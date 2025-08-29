@@ -196,7 +196,7 @@ public class CirculationController {
         }).collect(Collectors.toList());
 
         model.addAttribute("records", fileMasterReportDTOList);
-        return "fragments/file_master/view_master_report :: tabler"; // Thymeleaf template name
+        return "fragments/file_master/view_master_report :: tabler"; // Thymeleaf template name for testing
     }
 
 
