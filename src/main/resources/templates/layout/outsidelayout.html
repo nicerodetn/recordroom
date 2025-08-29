@@ -1,0 +1,77 @@
+<!-- layout.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Bootstrap Security Template | Homepage</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Bootstrap Template created by UxDT division, National Informatics Centre">
+    <meta name="keywords" content="HTML, Bootstrap, CSS, JS">
+    <link type="text/css" rel="stylesheet" th:href="@{/nic/vendor/bootstrap/css/bootstrap.min.css}"/>
+    <!-- Custom styles for this template -->
+    <link type="text/css" rel="stylesheet" th:href="@{/nic/css/base.css}"/>
+    <link type="text/css" rel="stylesheet" th:href="@{/nic/css/base-responsive.css}"/>
+    <link type="text/css" rel="stylesheet" th:href="@{/nic/css/animate.min.css}"/>
+    <link type="text/css" rel="stylesheet" th:href="@{/nic/css/slicknav.min.css}"/>
+    <link type="text/css" rel="stylesheet" th:href="@{/nic/css/font-awesome.min.css}"/>
+    <link th:href="@{/nic/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+
+    <script th:src="@{/nic/js/popper.min.js}"></script>
+    <script th:src="@{/nic/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/nic/vendor/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/nic/js/jquery.slicknav.min.js}"></script>
+    <script th:src="@{/nic/vendor/jquery-ui/jquery-ui.js}"></script>
+</head>
+
+<body>
+<div class="wrapper">
+
+
+    <header th:replace="~{fragments/header :: header}"></header>
+    <header th:replace="~{fragments/login :: login}"></header>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+
+    <!-- Bootstrap core JavaScript -->
+
+
+    <!-- Menu Toggle Script -->
+    <script>
+        $("#menu-toggle").click(function(e) {
+          e.preventDefault();
+          $("#wrapper").toggleClass("toggled");
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $(".b-navdropdown-click").click(function() {
+                if($(".b-navdropdown").hasClass("hide")) {
+                    $(".b-navdropdown").addClass("show");
+                    $(".b-navdropdown").removeClass("hide");
+                    // $(".b-icon-up").show();
+                    // $(".b-icon-down").hide();
+                }
+                else if($(".b-navdropdown").hasClass("show")) {
+                    $(".b-navdropdown").addClass("hide");
+                    $(".b-navdropdown").removeClass("show");
+                    // $(".b-icon-down").show();
+                    // $(".b-icon-up").hide();
+                }
+          });
+        });
+    </script>
+
+    <script>
+        function myFunction(x) {
+          x.classList.toggle("change");
+        }
+    </script>
+
+
+</div>
+<!-- ./wrapper -->
+</body>
+
+</html>

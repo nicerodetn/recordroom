@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div id="b-homedb" th:fragment="tabler">
+    <div class="my-5">
+
+
+        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Out Ward Pending Files's</h3>
+
+        <script>
+            $(function () {
+              $('#example1').DataTable({
+          dom: 'Bfrtip',   // Required to show buttons
+          buttons: [
+              {
+                  extend: 'pdfHtml5',
+                  text: 'Export PDF',
+                  title: 'Out Ward Files List',   // Custom PDF title
+                  messageTop: 'Record Room Out Ward Files List',
+
+                  // Customize the PDF layout and styles
+                  customize: function (doc) {
+                      // Set page margins
+                      doc.pageMargins = [40, 60, 40, 60];
+
+                      // Change the default font size
+                      doc.defaultStyle.fontSize = 12;
+
+                      // Style the table header
+                      doc.styles.tableHeader.fillColor = '#4CAF50';   // Green background for header
+                      doc.styles.tableHeader.color = 'white';         // White text for header
+
+                      // Modify content
+                      // For example, make the title bold and center it
+                      doc.content[0].text = doc.content[0].text.toUpperCase();
+                      doc.content[0].alignment = 'center';
+                      doc.content[0].fontSize = 18;
+                      doc.content[0].margin = [0, 0, 0, 10];
+
+                      // Add a footer
+                      doc.footer = function(currentPage, pageCount) {
+                          return {
+                              columns: [
+                                  'Left footer text',
+                                  {
+                                      text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
+                                      alignment: 'right',
+                                      margin: [0, 0, 20, 0]
+                                  }
+                              ],
+                              margin: [40, 0]
+                          }
+                      };
+                      // You can also manipulate the table layout here if needed
+                  },
+
+                  // Export only visible columns or all
+                  exportOptions: {
+                      columns: ':visible'
+                  }
+              }
+          ],
+          // Other DataTable options ...
+      });
+
+            });
+        </script>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"></h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>DR Serial No</th>
+                                    <th>Date of File Outgoing</th>
+                                    <th>Purpose of Taking File</th>
+                                    <th>Section Dealing Hand Name</th>
+                                    <th>Section Dealing Hand Phone No</th>
+                                    <th>Record Room Dealing Hand Name</th>
+                                    <!--                                    <th>Date of Return</th>-->
+                                    <!--                                    <th>Purpose of Return</th>-->
+                                    <!--                                    <th>Section Dealing Hand Name (InWard)</th>-->
+                                    <!--                                    <th>Section Dealing Hand Phone No (InWard)</th>-->
+                                    <!--                                    <th>Record Room Dealing Hand Name (InWard)</th>-->
+                                    <!--                                    <th>Created Date</th>-->
+                                    <!--                                    <th>Updated Date</th>-->
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="record : ${records}">
+                                    <td th:text="${record.drSerialNo}"></td>
+                                    <td th:text="${record.dateOfFileOutgoing}"></td>
+                                    <td th:text="${record.purposeOfTakingFile}"></td>
+                                    <td th:text="${record.sectionDealingHandName}"></td>
+                                    <td th:text="${record.sectionDealingHandPhoneNo}"></td>
+                                    <td th:text="${record.recordRoomDealingHandName}"></td>
+                                    <!--                                    <td th:text="${record.dateOfReturn}"></td>-->
+                                    <!--                                    <td th:text="${record.purposeOfReturn}"></td>-->
+                                    <!--                                    <td th:text="${record.sectionDealingHandName_InWard}"></td>-->
+                                    <!--                                    <td th:text="${record.sectionDealingHandPhoneNo_InWard}"></td>-->
+                                    <!--                                    <td th:text="${record.recordRoomDealingHandName_InWard}"></td>-->
+                                    <!--                                    <td th:text="${record.created_date}"></td>-->
+                                    <!--                                    <td th:text="${record.updated_date}"></td>-->
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+
+    </div>
+</div>
+</html>

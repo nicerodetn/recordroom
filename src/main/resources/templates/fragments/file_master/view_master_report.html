@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div id="b-homedb"  th:fragment="tabler">
+
+    <div class="my-5" >
+        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Master File's List </h3>
+        <script>
+            $(function () {
+              $('#example1').DataTable({
+          dom: 'Bfrtip',   // Required to show buttons
+          buttons: [
+              {
+                  extend: 'pdfHtml5',
+                  text: 'Export PDF',
+                  title: 'Master Files List',   // Custom PDF title
+                  messageTop: 'Master Files List',
+
+                  // Customize the PDF layout and styles
+                  customize: function (doc) {
+                      // Set page margins
+                      doc.pageMargins = [40, 60, 40, 60];
+
+                      // Change the default font size
+                      doc.defaultStyle.fontSize = 12;
+
+                      // Style the table header
+                      doc.styles.tableHeader.fillColor = '#4CAF50';   // Green background for header
+                      doc.styles.tableHeader.color = 'white';         // White text for header
+
+                      // Modify content
+                      // For example, make the title bold and center it
+                      doc.content[0].text = doc.content[0].text.toUpperCase();
+                      doc.content[0].alignment = 'center';
+                      doc.content[0].fontSize = 18;
+                      doc.content[0].margin = [0, 0, 0, 10];
+
+                      // Add a footer
+                      doc.footer = function(currentPage, pageCount) {
+                          return {
+                              columns: [
+                                  'Left footer text',
+                                  {
+                                      text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
+                                      alignment: 'right',
+                                      margin: [0, 0, 20, 0]
+                                  }
+                              ],
+                              margin: [40, 0]
+                          }
+                      };
+                      // You can also manipulate the table layout here if needed
+                  },
+
+                  // Export only visible columns or all
+                  exportOptions: {
+                      columns: ':visible'
+                  }
+              }
+          ],
+          // Other DataTable options ...
+      });
+
+            });
+        </script>
+
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"></h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>File Type (Year's)</th>
+                                    <th>DR Serial No</th>
+                                    <th>Section</th>
+
+                                    <th>File Closing Date</th>
+                                    <th>Handing Over Date</th>
+                                    <th>Remarks</th>
+
+                                    <th>Section Dealing Hand Name</th>
+                                    <th>Section Dealing Hand Phone No</th>
+                                    <th>Record Room Dealing Hand Name</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="record : ${records}">
+                                    <td th:text="${record.fileType}"></td>
+                                    <td th:text="${record.drSerialNo}"></td>
+                                    <td th:text="${record.section}"></td>
+
+                                    <td th:text="${record.fileClosingDate}"></td>
+                                    <td th:text="${record.handingOverDate}"></td>
+                                    <td th:text="${record.remarks}"></td>
+
+                                    <td th:text="${record.sectionDealingHandName}"></td>
+                                    <td th:text="${record.sectionDealingHandPhoneNo}"></td>
+                                    <td th:text="${record.recordRoomDealingHandName}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+
+    </div>
+</div>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div id="b-homedb" th:fragment="searchrecord">
+    <div class="my-5" >
+        <div class="container">
+            <h3 style="font-size:32px;" class="text-center col-12 b-latest-data">File Inward Entry</h3>
+            <div class="row">
+                <div class="container-fluid add-form-list">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <script>
+                                        // Auto-hide success message after 3 seconds
+                                        setTimeout(() => {
+                                            let msg = document.getElementById("successMsg");
+                                            if (msg) {
+                                                msg.classList.remove("show");
+                                                msg.remove();
+                                            }
+                                        }, 3000);
+
+                                        setTimeout(() => {
+                                            let msg = document.getElementById("errorMsg");
+                                            if (msg) {
+                                                msg.classList.remove("show");
+                                                msg.remove();
+                                            }
+                                        }, 5000);
+                                    </script>
+                                    <div th:if="${successMessage}"
+                                         class="alert alert-success alert-dismissible fade show text-center"
+                                         id="successMsg"
+                                         role="alert"
+                                         th:text="${successMessage}">
+                                    </div>
+
+                                    <div th:if="${errorMessage}"
+                                         class="alert alert-danger alert-dismissible fade show text-center"
+                                         id="errorMsg"
+                                         role="alert"
+                                         th:text="${errorMessage}">
+                                    </div>
+
+
+                                    <label class="form-label fw-bold">Search File</label>
+                                    <input type="text" name="query"
+                                           hx-get="/record/circulation/searchOutWard"
+                                           hx-target="#b-homedb"
+                                           hx-swap="outerHTML"
+                                           hx-trigger="keyup changed delay:500ms"
+                                           placeholder="Enter file number..." />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- file/fragments/notFound.html -->
+
+
+<div id="b-homedb" th:fragment="outwardform">
+    <div class="my-5" >
+        <div class="container">
+            <h3 style="font-size:32px;" class="text-center col-12 b-latest-data">File Outward Entry</h3>
+            <div class="row">
+                <div class="container-fluid add-form-list">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div>
+                                        <h3>File Details Found</h3>
+                                        <p><strong>File Type:</strong> <span th:text="${record.fileType}"></span></p>
+                                        <p><strong>Distribution Register Serial No:</strong> <span th:text="${record.drSerialNo}"></span></p>
+                                        <p><strong>Section :</strong> <span th:text="${record.section.description}"></span></p><br>
+                                        <!--                                        <a class="b-newpage" hx-get="/record/circulation/file_master_out_entry" hx-target="#outwardform" hx-swap="innerHTML">Search Other Record</a>-->
+                                    </div>
+
+                                    <form th:object="${recordTransactionDetails}" method="post"
+                                          hx-post="/record/circulation/saveInWardEntry"
+                                          hx-target="#b-homedb"
+                                          hx-swap="outerHTML"
+                                          class="row g-3 border p-3 rounded bg-light shadow-sm"
+                                          id="recordForm">
+
+                                        <input type="hidden" th:field="*{fileRecordId}" th:value="${record.id}" />
+
+                                        <label for="dateOfFileOutgoing">1. Date of Return:</label>
+                                        <input type="date" th:field="*{dateOfReturn}" class="form-control" id="dateOfFileOutgoing" /><br/>
+
+                                        <label for="purposeOfTakingFile">2. Purpose of Return:</label>
+                                        <input type="text" th:field="*{purposeOfReturn}" class="form-control" id="purposeOfTakingFile" /><br/>
+
+                                        <label for="sectionDealingHandName">3a) Section Dealing Hand Name:</label>
+                                        <input type="text" th:field="*{sectionDealingHandName_InWard}" class="form-control" id="sectionDealingHandName" /><br/>
+
+                                        <label for="sectionDealingHandPhoneNo">3b) Section Dealing Hand Phone No:</label>
+                                        <input type="text" th:field="*{sectionDealingHandPhoneNo_InWard}" class="form-control" id="sectionDealingHandPhoneNo" /><br/>
+
+
+                                        <div style="padding-top: 17px;" class="col-12">
+                                            <label class="form-label fw-bold">4. Record Room Dealing Hand Name</label><br>
+                                            <select class="form-select" th:field="*{recordRoomDealingHandName_InWard}" required>
+                                                <option value="">-- Select Section--</option>
+                                                <option value="Murugan">Shri A. Murugan</option>
+                                                <option value="Shiva">Shri Siva</option>
+                                                <option value="Palani">Shri Palani</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Please select a section before saving.
+                                            </div>
+                                        </div>
+
+
+                                        <div class="d-grid mt-4">
+                                            <button type="submit" class="btn btn-primary btn-lg">💾 Save Record</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</html>

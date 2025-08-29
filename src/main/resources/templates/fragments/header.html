@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="header">
+    <!-- Accessibility -->
+    <div class="container d-flex clearfix" id="b-accessibility">
+        <div class="b-ministryname">
+            <div class="text-right d-inline-block font-weight-bold b-acc-goi pr-sm-2">
+                <span>தமிழ்நாடு அரசு</span>
+            </div>
+            <div class="d-inline-block font-weight-bold b-acc-ministry pl-sm-2">
+                <span>Government of Tamil Nadu</span>
+            </div>
+        </div>
+
+
+        <div class="ml-auto d-flex b-acc-icons">
+            <div class="align-self-center">
+
+
+
+                <div class="d-inline-block h-100 px-3 dropdown">
+                    <img th:src="@{/nic/images/icons/ico-social.png}" alt="social sites links" title="Social links" class="dropdown-toggle" data-toggle="dropdown" style="cursor: pointer;">
+
+                    <div class="dropdown-menu b-social-dropdown" style="min-width: 50px; width: 50px">
+                        <a href="javascript:void(0)" class="dropdown-item"> <span style="display:none;">Facebook link</span><span class="fab fa-facebook-f"></span> </a>
+                        <a href="javascript:void(0);" class="dropdown-item"> <span style="display:none;">Twitter link</span><span class="fab fa-twitter"></span> </a>
+                        <a href="javascript:void(0)" class="dropdown-item"> <span style="display:none;">Youtube link</span><span class="fab fa-youtube"></span> </a>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Header -->
+    <div class="container clearfix" id="b-header">
+        <div class="float-left d-flex h-100">
+            <img th:src="@{/nic/images/Tamil_Nadu_emb.png}" class="align-self-center b-emblem-image" title="National Emblem of India" alt="emblem of india logo">
+        </div>
+
+        <div class="float-left d-flex h-100">
+            <h2 class="align-self-center pl-3 b-appname"><span class="font-weight-bold">Erode District Collectorate</span> <br><span class="b-appfullname"> Reocrd Room Management</span></h2>
+        </div>
+
+        <div class="float-right d-flex h-100">
+            <img th:src="@{/nic/images/thiru_img5.png}" class="align-self-center b-emblem-image" title="National Emblem of India" alt="emblem of india logo">
+        </div>
+    </div>
+
+    <style type="text/css">
+        .bar1, .bar2, .bar3 {
+            width: 25px;
+            height: 3px;
+            background-color: #fff;
+            margin: 5px 0;
+            transition: 0.4s;
+        }
+
+        .change .bar1 {
+          -webkit-transform: rotate(-45deg) translate(-5px, 5px);
+          transform: rotate(-45deg) translate(-5px, 5px);
+        }
+
+        .change .bar2 {opacity: 0;}
+
+        .change .bar3 {
+          -webkit-transform: rotate(45deg) translate(-5px, -7px);
+          transform: rotate(45deg) translate(-5px, -7px);
+        }
+    </style>
+
+
+    <!-- Global Navigation -->
+    <div class="globalnav-bg">
+        <div class="container">
+            <nav class="navbar navbar-expand-sm navbar-dark px-0">
+                <div class="d-flex w-100 b-nav-mobile">
+                    <button class="navbar-toggler align-self-center b-btn-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar" onclick="myFunction(this)">
+                        <span style="display:none;">Menu</span>
+                        <div>
+                            <div class="bar1"></div>
+                            <div class="bar2"></div>
+                            <div class="bar3"></div>
+                        </div>
+                    </button>
+                    <!-- <button class="btn btn-outline-light align-self-center ml-auto b-btn-login" type="button" data-toggle="modal" data-target="#login-modal">
+                        Log In
+                    </button>  -->
+                </div>
+
+                <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                    <ul class="navbar-nav main-menu d-flex">
+                        <li class="nav-item d-block"> <a href="index.html" class="nav-link active">Home</a> </li>
+                        <li class="nav-item d-block"> <a href="contactus.html" class="nav-link">Contact Us</a></li>
+                        <!-- <li class="nav-item d-block ml-auto b-loginbut" data-toggle="modal" data-target="#login-modal">
+                            <a class="nav-link" href="javascript:void(0);">Log In</a>
+                        </li>   -->
+                    </ul>
+                </div>
+
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        function myFunction(x) {
+          x.classList.toggle("change");
+        }
+    </script>
+
+</div>
+</html>

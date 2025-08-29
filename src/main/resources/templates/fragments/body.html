@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div  th:fragment="content">
+  <nav class="navbar navbar-expand-lg navbar-light dashboard-bgcolor border-bottom">
+    <button class="btn b-db-color" id="menu-toggle">
+      <span style="display:none;">Menu</span>
+      <span class="fas fa-bars" style="font-size: 1.4rem"></span>
+    </button>
+    <!-- Online users -->
+    <div class="d-inline-block px-4 py-2 dropdown">
+      <div class="dropdown-toggle" data-toggle="dropdown" style="cursor: pointer;">
+        <span class="fas fa-users" style="font-size: 20px;"></span>
+      </div>
+    </div>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+        <li class="nav-item">
+          <a class="nav-link b-db-color" hx-get="/profile" hx-target="#b-homedb" hx-swap="innerHTML" >Sign Out</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div class="container-fluid">
+
+  <div class="my-5" id="b-homedb">
+    <div class="container">
+      <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Dashboard</h3>
+      <div class="">
+        <div class="row text-center pl-4" id="sortable-cards">
+          <div class="col-lg-6 col-sm-12 p-3 b-customize">
+            <div class="bg-light p-4 b-dbcard">
+              <i class="fas fa-user-graduate position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
+              <div class="">
+                <p class="text-left font-weight-bold" style="font-size: 14px;">Total Records</p>
+                <h3 class="text-left font-weight-bold" style="margin-top: -5px">1,1870</h3>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 col-sm-12 p-3 b-customize">
+            <div class="bg-light p-4 b-dbcard">
+              <i class="fas fa-university position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
+              <div class="">
+                <p class="text-left font-weight-bold" style="font-size: 14px;">OutStanding Reocrds</p>
+                <h3 class="text-left font-weight-bold" style="margin-top: -5px">612</h3>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 col-sm-12 p-3 b-customize">
+            <div class="bg-light p-4 b-dbcard">
+              <i class="fas fa-users position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
+              <div class="">
+                <p class="text-left font-weight-bold" style="font-size: 14px;">Out Standing Registers</p>
+                <h3 class="text-left font-weight-bold" style="margin-top: -5px">152,679</h3>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 col-sm-12 p-3 b-customize">
+            <div class="bg-light p-4 b-dbcard">
+              <i class="fas fa-question-circle position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
+              <div class="">
+                <p class="text-left font-weight-bold" style="font-size: 14px;">Total Transcations</p>
+                <h3 class="text-left font-weight-bold" style="margin-top: -5px">39,891</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</html>

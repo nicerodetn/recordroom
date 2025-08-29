@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="sidebar">
+  <!-- Sidebar -->
+  <div style="height:100%" class="dashboard-bgcolor border-right" id="sidebar-wrapper">
+    <div class="sidebar-heading text-center b-db-color" style="font-size: 24px">
+      <span class="fas fa-tachometer-alt"></span> &nbsp;<span class="text-uppercase">Admin</span>
+    </div>
+    <div class="list-group list-group-flush b-leftmenu">
+
+      <ul id="sortable-menu">
+
+
+        <li><a href='body.html' class="dashboard-bgcolor b-db-color border-bottom b-newpage">Dashboard</a></li>
+
+        <li class='sub-menu'><a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">File's Circulation<div class='fa fa-caret-down right'></div></a>
+          <ul>
+            <li><a class="b-newpage" hx-get="/record/circulation/load_form" hx-target="#b-homedb" hx-swap="innerHTML">File Master Creation</a></li>
+            <li><a class="b-newpage" hx-get="/record/circulation/file_master_out_entry" hx-target="#b-homedb" hx-swap="innerHTML">Outward Entry</a></li>
+            <li><a class="b-newpage" hx-get="/record/circulation/file_master_in_entry" hx-target="#b-homedb" hx-swap="innerHTML">Inward Entry</a></li>
+
+
+            <li class='sub-sub-menu'><a href='javascript:void(0)' class="b-newpage">Report's<div class='fa fa-caret-down right'></div></a>
+              <ul>
+                <li><a class="b-newpage" hx-get="/record/circulation/outWardReport" hx-target="#b-homedb" hx-swap="innerHTML">Out Standing Report</a></li>
+                <li><a class="b-newpage" hx-get="/record/circulation/masterReport" hx-target="#b-homedb" hx-swap="innerHTML">Master File's</a></li>
+              </ul>
+            </li>
+
+          </ul>
+        </li>
+
+        <li class='sub-menu'><a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">Call Book File's<div class='fa fa-caret-down right'></div></a>
+          <ul>
+            <li><a class="b-newpage" href='linechart.html'>Outward Entry</a></li>
+            <li><a class="b-newpage" href='areachart.html'>Inward Entry</a></li>
+            <li><a class="b-newpage" href='areachart.html'>View Details</a></li>
+          </ul>
+        </li>
+
+        <li class='sub-menu'><a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">Old Register's<div class='fa fa-caret-down right'></div></a>
+          <ul>
+            <li><a class="b-newpage" href='barchart.html'>Register Master Creation</a></li>
+            <li><a class="b-newpage" href='linechart.html'>Outward Entry</a></li>
+            <li><a class="b-newpage" href='areachart.html'>Inward Entry</a></li>
+            <li><a class="b-newpage" href='areachart.html'>View Details</a></li>
+          </ul>
+        </li>
+
+        <li><a href='table.html' class="dashboard-bgcolor border-bottom b-newpage b-db-color">RTI</a></li>
+
+
+
+      </ul>
+    </div>
+  </div>
+  <!-- /#sidebar-wrapper -->
+
+
+
+</div>
+</html>
