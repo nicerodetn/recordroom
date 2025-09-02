@@ -15,10 +15,10 @@ public interface RecordTransactionRepository extends JpaRepository<RecordTransac
     Optional<RecordTransactionDetails> findByDrSerialNo(Long drSerialNo);
 
     @Query(
-            value = "SELECT * FROM record_transaction_details WHERE dr_serial_no = :drSerialNo AND active = true LIMIT 1",
+            value = "SELECT * FROM record_transaction_details WHERE dr_serial_no = :drSerialNo AND dr_year =:dr_year AND active = true LIMIT 1",
             nativeQuery = true
     )
-    Optional<RecordTransactionDetails> findActiveByDrSerialNo(@Param("drSerialNo") Long drSerialNo);
+    Optional<RecordTransactionDetails> findActiveByDrSerialNoAndYear(@Param("drSerialNo") Long drSerialNo,@Param("dr_year") Integer dr_year);
 
     List<RecordTransactionDetails> findByActiveTrue();
 

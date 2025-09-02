@@ -43,13 +43,30 @@
                                     </div>
 
 
-                                    <label class="form-label fw-bold">Search File</label>
-                                    <input type="text" name="query"
-                                           hx-get="/record/circulation/searchOutWard"
-                                           hx-target="#b-homedb"
-                                           hx-swap="outerHTML"
-                                           hx-trigger="keyup changed delay:500ms"
-                                           placeholder="Enter file number..." />
+                                    <form hx-get="/record/circulation/searchForInWardEntry"
+                                          hx-target="#b-homedb"
+                                          hx-swap="outerHTML">
+
+                                        <label class="form-label fw-bold">Search File</label>
+
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <input type="text" name="drSerialNo"
+                                                       class="form-control"
+                                                       placeholder="Enter DR Number..." required />
+                                            </div>
+                                            <div class="col">
+                                                <input type="text" name="dr_year"
+                                                       class="form-control"
+                                                       placeholder="Enter DR Serial Year..." required />
+                                            </div>
+                                            <div class="col-auto">
+                                                <button type="submit" class="btn btn-primary">
+                                                    Search
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>

@@ -25,8 +25,8 @@ public class RecordTransactionService {
         return recordTransactionRepository.findByDrSerialNo(drSerialNo);
     }
 
-    public Optional<RecordTransactionDetails> findBydrSerialNoAndActive(Long drSerialNo) {
-        return recordTransactionRepository.findActiveByDrSerialNo(drSerialNo);
+    public Optional<RecordTransactionDetails> findBydrSerialNoAndActiveAndYear(Long drSerialNo,Integer dr_year) {
+        return recordTransactionRepository.findActiveByDrSerialNoAndYear(drSerialNo,dr_year);
     }
 
     public List<RecordTransactionDetails> getActiveRecords() {

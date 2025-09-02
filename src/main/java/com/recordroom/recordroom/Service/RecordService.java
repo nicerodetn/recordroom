@@ -45,18 +45,15 @@ public class RecordService {
 
 
     public Optional<FileRecord> saveRecord(FileRecord r) {
-        if (recordRepo.findByDrSerialNo(r.getDrSerialNo()).isPresent()) {
+        if (recordRepo.findByDrSerialNoAndYear(r.getDrSerialNo(),r.getDr_year()).isPresent()) {
             return Optional.empty();
         } else {
             return Optional.of(recordRepo.save(r));
-
         }
-
-
     }
 
-    public Optional<FileRecord> findBydrSerialNo(Long drSerialNo) {
-        return recordRepo.findByDrSerialNo(drSerialNo);
+    public Optional<FileRecord> findBydrSerialNoAndYear(Long drSerialNo,Integer dr_year) {
+        return recordRepo.findByDrSerialNoAndYear(drSerialNo,dr_year);
     }
 
     public Optional<FileRecord> findById(Integer id) {

@@ -25,6 +25,8 @@ public class FileRecord {
     @Column( unique = true)
     private Long drSerialNo;
 
+    private Integer dr_year;
+
     @ManyToOne
     @JoinColumn(name = "section_id",referencedColumnName = "id")
     private Section section;

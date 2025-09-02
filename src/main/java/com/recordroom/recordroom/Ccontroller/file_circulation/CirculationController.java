@@ -88,14 +88,17 @@ public class CirculationController {
 
     }
 
-    @GetMapping("/search")
-    public String searchFile(@RequestParam String query, Model model) {
-        Optional<FileRecord> record = recordService.findBydrSerialNo(Long.parseLong(query));
-        Optional<RecordTransactionDetails> recordTransactionDetails = recordTransactionService.findBydrSerialNoAndActive(Long.parseLong(query));
+    @GetMapping("/searchForOutWardEntry")
+    public String searchFile(@RequestParam String drSerialNo,@RequestParam String dr_year, Model model) {
+
+        Optional<FileRecord> record = recordService.findBydrSerialNoAndYear(Long.parseLong(drSerialNo),Integer.parseInt(dr_year));
+
+        Optional<RecordTransactionDetails> recordTransactionDetails = recordTransactionService.findBydrSerialNoAndActiveAndYear(Long.parseLong(drSerialNo),Integer.parseInt(dr_year));
+
         System.out.println("Inside serach");
         if (record.isPresent()) {
             if(recordTransactionDetails.isPresent()){
-                model.addAttribute("errorMessage", "✅ File record alreaddy Outward !");
+                model.addAttribute("errorMessage", "✅ File record already  Outward !");
                 return "fragments/file_master/out_entry :: searchrecord";
             }
             else {
@@ -117,6 +120,7 @@ public class CirculationController {
         System.out.println("pppppppp::::::"+fileOutgoingDTO.getFileRecordId());
         RecordTransactionDetails outgoing = new RecordTransactionDetails();
         outgoing.setActive(true);
+        outgoing.setDr_year(fileRecord.get().getDr_year());
         outgoing.setDrSerialNo(fileRecord.get().getDrSerialNo());
         outgoing.setFileRecord(fileRecord.get());  // Set the existing record
         outgoing.setDateOfFileOutgoing(fileOutgoingDTO.getDateOfFileOutgoing());
@@ -130,10 +134,12 @@ public class CirculationController {
     }
 
 
-    @GetMapping("/searchOutWard")
-    public String searchFileTransaction(@RequestParam String query, Model model) {
-        Optional<FileRecord> record = recordService.findBydrSerialNo(Long.parseLong(query));
-        Optional<RecordTransactionDetails> recordTransactionDetails = recordTransactionService.findBydrSerialNoAndActive(Long.parseLong(query));
+    @GetMapping("/searchForInWardEntry")
+    public String searchFileTransaction(@RequestParam String drSerialNo,@RequestParam String dr_year, Model model) {
+
+        Optional<FileRecord> record = recordService.findBydrSerialNoAndYear(Long.parseLong(drSerialNo),Integer.parseInt(dr_year));
+
+        Optional<RecordTransactionDetails> recordTransactionDetails = recordTransactionService.findBydrSerialNoAndActiveAndYear(Long.parseLong(drSerialNo),Integer.parseInt(dr_year));
         System.out.println("Inside serach");
             if(recordTransactionDetails.isPresent()){
                 model.addAttribute("record", record.get());
@@ -150,8 +156,11 @@ public class CirculationController {
 
     @PostMapping("/saveInWardEntry")
     public String saveRecordTransactionDetailsInWard(@ModelAttribute FileOutgoingDTO fileOutgoingDTO, Model model) {
+
         Optional<FileRecord> fileRecord = recordService.findById(fileOutgoingDTO.getFileRecordId());
-        Optional<RecordTransactionDetails> recordTransactionDetails = recordTransactionService.findBydrSerialNoAndActive(fileRecord.get().getDrSerialNo());
+
+        Optional<RecordTransactionDetails> recordTransactionDetails = recordTransactionService.findBydrSerialNoAndActiveAndYear(fileRecord.get().getDrSerialNo(),fileRecord.get().getDr_year());
+
         System.out.println("pppppppp::::::"+fileOutgoingDTO.getFileRecordId());
         RecordTransactionDetails outgoing = recordTransactionDetails.get();
         outgoing.setActive(false);
@@ -188,7 +197,6 @@ public class CirculationController {
             dto.setHandingOverDate(record.getHandingOverDate());
             dto.setRemarks(record.getRemarks());
             dto.setRackDetails(record.getRackDetails());
-
             dto.setSectionDealingHandName(record.getSectionDealingHandName());
             dto.setSectionDealingHandPhoneNo(record.getSectionDealingHandPhoneNo());
             dto.setRecordRoomDealingHandName(record.getRecordRoomDealingHandName());

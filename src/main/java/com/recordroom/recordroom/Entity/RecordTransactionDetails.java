@@ -23,6 +23,7 @@ public class RecordTransactionDetails {
     @JoinColumn(name = "record_id")
     private FileRecord fileRecord;
     private Long drSerialNo;
+    private Integer dr_year;
     private Boolean active;
     private LocalDate dateOfFileOutgoing;
     private String purposeOfTakingFile;

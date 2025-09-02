@@ -44,19 +44,19 @@
                                         </div>
 
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">Year</label>
-                                            <input type="number" class="form-control" id="yearInput" name="year" min="1900" max="2099" placeholder="Enter year" required>
+                                            <label class="form-label fw-bold">2. Year</label>
+                                            <input type="number" class="form-control" id="yearInput" th:field="*{dr_year}" name="year" min="1900" max="2099" placeholder="Enter year" required>
                                         </div>
 
                                         <!-- 2. DR Serial No -->
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">2. DR Serial No</label>
+                                            <label class="form-label fw-bold">3. DR Serial No</label>
                                             <input type="number" class="form-control" th:field="*{drSerialNo}" placeholder="Enter DR serial number">
                                         </div>
 
                                         <!-- 3. Section Dropdown -->
                                         <div style="padding-top: 17px;" class="col-12">
-                                            <label class="form-label fw-bold">3. Section</label><br>
+                                            <label class="form-label fw-bold">4. Section</label><br>
                                             <select class="form-select" th:field="*{section}" required>
                                                 <option value="">-- Select Section --</option>
                                                 <option th:each="sec: ${sections}"
@@ -70,37 +70,37 @@
 
                                         <!-- 4. File Closing Date -->
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">4. File Closing Date</label>
+                                            <label class="form-label fw-bold">5. File Closing Date</label>
                                             <input type="date" class="form-control" th:field="*{fileClosingDate}">
                                         </div>
 
                                         <!-- 5. Handing Over Date -->
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">5. Handing Over Date</label>
+                                            <label class="form-label fw-bold">6. Handing Over Date</label>
                                             <input type="date" class="form-control" th:field="*{handingOverDate}">
                                         </div>
 
                                         <!-- 6. Rack Details -->
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">6. Rack Details</label>
+                                            <label class="form-label fw-bold">7. Rack Details</label>
                                             <input type="number" class="form-control" th:field="*{rackDetails}" placeholder="Enter rack no/details">
                                         </div>
 
                                         <!-- 7. Remarks -->
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">7. Remarks</label>
+                                            <label class="form-label fw-bold">8. Remarks</label>
                                             <textarea class="form-control" th:field="*{remarks}" rows="2" placeholder="Enter remarks"></textarea>
                                         </div>
 
                                         <!-- 8. Section Dealing Hand Name -->
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">8a) Section Dealing Hand Name</label>
+                                            <label class="form-label fw-bold">9a) Section Dealing Hand Name</label>
                                             <input type="text" class="form-control" th:field="*{sectionDealingHandName}" placeholder="Enter dealing hand name">
                                         </div>
 
                                         <!-- 9. Section Dealing Hand Phone -->
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">8b) Section Dealing Hand Phone No</label>
+                                            <label class="form-label fw-bold">9b) Section Dealing Hand Phone No</label>
                                             <input type="text" class="form-control" th:field="*{sectionDealingHandPhoneNo}" placeholder="Enter phone no">
                                         </div>
 
@@ -111,7 +111,7 @@
 
 
                                         <div style="padding-top: 17px;" class="col-12">
-                                            <label class="form-label fw-bold">9. Record Room Dealing Hand Name</label><br>
+                                            <label class="form-label fw-bold">10. Record Room Dealing Hand Name</label><br>
                                             <select class="form-select" th:field="*{recordRoomDealingHandName}" required>
                                                 <option value="">-- Select Section--</option>
                                                 <option value="Murugan">Shri A. Murugan</option>
