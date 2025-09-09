@@ -1,8 +1,8 @@
-package com.recordroom.recordroom.Service;
+package com.recordroom.recordroom.Service.closed;
 
 
-import com.recordroom.recordroom.Entity.RecordTransactionDetails;
-import com.recordroom.recordroom.Repository.RecordTransactionRepository;
+import com.recordroom.recordroom.Entity.closed.RecordTransactionDetails;
+import com.recordroom.recordroom.Repository.closed.RecordTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

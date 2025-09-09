@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+<div  th:fragment="loadFormFragment">
+  <div class="my-5" id="b-homedb">
+
+    <div class="container">
+
+      <h3 style="font-size:32px;" class="text-center col-12 b-latest-data">RTI Visit Entry</h3>
+      <div class="row">
+        <div class="container-fluid add-form-list">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="card">
+                <div class="card-body">
+                  <div th:if="${successMessage}"
+                       class="alert alert-success alert-dismissible fade show text-center"
+                       id="successMsg"
+                       role="alert"
+                       th:text="${successMessage}">
+                  </div>
+
+                  <form th:object="${rti}" method="post"
+                        hx-post="/record/rti/save"
+                        hx-target="#b-homedb"
+                        hx-swap="outerHTML"
+                        class="row g-3 border p-3 rounded bg-light shadow-sm"
+                        id="recordForm">
+                    <!-- 1. File Type -->
+
+                    <div class="col-12">
+                      <label for="petitionerName" class="form-label fw-bold">1. Petitioner Name</label>
+                      <input type="text" class="form-control" id="petitionerName" th:field="*{pettitioner_name}" placeholder="Enter petitioner name" required>
+                      <div class="invalid-feedback">Please enter petitioner name.</div>
+                    </div>
+
+                    <!-- 2. Petitioner Address -->
+                    <div class="col-12">
+                      <label for="petitionerAddress" class="form-label fw-bold">2. Petitioner Address</label>
+                      <textarea class="form-control" id="petitionerAddress" th:field="*{pettitioner_address}" rows="3" placeholder="Enter petitioner address" required></textarea>
+                      <div class="invalid-feedback">Please enter petitioner address.</div>
+                    </div>
+
+                    <!-- 3. Petitioner Phone No -->
+                    <div class="col-12">
+                      <label for="petitionerPhone" class="form-label fw-bold">3. Petitioner Phone No</label>
+                      <input type="tel" class="form-control" id="petitionerPhone" th:field="*{pettitioner_phoneno}" placeholder="Enter phone number" pattern="[0-9]{10}" required>
+                      <div class="invalid-feedback">Please enter a valid 10-digit phone number.</div>
+                    </div>
+
+                    <!-- 4. Letter No -->
+                    <div class="col-12">
+                      <label for="letterNo" class="form-label fw-bold">4. Letter No</label>
+                      <input type="text" class="form-control" id="letterNo" th:field="*{letter_no}" placeholder="Enter letter number" required>
+                      <div class="invalid-feedback">Please enter letter number.</div>
+                    </div>
+
+                    <!-- 5. Subject -->
+                    <div class="col-12">
+                      <label for="subject" class="form-label fw-bold">5. Subject</label>
+                      <input type="text" class="form-control" id="subject" th:field="*{subject}" placeholder="Enter subject" required>
+                      <div class="invalid-feedback">Please enter subject.</div>
+                    </div>
+
+                    <!-- 6. RTI Date -->
+                    <div class="col-12">
+                      <label for="rtiDate" class="form-label fw-bold">6. RTI Date</label>
+                      <input type="date" class="form-control" id="rtiDate" th:field="*{rtiDate}" required>
+                      <div class="invalid-feedback">Please select RTI date.</div>
+                    </div>
+
+                    <!-- 7. In Time -->
+                    <div class="col-12">
+                      <label for="inTime" class="form-label fw-bold">7. In Time</label>
+                      <input type="time" class="form-control" id="inTime" th:field="*{in_time}" required>
+                      <div class="invalid-feedback">Please enter in time.</div>
+                    </div>
+
+                    <!-- 8. Out Time -->
+                    <div class="col-12">
+                      <label for="outTime" class="form-label fw-bold">8. Out Time</label>
+                      <input type="time" class="form-control" id="outTime" th:field="*{out_time}" required>
+                      <div class="invalid-feedback">Please enter out time.</div>
+                    </div>
+
+                    <!-- 9. Check No -->
+                    <div class="col-12">
+                      <label for="checkNo" class="form-label fw-bold">9. Check No</label>
+                      <input type="text" class="form-control" id="checkNo" th:field="*{check_no}" placeholder="Enter check number">
+                    </div>
+
+                    <!-- 10. Amount -->
+                    <div class="col-12">
+                      <label for="amount" class="form-label fw-bold">10. Amount</label>
+                      <input type="number" class="form-control" id="amount" th:field="*{amount}" placeholder="Enter amount" min="0" step="0.01">
+                    </div>
+
+
+                    <div style="padding-top: 17px;" class="col-12">
+                      <label class="form-label fw-bold">11. Record Room Dealing Hand Name</label><br>
+                      <select class="form-select" id="rrDealingName" th:field="*{rr_dealing_name}" required>
+                        <option value="">-- Select Section--</option>
+                        <option value="Murugan">Shri A. Murugan</option>
+                        <option value="Shiva">Shri Siva</option>
+                        <option value="Palani">Shri Palani</option>
+                      </select>
+                      <div class="invalid-feedback">
+                        Please select a section before saving.
+                      </div>
+                    </div>
+
+
+                    <!-- Submit Button -->
+                    <div class="d-grid mt-4">
+                      <button type="submit" class="btn btn-primary btn-lg">💾 Save Record</button>
+                    </div>
+                  </form>
+
+                  <script>
+                    // Auto-hide success message after 3 seconds
+                    setTimeout(() => {
+                        let msg = document.getElementById("successMsg");
+                        if (msg) {
+                            msg.classList.remove("show");
+                            msg.remove();
+                        }
+                    }, 3000);
+                  </script>
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="response"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</html>

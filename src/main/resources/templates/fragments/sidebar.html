@@ -47,7 +47,14 @@
           </ul>
         </li>
 
-        <li><a href='table.html' class="dashboard-bgcolor border-bottom b-newpage b-db-color">RTI</a></li>
+
+        <li class='sub-menu'><a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">RTI<div class='fa fa-caret-down right'></div></a>
+          <ul>
+            <li><a class="b-newpage" hx-get="/record/rti/load_form" hx-target="#b-homedb" hx-swap="innerHTML">RTI Entry</a></li>
+            <li><a class="b-newpage" hx-get="/record/rti/rti_Report" hx-target="#b-homedb" hx-swap="innerHTML">Report</a></li>
+
+          </ul>
+        </li>
 
 
 

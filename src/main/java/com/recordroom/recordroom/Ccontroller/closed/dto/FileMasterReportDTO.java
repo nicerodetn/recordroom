@@ -1,4 +1,4 @@
-package com.recordroom.recordroom.Ccontroller.dto;
+package com.recordroom.recordroom.Ccontroller.closed.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
