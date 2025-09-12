@@ -32,7 +32,6 @@ public class RecordTransactionDetails {
     private String sectionDealingHandPhoneNo;
     private String recordRoomDealingHandName;
 
-
     private LocalDate dateOfReturn;
     private String purposeOfReturn;
     private String sectionDealingHandName_InWard;
@@ -41,6 +40,4 @@ public class RecordTransactionDetails {
 
     private LocalDate created_date;
     private LocalDate updated_date;
-
-
 }
