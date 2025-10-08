@@ -1,0 +1,1 @@
+start "" java -jar recordroom.jar > output.log 2>&1
