@@ -30,22 +30,22 @@ public class CirculationController {
 
     @GetMapping("/file_master_creation")
     public String fileMasterCreationLoadForm(Model model) {
-        return "fragments/file_master/master_creation :: form";
+        return "fragments/closed/master_creation :: form";
     }
 
     @GetMapping("/file_master_out_entry")
     public String fileOutEntryLoadForm(Model model) {
-        return "fragments/file_master/out_entry :: searchrecord";
+        return "fragments/closed/out_entry :: searchrecord";
     }
 
     @GetMapping("/file_master_in_entry")
     public String fileInEntryLoadForm(Model model) {
-        return "fragments/file_master/in_entry :: searchrecord";
+        return "fragments/closed/in_entry :: searchrecord";
     }
 
     @GetMapping("/file_master_view")
     public String fileViewMaster(Model model) {
-        return "fragments/file_master/view_master :: tabler";
+        return "fragments/closed/view_master :: tabler";
     }
 
 
@@ -56,7 +56,7 @@ public class CirculationController {
         // model.addAttribute("successMessage", "✅ Record saved successfully!");
         model.addAttribute("record", new FileRecord()); // new empty form
         model.addAttribute("sections", recordService.getAllSections());
-        return "fragments/file_master/master_creation :: loadFormFragment"; // return only fragment
+        return "fragments/closed/master_creation :: loadFormFragment"; // return only fragment
     }
 
     @PostMapping("/save")
@@ -74,13 +74,13 @@ public class CirculationController {
             model.addAttribute("record", new FileRecord());
             model.addAttribute("sections", recordService.getAllSections());
             model.addAttribute("successMessage", "✅ Record saved successfully!");
-            return "fragments/file_master/master_creation :: loadFormFragment";
+            return "fragments/closed/master_creation :: loadFormFragment";
 
         }else {
             model.addAttribute("record", new FileRecord());
             model.addAttribute("sections", recordService.getAllSections());
             model.addAttribute("successMessage", "✅ Dulpicate DR Number given!");
-            return "fragments/file_master/master_creation :: loadFormFragment";
+            return "fragments/closed/master_creation :: loadFormFragment";
         }
 
         // return fragment only (HTMX swap)
@@ -98,18 +98,18 @@ public class CirculationController {
         if (record.isPresent()) {
             if(recordTransactionDetails.isPresent()){
                 model.addAttribute("errorMessage", "✅ File record already  Outward !");
-                return "fragments/file_master/out_entry :: searchrecord";
+                return "fragments/closed/out_entry :: searchrecord";
             }
             else {
                 model.addAttribute("record", record.get());
                 FileOutgoingDTO fileOutgoingDTO = new FileOutgoingDTO();
                 fileOutgoingDTO.setFileRecordId(record.get().getId());
                 model.addAttribute("recordTransactionDetails", fileOutgoingDTO);
-                return "fragments/file_master/out_entry :: outwardform";
+                return "fragments/closed/out_entry :: outwardform";
             }
         } else {
             model.addAttribute("errorMessage", "✅ No file record found with that number!");
-            return "fragments/file_master/out_entry :: searchrecord";
+            return "fragments/closed/out_entry :: searchrecord";
         }
     }
 
@@ -129,7 +129,7 @@ public class CirculationController {
         outgoing.setRecordRoomDealingHandName(fileOutgoingDTO.getRecordRoomDealingHandName());
         recordTransactionService.saveTransaction(outgoing);
         model.addAttribute("successMessage", "✅ Record saved successfully!");
-        return "fragments/file_master/out_entry :: searchrecord";
+        return "fragments/closed/out_entry :: searchrecord";
     }
 
 
@@ -145,11 +145,11 @@ public class CirculationController {
                 FileOutgoingDTO fileOutgoingDTO = new FileOutgoingDTO();
                 fileOutgoingDTO.setFileRecordId(record.get().getId());
                 model.addAttribute("recordTransactionDetails", fileOutgoingDTO);
-                return "fragments/file_master/in_entry :: outwardform";
+                return "fragments/closed/in_entry :: outwardform";
             }
             else {
                 model.addAttribute("errorMessage", "✅ File is not Outstanding!");
-                return "fragments/file_master/in_entry :: searchrecord";
+                return "fragments/closed/in_entry :: searchrecord";
             }
         }
 
@@ -173,14 +173,14 @@ public class CirculationController {
         outgoing.setRecordRoomDealingHandName_InWard(fileOutgoingDTO.getRecordRoomDealingHandName_InWard());
         recordTransactionService.saveTransaction(outgoing);
         model.addAttribute("successMessage", "✅ Record saved successfully!");
-        return "fragments/file_master/in_entry :: searchrecord";
+        return "fragments/closed/in_entry :: searchrecord";
     }
 
     @GetMapping("/outWardReport")
     public String showReport(Model model) {
         List<RecordTransactionDetails> records = recordTransactionService.getActiveRecords();
         model.addAttribute("records", records);
-        return "fragments/file_master/out_entry_report :: tabler"; // Thymeleaf template name
+        return "fragments/closed/out_entry_report :: tabler"; // Thymeleaf template name
     }
 
     @GetMapping("/masterReport")
@@ -203,7 +203,7 @@ public class CirculationController {
         }).collect(Collectors.toList());
 
         model.addAttribute("records", fileMasterReportDTOList);
-        return "fragments/file_master/view_master_report :: tabler"; // Thymeleaf template name for testing
+        return "fragments/closed/view_master_report :: tabler"; // Thymeleaf template name for testing
     }
 
 
