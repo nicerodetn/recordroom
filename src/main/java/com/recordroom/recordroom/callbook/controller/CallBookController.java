@@ -1,4 +1,4 @@
-package com.recordroom.recordroom.Ccontroller.callbook;
+package com.recordroom.recordroom.callbook.controller;
 
 public class CallBookController {
 

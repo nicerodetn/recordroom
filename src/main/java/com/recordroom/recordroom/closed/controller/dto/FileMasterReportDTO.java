@@ -1,8 +1,5 @@
-package com.recordroom.recordroom.Entity.closed;
+package com.recordroom.recordroom.closed.controller.dto;
 
-
-import com.recordroom.recordroom.Entity.Section;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,28 +7,15 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class FileRecord {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+@NoArgsConstructor
+public class FileMasterReportDTO {
 
     private Integer fileType;
-
-    @Column( unique = true)
     private Long drSerialNo;
-
-    private Integer dr_year;
-
-    @ManyToOne
-    @JoinColumn(name = "section_id",referencedColumnName = "id")
-    private Section section;
-
+    private String section;
     private LocalDate fileClosingDate;
     private LocalDate handingOverDate;
     private String remarks;
@@ -39,5 +23,4 @@ public class FileRecord {
     private String sectionDealingHandName;
     private String sectionDealingHandPhoneNo;
     private String recordRoomDealingHandName;
-
 }

@@ -1,4 +1,4 @@
-package com.recordroom.recordroom.Ccontroller;
+package com.recordroom.recordroom;
 
 
 import org.springframework.stereotype.Controller;

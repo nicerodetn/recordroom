@@ -1,11 +1,11 @@
-package com.recordroom.recordroom.Ccontroller.closed.file_circulation;
+package com.recordroom.recordroom.closed.controller.file_circulation;
 
-import com.recordroom.recordroom.Ccontroller.closed.dto.FileMasterReportDTO;
-import com.recordroom.recordroom.Ccontroller.closed.dto.FileOutgoingDTO;
-import com.recordroom.recordroom.Entity.closed.FileRecord;
-import com.recordroom.recordroom.Entity.closed.RecordTransactionDetails;
-import com.recordroom.recordroom.Service.closed.RecordService;
-import com.recordroom.recordroom.Service.closed.RecordTransactionService;
+import com.recordroom.recordroom.closed.controller.dto.FileMasterReportDTO;
+import com.recordroom.recordroom.closed.controller.dto.FileOutgoingDTO;
+import com.recordroom.recordroom.closed.entity.FileRecord;
+import com.recordroom.recordroom.closed.entity.RecordTransactionDetails;
+import com.recordroom.recordroom.closed.service.RecordService;
+import com.recordroom.recordroom.closed.service.RecordTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

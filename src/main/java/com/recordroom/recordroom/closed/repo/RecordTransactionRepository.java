@@ -1,6 +1,6 @@
-package com.recordroom.recordroom.Repository.closed;
+package com.recordroom.recordroom.closed.repo;
 
-import com.recordroom.recordroom.Entity.closed.RecordTransactionDetails;
+import com.recordroom.recordroom.closed.entity.RecordTransactionDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

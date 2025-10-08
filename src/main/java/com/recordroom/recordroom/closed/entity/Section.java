@@ -1,4 +1,4 @@
-package com.recordroom.recordroom.Entity;
+package com.recordroom.recordroom.closed.entity;
 
 
 import jakarta.persistence.Entity;

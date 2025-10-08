@@ -1,11 +1,11 @@
-package com.recordroom.recordroom.Service.closed;
+package com.recordroom.recordroom.closed.service;
 
 
-import com.recordroom.recordroom.Entity.closed.FileRecord;
-import com.recordroom.recordroom.Entity.Section;
-import com.recordroom.recordroom.Repository.closed.RecordRepository;
-import com.recordroom.recordroom.Repository.closed.RecordTransactionRepository;
-import com.recordroom.recordroom.Repository.SectionRepository;
+import com.recordroom.recordroom.closed.entity.FileRecord;
+import com.recordroom.recordroom.closed.entity.Section;
+import com.recordroom.recordroom.closed.repo.RecordRepository;
+import com.recordroom.recordroom.closed.repo.RecordTransactionRepository;
+import com.recordroom.recordroom.closed.repo.SectionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

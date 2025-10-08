@@ -1,10 +1,8 @@
-package com.recordroom.recordroom.Ccontroller.rti;
+package com.recordroom.recordroom.rti.controller;
 
 
-import com.recordroom.recordroom.Entity.closed.FileRecord;
-import com.recordroom.recordroom.Entity.closed.RecordTransactionDetails;
-import com.recordroom.recordroom.Entity.rti.Rti;
-import com.recordroom.recordroom.Service.rti.RtiService;
+import com.recordroom.recordroom.rti.entity.Rti;
+import com.recordroom.recordroom.rti.service.RtiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

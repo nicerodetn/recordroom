@@ -1,7 +1,6 @@
-package com.recordroom.recordroom.Entity.rti;
+package com.recordroom.recordroom.rti.entity;
 
 
-import com.recordroom.recordroom.Entity.Section;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,10 +1,8 @@
-package com.recordroom.recordroom.Service.rti;
+package com.recordroom.recordroom.rti.service;
 
 
-import com.recordroom.recordroom.Entity.Section;
-import com.recordroom.recordroom.Entity.closed.FileRecord;
-import com.recordroom.recordroom.Entity.rti.Rti;
-import com.recordroom.recordroom.Repository.rti.RtiRepository;
+import com.recordroom.recordroom.rti.entity.Rti;
+import com.recordroom.recordroom.rti.repo.RtiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
