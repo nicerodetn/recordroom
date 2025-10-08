@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div id="b-homedb" th:fragment="searchrecord">
+    <div class="my-5">
+        <div class="container">
+            <h3 style="font-size:32px;" class="text-center col-12 b-latest-data">File In ward Entry</h3>
+            <div class="row">
+                <div class="container-fluid add-form-list">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <script>
+                                        // Auto-hide success message after 3 seconds
+                                        setTimeout(() => {
+                                            let msg = document.getElementById("successMsg");
+                                            if (msg) {
+                                                msg.classList.remove("show");
+                                                msg.remove();
+                                            }
+                                        }, 3000);
+
+                                        setTimeout(() => {
+                                            let msg = document.getElementById("errorMsg");
+                                            if (msg) {
+                                                msg.classList.remove("show");
+                                                msg.remove();
+                                            }
+                                        }, 5000);
+                                    </script>
+                                    <div th:if="${successMessage}"
+                                         class="alert alert-success alert-dismissible fade show text-center"
+                                         id="successMsg"
+                                         role="alert"
+                                         th:text="${successMessage}">
+                                    </div>
+
+                                    <div th:if="${errorMessage}"
+                                         class="alert alert-danger alert-dismissible fade show text-center"
+                                         id="errorMsg"
+                                         role="alert"
+                                         th:text="${errorMessage}">
+                                    </div>
+
+
+                                    <form hx-get="/record/callbook/searchForInWardEntry"
+                                          hx-target="#b-homedb"
+                                          hx-swap="outerHTML">
+
+                                        <label class="form-label fw-bold">Search File</label>
+
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <input type="text" name="new_drSerialNo"
+                                                       class="form-control"
+                                                       placeholder="Enter DR Number..." required/>
+                                            </div>
+                                            <div class="col">
+                                                <input type="text" name="new_dr_year"
+                                                       class="form-control"
+                                                       placeholder="Enter DR Serial Year..." required/>
+                                            </div>
+                                            <div class="col-auto">
+                                                <button type="submit" class="btn btn-primary">
+                                                    Search
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- file/fragments/notFound.html -->
+
+
+<div id="b-homedb" th:fragment="insertform">
+    <div class="my-5">
+        <div class="container">
+            <h3 style="font-size:32px;" class="text-center col-12 b-latest-data">Call Book New In Ward Entry</h3>
+            <div class="row">
+                <div class="container-fluid add-form-list">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <script>
+                                        // Auto-hide success message after 3 seconds
+                                        setTimeout(() => {
+                                            let msg = document.getElementById("successMsgI");
+                                            if (msg) {
+                                                msg.classList.remove("show");
+                                                msg.remove();
+                                            }
+                                        }, 3000);
+
+                                        setTimeout(() => {
+                                            let msg = document.getElementById("errorMsgI");
+                                            if (msg) {
+                                                msg.classList.remove("show");
+                                                msg.remove();
+                                            }
+                                        }, 5000);
+                                    </script>
+                                    <div th:if="${successMessage}"
+                                         class="alert alert-success alert-dismissible fade show text-center"
+                                         id="successMsgI"
+                                         role="alert"
+                                         th:text="${successMessage}">
+                                    </div>
+
+                                    <div th:if="${errorMessage}"
+                                         class="alert alert-danger alert-dismissible fade show text-center"
+                                         id="errorMsgI"
+                                         role="alert"
+                                         th:text="${errorMessage}">
+                                    </div>
+
+
+                                    <!--                  <div>-->
+                                    <!--                    <h3>File Details Found</h3>-->
+                                    <!--                    <p><strong>File Type:</strong> <span th:text="${record.fileType}"></span></p>-->
+                                    <!--                    <p><strong>Distribution Register Serial No:</strong> <span th:text="${record.drSerialNo}"></span></p>-->
+                                    <!--                    <p><strong>Section :</strong> <span th:text="${record.section.description}"></span></p><br>-->
+                                    <!--                    &lt;!&ndash;                                        <a class="b-newpage" hx-get="/record/circulation/file_master_out_entry" hx-target="#outwardform" hx-swap="innerHTML">Search Other Record</a>&ndash;&gt;-->
+                                    <!--                  </div>-->
+
+                                    <form th:object="${callbook}" method="post"
+                                          hx-post="/record/callbook/saveInWardEntry"
+                                          hx-target="#b-homedb"
+                                          hx-swap="outerHTML"
+                                          class="row g-3 border p-3 rounded bg-light shadow-sm"
+                                          id="recordForm">
+
+
+                                        <!-- 1. New DR Serial No -->
+                                        <label for="newDrSerialNo">1.DR Serial No:</label>
+                                        <input type="number" th:field="*{new_drSerialNo}" class="form-control"
+                                               id="newDrSerialNo"/><br/>
+
+                                        <!-- 2. New DR Year -->
+                                        <label for="newDrYear">2.DR Year:</label>
+                                        <input type="number" th:field="*{new_dr_year}" class="form-control"
+                                               id="newDrYear"/><br/>
+
+
+                                        <!-- 3a. Section Dealing Hand Name -->
+                                        <label for="sectionHandName">3a) Section Dealing Hand Name:</label>
+                                        <input type="text" th:field="*{sectionDealingHandName}" class="form-control"
+                                               id="sectionHandName"/><br/>
+
+                                        <!-- 3b. Section Dealing Hand Phone No -->
+                                        <label for="sectionHandPhone">3b) Section Dealing Hand Phone No:</label>
+                                        <input type="text" th:field="*{sectionDealingHandPhoneNo}" class="form-control"
+                                               id="sectionHandPhone"/><br/>
+
+                                        <!-- 4. Record Room Dealing Hand Name -->
+                                        <div style="padding-top: 17px;" class="col-12">
+                                            <label class="form-label fw-bold">4. Record Room Dealing Hand
+                                                Name</label><br>
+                                            <select class="form-select" th:field="*{recordRoomDealingHandName}"
+                                                    required>
+                                                <option value="">-- Select Name --</option>
+                                                <option value="Murugan">Shri A. Murugan</option>
+                                                <option value="Shiva">Shri Siva</option>
+                                                <option value="Palani">Shri Palani</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Please select a name before saving.
+                                            </div>
+                                        </div>
+                                        <br/>
+
+
+
+
+                                        <!-- 5. Purpose of Incoming File -->
+                                        <label for="purposeIncoming">5. Purpose of Incoming File:</label>
+                                        <input type="text" th:field="*{purpose_Of_Incoming_File}" class="form-control"
+                                               id="purposeIncoming"/><br/>
+
+
+                                        <!-- 6. Rack No -->
+                                        <label for="rackNo">6. Rack No:</label>
+                                        <input type="number" th:field="*{rack_no}" class="form-control"
+                                               id="rackNo"/><br/>
+
+
+                                        <div class="d-grid mt-4">
+                                            <button type="submit" class="btn btn-primary btn-lg">💾 Save Record</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="b-homedb" th:fragment="updateform">
+    <div class="my-5">
+        <div class="container">
+            <h3 style="font-size:32px;" class="text-center col-12 b-latest-data">Call Book In Ward Entry for Existing
+                Record</h3>
+            <div class="row">
+                <div class="container-fluid add-form-list">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div>
+                                        <h3>File Details Found</h3>
+                                        <p><strong>Distribution Register Serial No:</strong> <span
+                                                th:text="${callbook.new_drSerialNo}"></span></p>
+                                        <p><strong>Section :</strong> <span th:text="${callbook.new_dr_year}"></span>
+                                        </p><br>
+                                    </div>
+                                    <form th:object="${callbook}" method="post"
+                                          hx-post="/record/callbook/updateInWardEntry"
+                                          hx-target="#b-homedb"
+                                          hx-swap="outerHTML"
+                                          class="row g-3 border p-3 rounded bg-light shadow-sm"
+                                          id="recordForm1">
+
+
+                                        <input type="hidden" th:field="*{id}" />
+
+                                        <input type="hidden" th:field="*{new_drSerialNo}" />
+                                        <input type="hidden" th:field="*{new_dr_year}" />
+
+                                        <input type="hidden" th:field="*{old_drSerialNo}" />
+                                        <input type="hidden" th:field="*{old_dr_year}" />
+
+                                        <input type="hidden" th:field="*{unique_key}" />
+
+
+
+                                        <!-- 1a. Section Dealing Hand Name -->
+                                        <label for="sectionHandName">1a) Section Dealing Hand Name:</label>
+                                        <input type="text" th:field="*{sectionDealingHandName}" class="form-control"
+                                               id="sectionHandName1"/><br/>
+
+                                        <!-- 1b. Section Dealing Hand Phone No -->
+                                        <label for="sectionHandPhone">1b) Section Dealing Hand Phone No:</label>
+                                        <input type="text" th:field="*{sectionDealingHandPhoneNo}" class="form-control"
+                                               id="sectionHandPhone1"/><br/>
+
+                                        <!-- 2. Record Room Dealing Hand Name -->
+                                        <div style="padding-top: 17px;" class="col-12">
+                                            <label class="form-label fw-bold">4. Record Room Dealing Hand
+                                                Name</label><br>
+                                            <select class="form-select" th:field="*{recordRoomDealingHandName}"
+                                                    required>
+                                                <option value="">-- Select Name --</option>
+                                                <option value="Murugan">Shri A. Murugan</option>
+                                                <option value="Shiva">Shri Siva</option>
+                                                <option value="Palani">Shri Palani</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Please select a name before saving.
+                                            </div>
+                                        </div>
+                                        <br/>
+
+
+                                        <!-- 3. Purpose of Incoming File -->
+                                        <label for="purposeIncoming">3. Purpose of Incoming File:</label>
+                                        <input type="text" th:field="*{purpose_Of_Incoming_File}" class="form-control"
+                                               id="purposeIncoming1"/><br/>
+
+
+                                        <!-- 4. Rack No -->
+                                        <label for="rackNo">4. Rack No:</label>
+                                        <input type="number" th:field="*{rack_no}" class="form-control"
+                                               id="rackNo1"/><br/>
+
+
+                                        <div class="d-grid mt-4">
+                                            <button type="submit" class="btn btn-primary btn-lg">💾 Save Record</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</html>
