@@ -22,4 +22,10 @@ public interface RecordTransactionRepository extends JpaRepository<RecordTransac
     List<RecordTransactionDetails> findByActiveTrue();
 
 
+    @Query(
+            value = "SELECT count(*) FROM record_transaction_details WHERE active = true",
+            nativeQuery = true
+    )
+    long countClosedFilesOutstanding();
+
 }

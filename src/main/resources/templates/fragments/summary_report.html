@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div id="b-homedb"  th:fragment="tabler">
+
+    <div class="my-5" >
+        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Summary Report </h3>
+        <script>
+            $(function () {
+              $('#example1').DataTable({
+          dom: 'Bfrtip',   // Required to show buttons
+          buttons: [
+              {
+                  extend: 'pdfHtml5',
+                  text: 'Export PDF',
+                  title: 'Summary Report',   // Custom PDF title
+                  messageTop: 'Summary Report',
+
+                  // Customize the PDF layout and styles
+                  customize: function (doc) {
+                      // Set page margins
+                      doc.pageMargins = [40, 60, 40, 60];
+
+                      // Change the default font size
+                      doc.defaultStyle.fontSize = 12;
+
+                      // Style the table header
+                      doc.styles.tableHeader.fillColor = '#4CAF50';   // Green background for header
+                      doc.styles.tableHeader.color = 'white';         // White text for header
+
+                      // Modify content
+                      // For example, make the title bold and center it
+                      doc.content[0].text = doc.content[0].text.toUpperCase();
+                      doc.content[0].alignment = 'center';
+                      doc.content[0].fontSize = 18;
+                      doc.content[0].margin = [0, 0, 0, 10];
+
+
+
+                  },
+
+                  // Export only visible columns or all
+                  exportOptions: {
+                      columns: ':visible'
+                  }
+              }
+          ],
+          // Other DataTable options ...
+      });
+
+            });
+        </script>
+
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"></h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <table id="example1" class="table">
+                                <thead>
+                                <tr>
+                                    <th>File</th>
+                                    <th>Value</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Total Closed Files</td>
+                                    <td th:text="${stats.total_closed_files}">0</td>
+                                </tr>
+                                <tr>
+                                    <td>Closed Files Outstanding</td>
+                                    <td th:text="${stats.total_closed_files_outstanding}">0</td>
+                                </tr>
+                                <tr>
+                                    <td>Call Book Files Outstanding</td>
+                                    <td th:text="${stats.total_callbook_files_outstanding}">0</td>
+                                </tr>
+                                <tr>
+                                    <td>Total RTI</td>
+                                    <td th:text="${stats.total_rti}">0</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+
+    </div>
+</div>
+</html>
