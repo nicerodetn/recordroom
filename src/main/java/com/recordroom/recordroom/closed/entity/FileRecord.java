@@ -31,6 +31,10 @@ public class FileRecord {
     @JoinColumn(name = "section_id",referencedColumnName = "id")
     private Section section;
 
+    private Integer total_volume;
+    private Integer total_pages;
+    private Integer note_pages;
+
     private LocalDate fileClosingDate;
     private LocalDate handingOverDate;
     private String remarks;
@@ -38,5 +42,13 @@ public class FileRecord {
     private String sectionDealingHandName;
     private String sectionDealingHandPhoneNo;
     private String recordRoomDealingHandName;
+
+
+    private LocalDate created_date;
+
+    @PrePersist
+    protected void onCreate() {
+        this.created_date = LocalDate.now();
+    }
 
 }

@@ -27,7 +27,13 @@ public class HomeController {
     private DashboardService dashboardService;
 
     @GetMapping("/homepage")
-    public String homepage() {
+    public String homepage(@RequestParam(value = "error", required = false) String error, Model model) {
+
+        if ("invalid_credentials".equals(error)) {
+            model.addAttribute("errorMessage", "Incorrect username or password.");
+        }
+
+
         return "layout/outsidelayout";
     }
 
@@ -50,7 +56,7 @@ public class HomeController {
             return new ResponseEntity<>(headers, HttpStatus.OK);
         } else {
             HttpHeaders headers = new HttpHeaders();
-            headers.set("HX-Redirect", "/record/homepage"); // 👈 destination page
+            headers.set("HX-Redirect", "/record/homepage?error=invalid_credentials"); // 👈 destination page
             return new ResponseEntity<>(headers, HttpStatus.OK);
         }
     }

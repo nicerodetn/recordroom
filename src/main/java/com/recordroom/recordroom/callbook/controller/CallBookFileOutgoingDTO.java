@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -27,6 +28,8 @@ public class CallBookFileOutgoingDTO {
     private String sectionDealingHandName;
     private String sectionDealingHandPhoneNo;
     private String recordRoomDealingHandName;
+
+    private LocalDate possible_out_date;
 
     private Integer unique_key;
     private Boolean is_current;

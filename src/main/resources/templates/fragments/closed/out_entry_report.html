@@ -78,37 +78,25 @@
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
+                                    <th>Sr. No.</th>
                                     <th>DR Serial No</th>
                                     <th>Date of File Outgoing</th>
                                     <th>Purpose of Taking File</th>
                                     <th>Section Dealing Hand Name</th>
                                     <th>Section Dealing Hand Phone No</th>
                                     <th>Record Room Dealing Hand Name</th>
-                                    <!--                                    <th>Date of Return</th>-->
-                                    <!--                                    <th>Purpose of Return</th>-->
-                                    <!--                                    <th>Section Dealing Hand Name (InWard)</th>-->
-                                    <!--                                    <th>Section Dealing Hand Phone No (InWard)</th>-->
-                                    <!--                                    <th>Record Room Dealing Hand Name (InWard)</th>-->
-                                    <!--                                    <th>Created Date</th>-->
-                                    <!--                                    <th>Updated Date</th>-->
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="record : ${records}">
+                                <tr th:each="record, iterStat : ${records}">
+                                    <td th:text="${iterStat.index + 1}"></td>
                                     <td th:text="${record.drSerialNo}"></td>
                                     <td th:text="${record.dateOfFileOutgoing}"></td>
                                     <td th:text="${record.purposeOfTakingFile}"></td>
                                     <td th:text="${record.sectionDealingHandName}"></td>
                                     <td th:text="${record.sectionDealingHandPhoneNo}"></td>
                                     <td th:text="${record.recordRoomDealingHandName}"></td>
-                                    <!--                                    <td th:text="${record.dateOfReturn}"></td>-->
-                                    <!--                                    <td th:text="${record.purposeOfReturn}"></td>-->
-                                    <!--                                    <td th:text="${record.sectionDealingHandName_InWard}"></td>-->
-                                    <!--                                    <td th:text="${record.sectionDealingHandPhoneNo_InWard}"></td>-->
-                                    <!--                                    <td th:text="${record.recordRoomDealingHandName_InWard}"></td>-->
-                                    <!--                                    <td th:text="${record.created_date}"></td>-->
-                                    <!--                                    <td th:text="${record.updated_date}"></td>-->
-                                </tr>
+                                 </tr>
                                 </tbody>
                             </table>
                         </div>

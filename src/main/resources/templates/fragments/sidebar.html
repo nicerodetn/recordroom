@@ -13,7 +13,7 @@
 
                 <li><a href="/record/dashboard" class="dashboard-bgcolor b-db-color border-bottom b-newpage">Dashboard</a></li>
 
-                <li class='sub-menu'><a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">File's Circulation<div class='fa fa-caret-down right'></div></a>
+                <li class='sub-menu'><a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">Closed File's<div class='fa fa-caret-down right'></div></a>
                     <ul>
                         <li><a class="b-newpage" hx-get="/record/circulation/load_form" hx-target="#b-homedb" hx-swap="innerHTML">File Master Creation</a></li>
                         <li><a class="b-newpage" hx-get="/record/circulation/file_master_out_entry" hx-target="#b-homedb" hx-swap="innerHTML">Outward Entry</a></li>
@@ -35,6 +35,14 @@
                         <li><a class="b-newpage" hx-get="/record/callbook/call_book_in_entry" hx-target="#b-homedb" hx-swap="innerHTML">Inward Entry</a></li>
                         <li><a class="b-newpage" hx-get="/record/callbook/call_book_out_entry" hx-target="#b-homedb" hx-swap="innerHTML">Outward Entry</a></li>
                         <li><a class="b-newpage" hx-get="/record/callbook/call_book_view" hx-target="#b-homedb" hx-swap="innerHTML">Received File's Report</a></li>
+                    </ul>
+                </li>
+
+                <li class='sub-menu'><a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">Reference File's<div class='fa fa-caret-down right'></div></a>
+                    <ul>
+                        <li><a class="b-newpage" hx-get="/record/reference/reference_in_entry" hx-target="#b-homedb" hx-swap="innerHTML">Inward Entry</a></li>
+                        <li><a class="b-newpage" hx-get="/record/reference/reference_out_entry" hx-target="#b-homedb" hx-swap="innerHTML">Outward Entry</a></li>
+                        <li><a class="b-newpage" hx-get="/record/reference/masterReport" hx-target="#b-homedb" hx-swap="innerHTML">Report</a></li>
                     </ul>
                 </li>
 

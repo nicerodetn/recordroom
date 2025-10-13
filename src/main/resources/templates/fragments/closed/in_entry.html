@@ -107,16 +107,19 @@
                                         <input type="hidden" th:field="*{fileRecordId}" th:value="${record.id}" />
 
                                         <label for="dateOfFileOutgoing">1. Date of Return:</label>
-                                        <input type="date" th:field="*{dateOfReturn}" class="form-control" id="dateOfFileOutgoing" /><br/>
+                                        <input type="date" th:field="*{dateOfReturn}" class="form-control" id="dateOfFileOutgoing" required/><br/>
 
                                         <label for="purposeOfTakingFile">2. Purpose of Return:</label>
-                                        <input type="text" th:field="*{purposeOfReturn}" class="form-control" id="purposeOfTakingFile" /><br/>
+                                        <input type="text" th:field="*{purposeOfReturn}" class="form-control" id="purposeOfTakingFile" required/><br/>
 
                                         <label for="sectionDealingHandName">3a) Section Dealing Hand Name:</label>
-                                        <input type="text" th:field="*{sectionDealingHandName_InWard}" class="form-control" id="sectionDealingHandName" /><br/>
+                                        <input type="text" th:field="*{sectionDealingHandName_InWard}" class="form-control" id="sectionDealingHandName" required/><br/>
 
                                         <label for="sectionDealingHandPhoneNo">3b) Section Dealing Hand Phone No:</label>
-                                        <input type="text" th:field="*{sectionDealingHandPhoneNo_InWard}" class="form-control" id="sectionDealingHandPhoneNo" /><br/>
+                                        <input type="text" pattern="\d{10}"
+                                               maxlength="10"
+                                               minlength="10"
+                                               oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)"  th:field="*{sectionDealingHandPhoneNo_InWard}" class="form-control" id="sectionDealingHandPhoneNo" required/><br/>
 
 
                                         <div style="padding-top: 17px;" class="col-12">

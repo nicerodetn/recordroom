@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<div id="b-homedb"  th:fragment="tabler">
+<div id="b-homedb" th:fragment="tabler">
+    <div class="my-5">
 
-    <div class="my-5" >
-        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Master File's List </h3>
+
+        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Reference File Report</h3>
+
         <script>
             $(function () {
               $('#example1').DataTable({
@@ -12,9 +14,10 @@
           buttons: [
               {
                   extend: 'pdfHtml5',
+                  orientation: 'landscape',
                   text: 'Export PDF',
-                  title: 'Master Files List',   // Custom PDF title
-                  messageTop: 'Master Files List',
+                  title: 'Reference File Report',   // Custom PDF title
+                  messageTop: 'Reference File Report',
 
                   // Customize the PDF layout and styles
                   customize: function (doc) {
@@ -64,7 +67,6 @@
             });
         </script>
 
-
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
@@ -78,37 +80,25 @@
                                 <thead>
                                 <tr>
                                     <th>Sr. No.</th>
-                                    <th>File Type (Year's)</th>
-                                    <th>DR Serial No</th>
-                                    <th>Section</th>
-
-                                    <th>File Closing Date</th>
-                                    <th>Handing Over Date</th>
-                                    <th>Remarks</th>
-
+                                    <th>File Type</th>
+                                    <th>Serial No</th>
                                     <th>Section Dealing Hand Name</th>
-                                    <th>Section Dealing Hand Phone No</th>
-                                    <th>Record Room Dealing Hand Name</th>
+                                    <th>Section Dealing Phone No</th>
+                                    <th>Out Ward Date</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-
-                                <tr th:each="record, iterStat : ${records}">
+                                <tr th:each="record, iterStat : ${reference}">
                                     <td th:text="${iterStat.index + 1}"></td>
-                                    <td th:text="${record.fileType}"></td>
-                                    <td th:text="${record.drSerialNo}"></td>
-                                    <td th:text="${record.section}"></td>
-
-                                    <td th:text="${record.fileClosingDate}"></td>
-                                    <td th:text="${record.handingOverDate}"></td>
-                                    <td th:text="${record.remarks}"></td>
-
-                                    <td th:text="${record.sectionDealingHandName}"></td>
-                                    <td th:text="${record.sectionDealingHandPhoneNo}"></td>
-                                    <td th:text="${record.recordRoomDealingHandName}"></td>
+                                    <td th:text="${record.typeee}"></td>
+                                    <td th:text="${record.serialNo}"></td>
+                                    <td th:text="${record.out_sectionDealingHandName}"></td>
+                                    <td th:text="${record.out_sectionDealingHandPhoneNo}"></td>
+                                    <td th:text="${#temporals.format(record.created_date, 'dd-MM-yyyy')}"></td>
                                 </tr>
                                 </tbody>
                             </table>
+
                         </div>
                         <!-- /.card-body -->
                     </div>

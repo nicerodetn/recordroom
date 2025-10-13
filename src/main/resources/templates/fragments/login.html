@@ -4,6 +4,17 @@
     <div class="b-bg-image py-5" style="padding-bottom: 100px!important">
         <div class="container">
             <div class="row">
+                <script>
+
+
+                    setTimeout(() => {
+                        let msg = document.getElementById("errorMsg");
+                        if (msg) {
+                            msg.classList.remove("show");
+                            msg.remove();
+                        }
+                    }, 5000);
+                </script>
                 <div class="col-lg-6 d-flex">
                     <div class="align-self-center pr-5">
                         <h1 class="text-right mt-5 b-left-head">Record Room Management <br></h1>
@@ -17,6 +28,16 @@
                     </div>
 
                     <div class="">
+
+
+                        <div th:if="${errorMessage}"
+                             class="alert alert-danger alert-dismissible fade show text-center"
+                             id="errorMsg"
+                             role="alert"
+                             th:text="${errorMessage}">
+                        </div>
+
+
                         <form hx-post="/record/login"  class="px-5 b-login-w">
                             <div class="form-group ">
                                 <label for="username" class="text-white">Email:</label>
@@ -26,8 +47,7 @@
                                 <label for="password" class="text-white">Password:</label>
                                 <input type="password" class="form-control" id="password" placeholder="Enter password" name="password">
                             </div>
-                            <div style="color: red;" th:if="${error}" th:text="${error}"></div>
-                            <!-- <p class="text-right b-notreg ">Don't have an account? <a href="">Sign Up</a></p> -->
+
                             <div class="text-center py-4">
                                 <button type="submit" class="btn btn-primary b-btn">Log In</button>
                             </div>
