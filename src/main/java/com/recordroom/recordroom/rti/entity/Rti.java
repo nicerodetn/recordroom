@@ -31,5 +31,20 @@ public class Rti {
     private String check_no;
     private Long amount;
     private String rr_dealing_name;
+    private String remarks;
+
+
+    private LocalDate created_date;
+    private LocalDate updated_date;
+
+    @PrePersist
+    protected void onCreate() {
+        this.created_date = LocalDate.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updated_date = LocalDate.now();
+    }
 
 }

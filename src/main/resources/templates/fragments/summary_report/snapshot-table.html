@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+<div id="b-homedb" th:fragment="tabler">
+
+
+    <div class="my-5" >
+        <script>
+            document.getElementById("export-pdf").addEventListener("click", function () {
+                // Get today's date in readable format (e.g., October 14, 2025)
+                const today = new Date().toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'long', day: 'numeric'
+                });
+
+                // Collect data
+                const rows = [];
+                document.querySelectorAll("#summary-report .report-row").forEach(row => {
+                    const label = row.querySelector(".label").textContent.trim();
+                    const value = row.querySelector(".value").textContent.trim();
+                    rows.push([label, value]);
+                });
+
+                // Build PDF content
+                const docDefinition = {
+                    content: [
+                        { text: 'SUMMARY REPORT', style: 'header' },
+                        { text: `Date: ${today}`, style: 'subheader' },
+                        {
+                            table: {
+                                widths: ['*', '*'],
+                                body: [
+                                    ['Item', 'No of files'],
+                                    ...rows
+                                ]
+                            },
+                            layout: 'lightHorizontalLines'
+                        }
+                    ],
+                    styles: {
+                        header: {
+                            fontSize: 18,
+                            bold: true,
+                            alignment: 'center',
+                            margin: [0, 0, 0, 10]
+                        },
+                        subheader: {
+                            fontSize: 12,
+                            italics: true,
+                            alignment: 'center',
+                            margin: [0, 0, 0, 20]
+                        }
+                    },
+                    pageMargins: [40, 60, 40, 60]
+                };
+
+                pdfMake.createPdf(docDefinition).download("summary-report-date-wise.pdf");
+            });
+        </script>
+
+        <style>
+            #summary-report {
+                max-width: 600px;
+                margin: 30px auto;
+            }
+
+            .report-row {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid #ccc;
+            }
+
+            .report-row .label {
+                font-weight: bold;
+                flex: 1;
+            }
+
+            .report-row .value {
+                flex: 1;
+                text-align: right;
+            }
+        </style>
+
+
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"></h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+
+                            <div th:if="${noData}">
+                                <p>No data available for the selected date.</p>
+                            </div>
+
+                            <div th:if="${!noData}" id="summary-report">
+
+                                <div class="report-row">
+                                    <div class="label">Snapshot Time</div>
+                                    <div class="value" th:text="${#temporals.format(snap.snapshotDate, 'yyyy-MM-dd HH:mm')}">0</div>
+                                </div>
+
+                                <div class="report-row">
+                                    <div class="label">Total Closed Files</div>
+                                    <div class="value" th:text="${snap.totalClosedFiles}">0</div>
+                                </div>
+                                <div class="report-row">
+                                    <div class="label">Closed Files Outstanding</div>
+                                    <div class="value" th:text="${snap.totalClosedFilesOutstanding}">0</div>
+                                </div>
+                                <div class="report-row">
+                                    <div class="label">Total Call Book Files</div>
+                                    <div class="value" th:text="${snap.totalCallbookFiles}">0</div>
+                                </div>
+                                <div class="report-row">
+                                    <div class="label">Call Book Files Outstanding</div>
+                                    <div class="value" th:text="${snap.totalCallbookFilesOutstanding}">0</div>
+                                </div>
+                                <div class="report-row">
+                                    <div class="label">Reference Files Outstanding</div>
+                                    <div class="value" th:text="${snap.totalReferenceOutstanding}">0</div>
+                                </div>
+                                <div class="report-row">
+                                    <div class="label">Total RTI</div>
+                                    <div class="value" th:text="${snap.totalRti}">0</div>
+                                </div>
+
+                                <button id="export-pdf">Export PDF</button>
+                            </div>
+
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+
+    </div>
+
+</div>
+
+
+</html>
