@@ -96,9 +96,14 @@
                       <input type="number" class="form-control" id="amount" th:field="*{amount}" placeholder="Enter amount" min="0" step="0.01">
                     </div>
 
+                      <div class="col-12">
+                          <label for="remarks" class="form-label fw-bold">11. Remarks</label>
+                          <input type="text" class="form-control" id="remarks" th:field="*{remarks}" placeholder="Enter amount" min="0" step="0.01">
+                      </div>
+
 
                     <div style="padding-top: 17px;" class="col-12">
-                      <label class="form-label fw-bold">11. Record Room Dealing Hand Name</label><br>
+                      <label class="form-label fw-bold">12. Record Room Dealing Hand Name</label><br>
                       <select class="form-select" id="rrDealingName" th:field="*{rr_dealing_name}" required>
                         <option value="">-- Select Section--</option>
                         <option value="M. Ramesh">Shri M. Ramesh</option>

@@ -169,23 +169,26 @@
                     <!-- 1. New DR Serial No -->
                     <label for="newDrSerialNo">1.New DR Serial No:</label>
                     <input type="number" th:field="*{new_drSerialNo}" class="form-control"
-                           id="newDrSerialNo"/><br/>
+                           id="newDrSerialNo" required/><br/>
 
                     <!-- 2. New DR Year -->
                     <label for="newDrYear">2.New DR Year:</label>
                     <input type="number" th:field="*{new_dr_year}" class="form-control"
-                           id="newDrYear"/><br/>
+                           id="newDrYear" required/><br/>
 
 
                     <!-- 3a. Section Dealing Hand Name -->
                     <label for="sectionHandName">3a) Section Dealing Hand Name:</label>
                     <input type="text" th:field="*{sectionDealingHandName}" class="form-control"
-                           id="sectionHandName"/><br/>
+                           id="sectionHandName" required/><br/>
 
                     <!-- 3b. Section Dealing Hand Phone No -->
                     <label for="sectionHandPhone">3b) Section Dealing Hand Phone No:</label>
-                    <input type="text" th:field="*{sectionDealingHandPhoneNo}" class="form-control"
-                           id="sectionHandPhone"/><br/>
+                    <input type="text"  pattern="\d{10}"
+                           maxlength="10"
+                           minlength="10"
+                           oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)" th:field="*{sectionDealingHandPhoneNo}" class="form-control"
+                           id="sectionHandPhone" required/><br/>
 
                     <!-- 4. Record Room Dealing Hand Name -->
                     <div style="padding-top: 17px;" class="col-12">
@@ -204,24 +207,12 @@
                     </div>
                     <br/>
 
-
-
-
                     <!-- 5. Purpose of Incoming File -->
-                    <label for="purposeIncoming">5. Purpose of Incoming File:</label>
-                    <input type="text" th:field="*{purpose_Of_Incoming_File}" class="form-control"
+                    <label for="purposeIncoming">5. Purpose of Out Going File:</label>
+                    <input type="text" th:field="*{purpose_Of_Outgoing_Fle}" class="form-control"
                            id="purposeIncoming"/><br/>
 
-
-                    <!-- 6. Rack No -->
-                    <label for="rackNo">6. Rack No:</label>
-                    <input type="number" th:field="*{rack_no}" class="form-control"
-                           id="rackNo"/><br/>
-
-
-
-
-                    <div class="d-grid mt-4">
+                   <div class="d-grid mt-4">
                       <button type="submit" class="btn btn-primary btn-lg">💾 Save Record</button>
                     </div>
                   </form>

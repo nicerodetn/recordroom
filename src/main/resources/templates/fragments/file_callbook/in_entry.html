@@ -82,7 +82,7 @@
 <div id="b-homedb" th:fragment="insertform">
     <div class="my-5">
         <div class="container">
-            <h3 style="font-size:32px;" class="text-center col-12 b-latest-data">Call Book New In Ward Entry</h3>
+            <h3 style="font-size:32px;" class="text-center col-12 b-latest-data">Call Book In Ward Entry (New)</h3>
             <div class="row">
                 <div class="container-fluid add-form-list">
                     <div class="row">
@@ -122,13 +122,6 @@
                                     </div>
 
 
-                                    <!--                  <div>-->
-                                    <!--                    <h3>File Details Found</h3>-->
-                                    <!--                    <p><strong>File Type:</strong> <span th:text="${record.fileType}"></span></p>-->
-                                    <!--                    <p><strong>Distribution Register Serial No:</strong> <span th:text="${record.drSerialNo}"></span></p>-->
-                                    <!--                    <p><strong>Section :</strong> <span th:text="${record.section.description}"></span></p><br>-->
-                                    <!--                    &lt;!&ndash;                                        <a class="b-newpage" hx-get="/record/circulation/file_master_out_entry" hx-target="#outwardform" hx-swap="innerHTML">Search Other Record</a>&ndash;&gt;-->
-                                    <!--                  </div>-->
 
                                     <form th:object="${callbook}" method="post"
                                           hx-post="/record/callbook/saveInWardEntry"
@@ -141,27 +134,36 @@
                                         <!-- 1. New DR Serial No -->
                                         <label for="newDrSerialNo">1.DR Serial No:</label>
                                         <input type="number" th:field="*{new_drSerialNo}" class="form-control"
-                                               id="newDrSerialNo"/><br/>
+                                               id="newDrSerialNo" required/><br/>
 
                                         <!-- 2. New DR Year -->
                                         <label for="newDrYear">2.DR Year:</label>
                                         <input type="number" th:field="*{new_dr_year}" class="form-control"
-                                               id="newDrYear"/><br/>
+                                               id="newDrYear" required/><br/>
+
+                                        <label for="duedate">3.Due Date</label>
+                                        <input type="date" th:field="*{possible_out_date}" class="form-control"
+                                               id="duedate" required/><br/>
+
+
 
 
                                         <!-- 3a. Section Dealing Hand Name -->
-                                        <label for="sectionHandName">3a) Section Dealing Hand Name:</label>
+                                        <label for="sectionHandName">4a) Section Dealing Hand Name:</label>
                                         <input type="text" th:field="*{sectionDealingHandName}" class="form-control"
-                                               id="sectionHandName"/><br/>
+                                               id="sectionHandName" required/><br/>
 
                                         <!-- 3b. Section Dealing Hand Phone No -->
-                                        <label for="sectionHandPhone">3b) Section Dealing Hand Phone No:</label>
-                                        <input type="text" th:field="*{sectionDealingHandPhoneNo}" class="form-control"
-                                               id="sectionHandPhone"/><br/>
+                                        <label for="sectionHandPhone">4b) Section Dealing Hand Phone No:</label>
+                                        <input type="text"  pattern="\d{10}"
+                                               maxlength="10"
+                                               minlength="10"
+                                               oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)" th:field="*{sectionDealingHandPhoneNo}" class="form-control"
+                                               id="sectionHandPhone" required/><br/>
 
                                         <!-- 4. Record Room Dealing Hand Name -->
                                         <div style="padding-top: 17px;" class="col-12">
-                                            <label class="form-label fw-bold">4. Record Room Dealing Hand
+                                            <label class="form-label fw-bold">5. Record Room Dealing Hand
                                                 Name</label><br>
                                             <select class="form-select" th:field="*{recordRoomDealingHandName}"
                                                     required>
@@ -180,15 +182,15 @@
 
 
                                         <!-- 5. Purpose of Incoming File -->
-                                        <label for="purposeIncoming">5. Purpose of Incoming File:</label>
+                                        <label for="purposeIncoming">6. Purpose of Incoming File:</label>
                                         <input type="text" th:field="*{purpose_Of_Incoming_File}" class="form-control"
-                                               id="purposeIncoming"/><br/>
+                                               id="purposeIncoming" required/><br/>
 
 
                                         <!-- 6. Rack No -->
-                                        <label for="rackNo">6. Rack No:</label>
+                                        <label for="rackNo">7. Rack No:</label>
                                         <input type="number" th:field="*{rack_no}" class="form-control"
-                                               id="rackNo"/><br/>
+                                               id="rackNo" required/><br/>
 
 
                                         <div class="d-grid mt-4">
@@ -242,20 +244,23 @@
                                         <input type="hidden" th:field="*{unique_key}" />
 
 
+                                        <label for="duedate">1.Due Date</label>
+                                        <input type="date" th:field="*{possible_out_date}" class="form-control"
+                                               id="duedate"/><br/>
 
                                         <!-- 1a. Section Dealing Hand Name -->
-                                        <label for="sectionHandName">1a) Section Dealing Hand Name:</label>
+                                        <label for="sectionHandName">2a) Section Dealing Hand Name:</label>
                                         <input type="text" th:field="*{sectionDealingHandName}" class="form-control"
                                                id="sectionHandName1"/><br/>
 
                                         <!-- 1b. Section Dealing Hand Phone No -->
-                                        <label for="sectionHandPhone">1b) Section Dealing Hand Phone No:</label>
+                                        <label for="sectionHandPhone">2b) Section Dealing Hand Phone No:</label>
                                         <input type="text" th:field="*{sectionDealingHandPhoneNo}" class="form-control"
                                                id="sectionHandPhone1"/><br/>
 
                                         <!-- 2. Record Room Dealing Hand Name -->
                                         <div style="padding-top: 17px;" class="col-12">
-                                            <label class="form-label fw-bold">4. Record Room Dealing Hand
+                                            <label class="form-label fw-bold">3. Record Room Dealing Hand
                                                 Name</label><br>
                                             <select class="form-select" th:field="*{recordRoomDealingHandName}"
                                                     required>
@@ -272,13 +277,13 @@
 
 
                                         <!-- 3. Purpose of Incoming File -->
-                                        <label for="purposeIncoming">3. Purpose of Incoming File:</label>
+                                        <label for="purposeIncoming">4. Purpose of Incoming File:</label>
                                         <input type="text" th:field="*{purpose_Of_Incoming_File}" class="form-control"
                                                id="purposeIncoming1"/><br/>
 
 
                                         <!-- 4. Rack No -->
-                                        <label for="rackNo">4. Rack No:</label>
+                                        <label for="rackNo">5. Rack No:</label>
                                         <input type="number" th:field="*{rack_no}" class="form-control"
                                                id="rackNo1"/><br/>
 

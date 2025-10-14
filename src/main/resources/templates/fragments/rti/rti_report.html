@@ -91,6 +91,7 @@
                   <th>Check No</th>
                   <th>Amount</th>
                   <th>Record Room Dealing Hand Name</th>
+                  <th>Remarks</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -102,13 +103,12 @@
                   <td th:text="${record.letter_no}"></td>
                   <td th:text="${record.subject}"></td>
                   <td th:text="${#temporals.format(record.rtiDate, 'dd-MM-yyyy')}"></td>
-
                   <td th:text="${#temporals.format(record.in_time, 'HH:mm')}"></td>
                   <td th:text="${#temporals.format(record.out_time, 'HH:mm')}"></td>
-
                   <td th:text="${record.check_no}"></td>
                   <td th:text="${record.amount}"></td>
                   <td th:text="${record.rr_dealing_name}"></td>
+                  <td th:text="${record.remarks}"></td>
                 </tr>
                 </tbody>
               </table>

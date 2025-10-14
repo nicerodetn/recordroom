@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div id="b-homedb"  th:fragment="tabler">
+
+    <div class="my-5" >
+        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data"> Summary Report (as On Date)</h3>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title"></h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <h3 class="mb-4 text-center"></h3>
+
+                            <form hx-get="/record/dashboard/snapshots" hx-target="#snapshot-results" hx-indicator="#loading" class="mb-3">
+                                <label for="date">Select Date:</label>
+                                <input type="date" name="date" id="date" required />
+                                <button type="submit">Get Report</button>
+                            </form>
+
+                            <div id="loading" style="display:none;">Loading...</div>
+                            <div id="snapshot-results"></div>
+
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+
+    </div>
+</div>
+</html>
