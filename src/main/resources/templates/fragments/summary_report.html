@@ -6,50 +6,81 @@
     <div class="my-5" >
         <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Summary Report </h3>
         <script>
-            $(function () {
-              $('#example1').DataTable({
-          dom: 'Bfrtip',   // Required to show buttons
-          buttons: [
-              {
-                  extend: 'pdfHtml5',
-                  text: 'Export PDF',
-                  title: 'Summary Report',   // Custom PDF title
-                  messageTop: 'Summary Report',
+            document.getElementById("export-pdf").addEventListener("click", function () {
+                // Get today's date in readable format (e.g., October 14, 2025)
+                const today = new Date().toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'long', day: 'numeric'
+                });
 
-                  // Customize the PDF layout and styles
-                  customize: function (doc) {
-                      // Set page margins
-                      doc.pageMargins = [40, 60, 40, 60];
+                // Collect data
+                const rows = [];
+                document.querySelectorAll("#summary-report .report-row").forEach(row => {
+                    const label = row.querySelector(".label").textContent.trim();
+                    const value = row.querySelector(".value").textContent.trim();
+                    rows.push([label, value]);
+                });
 
-                      // Change the default font size
-                      doc.defaultStyle.fontSize = 12;
+                // Build PDF content
+                const docDefinition = {
+                    content: [
+                        { text: 'SUMMARY REPORT', style: 'header' },
+                        { text: `Date: ${today}`, style: 'subheader' },
+                        {
+                            table: {
+                                widths: ['*', '*'],
+                                body: [
+                                    ['Item', 'Value'],
+                                    ...rows
+                                ]
+                            },
+                            layout: 'lightHorizontalLines'
+                        }
+                    ],
+                    styles: {
+                        header: {
+                            fontSize: 18,
+                            bold: true,
+                            alignment: 'center',
+                            margin: [0, 0, 0, 10]
+                        },
+                        subheader: {
+                            fontSize: 12,
+                            italics: true,
+                            alignment: 'center',
+                            margin: [0, 0, 0, 20]
+                        }
+                    },
+                    pageMargins: [40, 60, 40, 60]
+                };
 
-                      // Style the table header
-                      doc.styles.tableHeader.fillColor = '#4CAF50';   // Green background for header
-                      doc.styles.tableHeader.color = 'white';         // White text for header
-
-                      // Modify content
-                      // For example, make the title bold and center it
-                      doc.content[0].text = doc.content[0].text.toUpperCase();
-                      doc.content[0].alignment = 'center';
-                      doc.content[0].fontSize = 18;
-                      doc.content[0].margin = [0, 0, 0, 10];
-
-
-
-                  },
-
-                  // Export only visible columns or all
-                  exportOptions: {
-                      columns: ':visible'
-                  }
-              }
-          ],
-          // Other DataTable options ...
-      });
-
+                pdfMake.createPdf(docDefinition).download("summary-report.pdf");
             });
         </script>
+
+        <style>
+            #summary-report {
+                max-width: 600px;
+                margin: 30px auto;
+            }
+
+            .report-row {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid #ccc;
+            }
+
+            .report-row .label {
+                font-weight: bold;
+                flex: 1;
+            }
+
+            .report-row .value {
+                flex: 1;
+                text-align: right;
+            }
+        </style>
+
 
 
         <div class="container-fluid">
@@ -61,32 +92,34 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            <table id="example1" class="table">
-                                <thead>
-                                <tr>
-                                    <th>File</th>
-                                    <th>Value</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>Total Closed Files</td>
-                                    <td th:text="${stats.total_closed_files}">0</td>
-                                </tr>
-                                <tr>
-                                    <td>Closed Files Outstanding</td>
-                                    <td th:text="${stats.total_closed_files_outstanding}">0</td>
-                                </tr>
-                                <tr>
-                                    <td>Call Book Files Outstanding</td>
-                                    <td th:text="${stats.total_callbook_files_outstanding}">0</td>
-                                </tr>
-                                <tr>
-                                    <td>Total RTI</td>
-                                    <td th:text="${stats.total_rti}">0</td>
-                                </tr>
-                                </tbody>
-                            </table>
+
+                            <div id="summary-report">
+                                <div class="report-row">
+                                    <div class="label">Total Closed Files</div>
+                                    <div class="value" th:text="${stats.total_closed_files}">0</div>
+                                </div>
+                                <div class="report-row">
+                                    <div class="label">Closed Files Outstanding</div>
+                                    <div class="value" th:text="${stats.total_closed_files_outstanding}">0</div>
+                                </div>
+                                <div class="report-row">
+                                    <div class="label">Total Call Book Files</div>
+                                    <div class="value" th:text="${stats.total_callbook_files}">0</div>
+                                </div>
+                                <div class="report-row">
+                                    <div class="label">Call Book Files Outstanding</div>
+                                    <div class="value" th:text="${stats.total_callbook_files_outstanding}">0</div>
+                                </div>
+                                <div class="report-row">
+                                    <div class="label">Reference Files Outstanding</div>
+                                    <div class="value" th:text="${stats.total_reference_outstanding}">0</div>
+                                </div>
+                                <div class="report-row">
+                                    <div class="label">Total RTI</div>
+                                    <div class="value" th:text="${stats.total_rti}">0</div>
+                                </div>
+                            </div>
+                          <button id="export-pdf">Export PDF</button>
                         </div>
                         <!-- /.card-body -->
                     </div>

@@ -23,4 +23,9 @@ public class FileMasterReportDTO {
     private String sectionDealingHandName;
     private String sectionDealingHandPhoneNo;
     private String recordRoomDealingHandName;
+
+    private Integer total_volume;
+    private Integer total_pages;
+    private Integer note_pages;
+
 }

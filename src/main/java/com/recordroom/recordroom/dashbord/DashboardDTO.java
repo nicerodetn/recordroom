@@ -13,10 +13,12 @@ import lombok.Setter;
 public class DashboardDTO {
 
     private Long total_closed_files;
-
     private Long total_closed_files_outstanding;
 
     private Long total_callbook_files_outstanding;
+    private Long total_callbook_files;
+
+    private Long total_reference_outstanding;
 
     private Long total_rti;
 

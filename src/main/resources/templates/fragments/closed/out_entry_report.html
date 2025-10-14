@@ -80,6 +80,8 @@
                                 <tr>
                                     <th>Sr. No.</th>
                                     <th>DR Serial No</th>
+                                    <th>DR year</th>
+                                    <th>Section</th>
                                     <th>Date of File Outgoing</th>
                                     <th>Purpose of Taking File</th>
                                     <th>Section Dealing Hand Name</th>
@@ -91,6 +93,9 @@
                                 <tr th:each="record, iterStat : ${records}">
                                     <td th:text="${iterStat.index + 1}"></td>
                                     <td th:text="${record.drSerialNo}"></td>
+                                    <td th:text="${record.dr_year}"></td>
+                                    <td th:text="${record.section}"></td>
+
                                     <td th:text="${record.dateOfFileOutgoing}"></td>
                                     <td th:text="${record.purposeOfTakingFile}"></td>
                                     <td th:text="${record.sectionDealingHandName}"></td>

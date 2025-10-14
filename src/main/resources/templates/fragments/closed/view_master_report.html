@@ -81,6 +81,8 @@
                                     <th>File Type (Year's)</th>
                                     <th>DR Serial No</th>
                                     <th>Section</th>
+                                    <th>Volumes</th>
+                                    <th>Pages</th>
 
                                     <th>File Closing Date</th>
                                     <th>Handing Over Date</th>
@@ -98,6 +100,11 @@
                                     <td th:text="${record.fileType}"></td>
                                     <td th:text="${record.drSerialNo}"></td>
                                     <td th:text="${record.section}"></td>
+
+                                    <td th:text="${record.total_volume}"></td>
+                                    <td th:text="${record.total_pages}"></td>
+
+
 
                                     <td th:text="${record.fileClosingDate}"></td>
                                     <td th:text="${record.handingOverDate}"></td>

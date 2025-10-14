@@ -25,6 +25,12 @@ public class ReferenceDTO {
     private String section;
     private String typeee;
 
+
+
+    private String description;
+    private Integer file_year;
+    private Long serial_no_user;
+
     private String in_sectionDealingHandName;
     private String in_sectionDealingHandPhoneNo;
     private String in_recordRoomDealingHandName;

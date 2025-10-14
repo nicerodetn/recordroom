@@ -32,6 +32,10 @@ public class Reference {
     @JoinColumn(name = "section_id",referencedColumnName = "id")
     private Section section;
 
+    private String description;
+    private Integer file_year;
+    private Long serial_no_user;
+
     private Boolean is_active;
 
     private String in_sectionDealingHandName;

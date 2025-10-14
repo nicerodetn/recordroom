@@ -95,6 +95,10 @@ public class ReferenceController {
             dto.setOut_sectionDealingHandPhoneNo(record.getOut_sectionDealingHandPhoneNo());
             dto.setCreated_date(record.getCreated_date());
 
+            dto.setDescription(record.getDescription());
+            dto.setSerial_no_user(record.getSerial_no_user());
+            dto.setFile_year(record.getFile_year());
+
             if (record.getType()==1)
             {
                 dto.setTypeee("DR");

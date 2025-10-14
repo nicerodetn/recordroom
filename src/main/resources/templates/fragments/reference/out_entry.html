@@ -59,18 +59,31 @@
                                             </div>
                                         </div>
 
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">3.File  Year</label>
+                                            <input type="number" class="form-control" id="yearInput" th:field="*{file_year}" name="year" min="1900" max="2099" placeholder="Enter year" required>
+                                        </div>
 
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">4.File Serial No</label>
+                                            <input type="number" class="form-control" th:field="*{serial_no_user}" placeholder="Enter serial number">
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">5)File Description</label>
+                                            <input type="text" class="form-control" th:field="*{description}" placeholder="Enter file description" required>
+                                        </div>
 
 
                                         <!-- 3. Section Dealing Hand Name -->
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">3) Section Dealing Hand Name</label>
+                                            <label class="form-label fw-bold">6) Section Dealing Hand Name</label>
                                             <input type="text" class="form-control" th:field="*{out_sectionDealingHandName}" placeholder="Enter dealing hand name" required>
                                         </div>
 
                                         <!-- 9. Section Dealing Hand Phone -->
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">3) Section Dealing Hand Phone No</label>
+                                            <label class="form-label fw-bold">7) Section Dealing Hand Phone No</label>
                                             <input type="text" class="form-control" th:field="*{out_sectionDealingHandPhoneNo}" placeholder="Enter phone no" pattern="\d{10}"
                                                    maxlength="10"
                                                    minlength="10"
@@ -85,7 +98,7 @@
 
 
                                         <div style="padding-top: 17px;" class="col-12">
-                                            <label class="form-label fw-bold">10. Record Room Dealing Hand Name</label><br>
+                                            <label class="form-label fw-bold">8. Record Room Dealing Hand Name</label><br>
                                             <select class="form-select" th:field="*{out_recordRoomDealingHandName}" required>
                                                 <option value="">-- Select Section--</option>
                                                 <option value="M. Ramesh">Shri M. Ramesh</option>
