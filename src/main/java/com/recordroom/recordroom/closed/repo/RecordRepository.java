@@ -9,10 +9,6 @@ import java.util.Optional;
 
 public interface RecordRepository extends JpaRepository<FileRecord, Integer> {
 
-
-
-
-
     @Query(
             value = "SELECT * FROM file_record f WHERE f.dr_serial_no = :drSerialNo and f.dr_year =:dryear LIMIT 1",
             nativeQuery = true

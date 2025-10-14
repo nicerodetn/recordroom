@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+<div  th:fragment="loadFormFragment">
+    <div class="my-5" id="b-homedb">
+
+        <div class="container">
+
+            <h3 style="font-size:32px;" class="text-center col-12 b-latest-data">Book Master Creation</h3>
+            <div class="row">
+                <div class="container-fluid add-form-list">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div th:if="${successMessage}"
+                                         class="alert alert-success alert-dismissible fade show text-center"
+                                         id="successMsg"
+                                         role="alert"
+                                         th:text="${successMessage}">
+                                    </div>
+
+                                    <div th:if="${errorMessage}"
+                                         class="alert alert-danger text-center"
+                                         id="errorMsg"
+                                         role="alert"
+                                         th:text="${errorMessage}">
+                                    </div>
+
+                                    <form th:object="${library}" method="post"
+                                          hx-post="/record/library/save"
+                                          hx-target="#b-homedb"
+                                          hx-swap="outerHTML"
+                                          class="row g-3 border p-3 rounded bg-light shadow-sm"
+                                          id="recordForm">
+
+
+                                        <!-- 1. Name Of The Book  -->
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">1. Name Of The Book </label>
+                                            <input type="text" class="form-control" th:field="*{name_of_book}" placeholder="Enter the Name of the book" required>
+                                        </div>
+
+                                        <!-- 2. Publication  -->
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">2. Publication </label>
+                                            <input type="text" class="form-control" th:field="*{publication}" placeholder="Enter the Publication" required>
+                                        </div>
+
+                                        <!-- 3. Description  -->
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">3. Description</label>
+                                            <textarea class="form-control" th:field="*{description}" rows="3" placeholder="Enter a brief description of the book"></textarea>
+                                        </div>
+
+                                        <!-- 3. Book Serial No -->
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">4. Book Serial No </label>
+                                            <input type="number" class="form-control" th:field="*{book_serial_no}" placeholder="Enter Book serial number" required>
+                                        </div>
+
+                                        <!-- 4. Rack No -->
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">5. Rack No </label>
+                                            <input type="number" class="form-control" th:field="*{rack_no}" placeholder="Enter Rack number" required>
+                                        </div>
+
+                                        <!-- 5. Remarks -->
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">6. Remarks</label>
+                                            <textarea class="form-control" th:field="*{remarks}" rows="2" placeholder="Enter remarks"></textarea>
+                                        </div>
+
+                                        <!-- 6. Date  in -->
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">7. Date in</label>
+                                            <input type="date" class="form-control" th:field="*{date_in}" required>
+                                        </div>
+
+                                        <!-- Submit Button -->
+                                        <div class="d-grid mt-4">
+                                            <button type="submit" class="btn btn-primary btn-lg">💾 Save Record</button>
+                                        </div>
+                                    </form>
+
+                                    <script>
+                                        // Auto-hide success message after 3 seconds
+                                        setTimeout(() => {
+                                            let msg = document.getElementById("successMsg");
+                                            if (msg) {
+                                                msg.classList.remove("show");
+                                                msg.remove();
+                                            }
+                                        }, 3000);
+                                    </script>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="response"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</html>
