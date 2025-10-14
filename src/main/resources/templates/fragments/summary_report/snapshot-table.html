@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<div id="b-homedb"  th:fragment="tabler">
+
+<div id="b-homedb" th:fragment="tabler">
+
 
     <div class="my-5" >
-        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Summary Report </h3>
         <script>
             document.getElementById("export-pdf").addEventListener("click", function () {
                 // Get today's date in readable format (e.g., October 14, 2025)
@@ -53,7 +54,7 @@
                     pageMargins: [40, 60, 40, 60]
                 };
 
-                pdfMake.createPdf(docDefinition).download("summary-report.pdf");
+                pdfMake.createPdf(docDefinition).download("summary-report-date-wise.pdf");
             });
         </script>
 
@@ -93,33 +94,45 @@
                         <!-- /.card-header -->
                         <div class="card-body">
 
-                            <div id="summary-report">
+                            <div th:if="${noData}">
+                                <p>No data available for the selected date.</p>
+                            </div>
+
+                            <div th:if="${!noData}" id="summary-report">
+
+                                <div class="report-row">
+                                    <div class="label">Snapshot Time</div>
+                                    <div class="value" th:text="${#temporals.format(snap.snapshotDate, 'yyyy-MM-dd HH:mm')}">0</div>
+                                </div>
+
                                 <div class="report-row">
                                     <div class="label">Total Closed Files</div>
-                                    <div class="value" th:text="${stats.total_closed_files}">0</div>
+                                    <div class="value" th:text="${snap.totalClosedFiles}">0</div>
                                 </div>
                                 <div class="report-row">
                                     <div class="label">Closed Files Outstanding</div>
-                                    <div class="value" th:text="${stats.total_closed_files_outstanding}">0</div>
+                                    <div class="value" th:text="${snap.totalClosedFilesOutstanding}">0</div>
                                 </div>
                                 <div class="report-row">
                                     <div class="label">Total Call Book Files</div>
-                                    <div class="value" th:text="${stats.total_callbook_files}">0</div>
+                                    <div class="value" th:text="${snap.totalCallbookFiles}">0</div>
                                 </div>
                                 <div class="report-row">
                                     <div class="label">Call Book Files Outstanding</div>
-                                    <div class="value" th:text="${stats.total_callbook_files_outstanding}">0</div>
+                                    <div class="value" th:text="${snap.totalCallbookFilesOutstanding}">0</div>
                                 </div>
                                 <div class="report-row">
                                     <div class="label">Reference Files Outstanding</div>
-                                    <div class="value" th:text="${stats.total_reference_outstanding}">0</div>
+                                    <div class="value" th:text="${snap.totalReferenceOutstanding}">0</div>
                                 </div>
                                 <div class="report-row">
                                     <div class="label">Total RTI</div>
-                                    <div class="value" th:text="${stats.total_rti}">0</div>
+                                    <div class="value" th:text="${snap.totalRti}">0</div>
                                 </div>
+
+                                <button id="export-pdf">Export PDF</button>
                             </div>
-                          <button id="export-pdf">Export PDF</button>
+
                         </div>
                         <!-- /.card-body -->
                     </div>
@@ -131,5 +144,8 @@
         </div>
 
     </div>
+
 </div>
+
+
 </html>
