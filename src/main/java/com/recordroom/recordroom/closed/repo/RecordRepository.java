@@ -16,4 +16,11 @@ public interface RecordRepository extends JpaRepository<FileRecord, Integer> {
     Optional<FileRecord> findByDrSerialNoAndYear(@Param("drSerialNo") Long drSerialNo , @Param("dryear") Integer dryear);
 
     Optional<FileRecord> findById(Integer id);
+
+    @Query(
+            value = "SELECT count(*) FROM file_record",
+            nativeQuery = true
+    )
+    long countClosedFiles();
+
 }

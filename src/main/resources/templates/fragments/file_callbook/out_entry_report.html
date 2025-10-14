@@ -80,6 +80,7 @@
                   <th>Sr. No.</th>
                   <th>DR Serial No</th>
                   <th>DR Year</th>
+                  <th>Due Date</th>
                   <th>Section Dealing Hand Name</th>
                   <th>Section Dealing Hand Phone No</th>
                   <th>Record Room Dealing Hand Name</th>
@@ -92,6 +93,8 @@
                   <td th:text="${iterStat.index + 1}"></td>
                   <td th:text="${record.new_drSerialNo}"></td>
                   <td th:text="${record.new_dr_year}"></td>
+                  <td th:text="${record.possible_out_date}"></td>
+
                   <td th:text="${record.sectionDealingHandName}"></td>
                   <td th:text="${record.sectionDealingHandPhoneNo}"></td>
                   <td th:text="${record.recordRoomDealingHandName}"></td>

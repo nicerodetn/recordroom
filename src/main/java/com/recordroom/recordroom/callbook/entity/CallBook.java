@@ -1,10 +1,7 @@
 package com.recordroom.recordroom.callbook.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,6 +30,8 @@ public class CallBook {
     private String sectionDealingHandPhoneNo;
     private String recordRoomDealingHandName;
 
+    private LocalDate possible_out_date;
+
     private Integer unique_key;
     private Boolean is_current;
     private Integer in_out_status;
@@ -46,4 +45,18 @@ public class CallBook {
     private Integer rack_no;
 
     private Boolean closed_status;
+
+    private LocalDate created_date;
+    private LocalDate updated_date;
+
+    @PrePersist
+    protected void onCreate() {
+        this.created_date = LocalDate.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updated_date = LocalDate.now();
+    }
+
 }

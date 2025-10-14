@@ -29,6 +29,8 @@ public class CallBookController {
         return "fragments/file_callbook/out_entry :: searchrecord";
     }
 
+
+
     @GetMapping("/call_book_view")
     public String fileViewMaster(Model model) {
         model.addAttribute("callbook",callBookService.findByActive());
@@ -41,18 +43,13 @@ public class CallBookController {
     public String searchForFileAvailabilityAlready(@RequestParam String new_drSerialNo, @RequestParam String new_dr_year, Model model) {
 
         Optional<CallBook> callBook = callBookService.findBydrSerialNoAndYearInward(Integer.parseInt(new_drSerialNo),Integer.parseInt(new_dr_year));
-
-
-
         if(callBook.isPresent()){
-
             model.addAttribute("callbook",callBook.get());
             model.addAttribute("successMsg", "✅ File is not New!. Update for Receving!");
             return "fragments/file_callbook/in_entry :: updateform";
         }
-
         else {
-            model.addAttribute("errorMessage", "✅ File is Not Available!. or File Inside. You Cant Receive this File!");
+            model.addAttribute("errorMessage", "✅ File is Not Available!. You Can't Receive this File!");
             model.addAttribute("callbook",new CallBook());
             return "fragments/file_callbook/in_entry :: insertform";
         }
@@ -100,17 +97,14 @@ public class CallBookController {
 
         Optional<CallBook> callBook = callBookService.findBydrSerialNoAndYear(Integer.parseInt(new_drSerialNo),Integer.parseInt(new_dr_year));
 
-        System.out.println("Inside serach");
-
         if(callBook.isPresent()){
-            System.out.println("Update");
 
             CallBookFileOutgoingDTO callBookFileOutgoingDTO = new CallBookFileOutgoingDTO();
-
             callBookFileOutgoingDTO.setId(callBook.get().getId());
             callBookFileOutgoingDTO.setNew_drSerialNo_d(callBook.get().getNew_drSerialNo());
             callBookFileOutgoingDTO.setNew_dr_year_d(callBook.get().getNew_dr_year());
             callBookFileOutgoingDTO.setUnique_key(callBook.get().getUnique_key());
+            callBookFileOutgoingDTO.setPossible_out_date(callBook.get().getPossible_out_date());
 
             List<CallBook> records = callBookService.findByUniqueKey(callBook.get().getUnique_key());
             model.addAttribute("records", records);
@@ -139,7 +133,7 @@ public class CallBookController {
 
         // create new record and Open
         CallBook callBook = new CallBook();
-
+        callBook.setPossible_out_date(callBookFileOutgoingDTO.getPossible_out_date());
         callBook.setNew_drSerialNo(callBookFileOutgoingDTO.getNew_drSerialNo());
         callBook.setNew_dr_year(callBookFileOutgoingDTO.getNew_dr_year());
         callBook.setOld_drSerialNo(callBook_old.getNew_drSerialNo());
