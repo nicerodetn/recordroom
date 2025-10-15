@@ -99,6 +99,7 @@
                     <tr>
                       <th>DR Serial No</th>
                       <th>DR Year</th>
+                       <th>Call Book Serial No</th>
                       <th>Current Status</th>
                       <th>Closed Status</th>
                       <th>In Coming Date</th>
@@ -114,6 +115,7 @@
 
                       <td th:text="${record.new_drSerialNo}"></td>
                       <td th:text="${record.new_dr_year}"></td>
+                      <td th:text="${record.call_book_no}"></td>
 
                       <td th:text="${record.is_current} ? 'Current' : 'Old'"></td>
                       <td th:text="${record.closed_status} ? 'Closed' : 'Open'"></td>
