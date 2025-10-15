@@ -67,10 +67,10 @@
                 "info": true,
                 dom: 'Bfrtip', // Required to show buttons
                 buttons: [
-                    // Only the "Export PDF" button is configured.
+
                     {
                         extend: 'pdfHtml5',
-                        text: 'Export PDF', // Button text to match your UI style
+                        text: 'Export PDF',
                         title: 'Library Book List',
                         orientation: 'portrait',
                         pageSize: 'A4',
@@ -78,8 +78,8 @@
                             columns: ':visible'
                         },
                         customize: function (doc) {
-                            // Style the PDF for a clean, professional look
-                            doc.styles.tableHeader.fillColor = '#343a40'; // Dark gray header
+
+                            doc.styles.tableHeader.fillColor = '#343a40';
                             doc.styles.tableHeader.color = 'white';
                             doc.pageMargins = [40, 60, 40, 60];
                         }

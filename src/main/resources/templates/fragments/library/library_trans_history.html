@@ -18,6 +18,7 @@
                             <table id="historyTable" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
+                                    <th>Sl. No</th>
                                     <th>Book Serial No</th>
                                     <th>Book Name</th>
                                     <th>Staff Name</th>
@@ -27,7 +28,8 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="transaction : ${returnedTransactions}">
+                                <tr th:each="transaction, iterStat : ${returnedTransactions}">
+                                    <td th:text="${iterStat.count}"></td>
                                     <td th:text="${transaction.library.book_serial_no}"></td>
                                     <td th:text="${transaction.book_name}"></td>
                                     <td th:text="${transaction.nameOfStaffTaking}"></td>

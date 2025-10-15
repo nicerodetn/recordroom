@@ -114,7 +114,9 @@
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Staff Phone No:</label>
-                                    <input type="text" th:field="*{ph_no_of_staff_taking}" class="form-control" required/>
+                                    <input type="text" th:field="*{ph_no_of_staff_taking}" class="form-control"
+                                           placeholder="Enter 10-digit phone number"
+                                           required pattern="[0-9]{10}" title="Phone number must be exactly 10 digits." />
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Remarks:</label>

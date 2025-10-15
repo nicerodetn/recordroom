@@ -22,6 +22,7 @@
                             <table id="outstandingTable" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
+                                    <th>Sl. No</th>
                                     <th>Book Serial No</th>
                                     <th>Book Name</th>
                                     <th>Date of Taking</th>
@@ -33,13 +34,24 @@
                                 <tbody>
                                 <!-- The loop will generate rows only if the 'outstandingBooks' list is not empty. -->
                                 <!-- If the list is empty, this tbody will be empty, and DataTables will show its default message. -->
-                                <tr th:each="transaction : ${outstandingBooks}">
+<!--                                <tr th:each="transaction : ${outstandingBooks}">-->
+<!--                                    <td th:text="${iterStat.count}"></td>-->
+<!--                                    <td th:text="${transaction.library.book_serial_no}"></td>-->
+<!--                                    <td th:text="${transaction.book_name}"></td>-->
+<!--                                    <td th:text="${#temporals.format(transaction.date_of_taking, 'dd-MMM-yyyy')}"></td>-->
+<!--                                    <td th:text="${transaction.purpose_of_taking}"></td>-->
+<!--                                    <td th:text="${transaction.nameOfStaffTaking}"></td>-->
+<!--                                    <td th:text="${transaction.ph_no_of_staff_taking}"></td>-->
+<!--                                </tr>-->
+                                <tr th:each="transaction, iterStat : ${outstandingBooks}" th:id="'transaction-row-' + ${transaction.id}">
+                                    <td th:text="${iterStat.count}"></td>
                                     <td th:text="${transaction.library.book_serial_no}"></td>
                                     <td th:text="${transaction.book_name}"></td>
                                     <td th:text="${#temporals.format(transaction.date_of_taking, 'dd-MMM-yyyy')}"></td>
                                     <td th:text="${transaction.purpose_of_taking}"></td>
                                     <td th:text="${transaction.nameOfStaffTaking}"></td>
                                     <td th:text="${transaction.ph_no_of_staff_taking}"></td>
+
                                 </tr>
                                 </tbody>
                             </table>
