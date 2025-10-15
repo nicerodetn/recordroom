@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div id="b-homedb" th:fragment="searchrecord">
+    <div class="my-5">
+        <div class="container">
+            <h3 style="font-size:32px;" class="text-center col-12 b-latest-data">Old Register Inward Entry</h3>
+            <div class="row">
+                <div class="container-fluid add-form-list">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <script>
+                                        setTimeout(() => {
+                                            let msg = document.getElementById("successMsg");
+                                            if (msg) {
+                                                msg.classList.remove("show");
+                                                msg.remove();
+                                            }
+                                        }, 3000);
+
+                                        setTimeout(() => {
+                                            let msg = document.getElementById("errorMsg");
+                                            if (msg) {
+                                                msg.classList.remove("show");
+                                                msg.remove();
+                                            }
+                                        }, 5000);
+                                    </script>
+
+                                    <div th:if="${successMessage}"
+                                         class="alert alert-success alert-dismissible fade show text-center"
+                                         id="successMsg"
+                                         role="alert"
+                                         th:text="${successMessage}">
+                                    </div>
+
+                                    <div th:if="${errorMessage}"
+                                         class="alert alert-danger alert-dismissible fade show text-center"
+                                         id="errorMsg"
+                                         role="alert"
+                                         th:text="${errorMessage}">
+                                    </div>
+
+                                    <form hx-get="/record/oldregister/searchForInwardEntry"
+                                          hx-target="#b-homedb"
+                                          hx-swap="outerHTML">
+
+                                        <label class="form-label fw-bold">Search Record</label>
+
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <input type="number" name="record_serial_no"
+                                                       class="form-control"
+                                                       placeholder="Enter Record Serial Number..." required/>
+                                            </div>
+                                            <div class="col">
+                                                <input type="number" name="year"
+                                                       class="form-control"
+                                                       placeholder="Enter Year..." required/>
+                                            </div>
+                                            <div class="col-auto">
+                                                <button type="submit" class="btn btn-primary">
+                                                    Search
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="b-homedb" th:fragment="inwardform">
+    <div class="my-5">
+        <div class="container">
+            <h3 style="font-size:32px;" class="text-center col-12 b-latest-data">Old Register Inward Entry Form</h3>
+            <div class="row">
+                <div class="container-fluid add-form-list">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="mb-4">
+                                        <h4>Record Details</h4>
+                                        <p><strong>Record Serial No:</strong> <span th:text="${master.record_serial_no}"></span></p>
+                                        <p><strong>Year:</strong> <span th:text="${master.year}"></span></p>
+                                        <p><strong>Details:</strong> <span th:text="${master.details_of_record}"></span></p>
+                                        <p><strong>Type:</strong> <span th:text="${master.types_of_record}"></span></p>
+                                        <hr/>
+                                        <h5>Outward Details</h5>
+                                        <p><strong>Date of Outgoing:</strong> <span th:text="${transaction.dateOfOutGoing}"></span></p>
+                                        <p><strong>Purpose:</strong> <span th:text="${transaction.purposeTakingOut}"></span></p>
+                                        <p><strong>Issued To:</strong> <span th:text="${transaction.sectionPersonName_out}"></span></p>
+                                    </div>
+
+                                    <form method="post"
+                                          hx-post="/record/oldregister/saveInwardEntry"
+                                          hx-target="#b-homedb"
+                                          hx-swap="outerHTML"
+                                          class="row g-3 border p-3 rounded bg-light shadow-sm">
+
+                                        <input type="hidden" name="transactionId" th:value="${transaction.id}"/>
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">1. Date of Return</label>
+                                            <input type="date" name="dateOfReturn"
+                                                   class="form-control" required/>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">2. Section Person Name (Return)</label>
+                                            <input type="text" name="sectionPersonName_in"
+                                                   class="form-control" required/>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">3. Section Person Phone Number</label>
+                                            <input type="number" name="sectionPersonPhNumber_in"
+                                                   class="form-control"
+                                                   pattern="\d{10}"
+                                                   maxlength="10"
+                                                   oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)"
+                                                   required/>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">4. Record Room Person Name</label></br>
+                                            <select name="recordPersonName_in" class="form-select" required>
+                                                <option value="">-- Select Name --</option>
+                                                <option value="M. Ramesh">Shri M. Ramesh</option>
+                                                <option value="Balasubramaniyan">Shri S. Balasubramaniyan</option>
+                                                <option value="N. Karuppusamy">Shri N. Karuppusamy</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="d-grid mt-4">
+                                            <button type="submit" class="btn btn-primary btn-lg">💾 Save Record</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

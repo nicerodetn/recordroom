@@ -45,13 +45,23 @@
 
                     </ul>
                 </li>
-
-                <li class='sub-menu'><a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">Old Register's<div class='fa fa-caret-down right'></div></a>
+                <li class='sub-menu'>
+                    <a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">
+                        Old Register's
+                        <div class='fa fa-caret-down right'></div>
+                    </a>
                     <ul>
-                        <li><a class="b-newpage" href='barchart.html'>Register Master Creation</a></li>
-                        <li><a class="b-newpage" href='linechart.html'>Outward Entry</a></li>
-                        <li><a class="b-newpage" href='areachart.html'>Inward Entry</a></li>
-                        <li><a class="b-newpage" href='areachart.html'>View Details</a></li>
+                        <li><a class="b-newpage" hx-get="/record/oldregister/master_creation" hx-target="#b-homedb" hx-swap="innerHTML">Register Master Creation</a></li>
+                        <li><a class="b-newpage" hx-get="/record/oldregister/outward_entry" hx-target="#b-homedb" hx-swap="innerHTML">Outward Entry</a></li>
+                        <li><a class="b-newpage" hx-get="/record/oldregister/inward_entry" hx-target="#b-homedb" hx-swap="innerHTML">Inward Entry</a></li>
+
+                        <li class='sub-sub-menu'><a href='javascript:void(0)' class="b-newpage">Report's<div class='fa fa-caret-down right'></div></a>
+                            <ul>
+                                <li><a class="b-newpage" hx-get="/record/oldregister/view_details" hx-target="#b-homedb" hx-swap="innerHTML">View Master Details</a></li>
+                                <li><a class="b-newpage" hx-get="/record/oldregister/outstanding_records" hx-target="#b-homedb" hx-swap="innerHTML">Outstanding Records</a></li>
+                                <li><a class="b-newpage" hx-get="/record/oldregister/transaction_details" hx-target="#b-homedb" hx-swap="innerHTML">Transaction Details</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
 

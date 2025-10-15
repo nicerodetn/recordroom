@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div id="b-homedb" th:fragment="tabler">
+    <div class="my-5">
+        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Old Register Transaction Details </h3>
+
+        <script>
+            $(function () {
+                $('#example1').DataTable({
+                    dom: 'Bfrtip',
+                    buttons: [
+                        {
+                            extend: 'pdfHtml5',
+                            text: 'Export PDF',
+                            title: 'Old Register Transaction Details',
+                            messageTop: 'Record Room - Completed Transactions (Returned Records)',
+                            orientation: 'landscape',
+                            customize: function (doc) {
+                                doc.pageMargins = [40, 60, 40, 60];
+                                doc.defaultStyle.fontSize = 8;
+                                doc.styles.tableHeader.fillColor = '#4CAF50';
+                                doc.styles.tableHeader.color = 'white';
+                                doc.content[0].text = doc.content[0].text.toUpperCase();
+                                doc.content[0].alignment = 'center';
+                                doc.content[0].fontSize = 16;
+                                doc.content[0].margin = [0, 0, 0, 10];
+                                doc.footer = function(currentPage, pageCount) {
+                                    return {
+                                        columns: [
+                                            'Completed Transactions',
+                                            {
+                                                text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
+                                                alignment: 'right',
+                                                margin: [0, 0, 20, 0]
+                                            }
+                                        ],
+                                        margin: [40, 0]
+                                    }
+                                };
+                            },
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        }
+                    ],
+                    "responsive": false,
+                    "lengthChange": false,
+                    "autoWidth": false,
+                    "scrollX": true,
+                    "scrollCollapse": true
+                });
+            });
+        </script>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+
+                        <div class="card-body">
+                            <div class="table-responsive" style="overflow-x: auto;">
+                                <table id="example1" class="table table-bordered table-striped" style="width: 100%;">
+                                    <thead>
+                                    <tr>
+                                        <th style="min-width: 60px; white-space: nowrap;">Sr. No.</th>
+                                        <th style="min-width: 120px; white-space: nowrap;">Record Serial No</th>
+                                        <th style="min-width: 80px; white-space: nowrap;">Year</th>
+                                        <th style="min-width: 130px; white-space: nowrap;">Date of Outgoing</th>
+                                        <th style="min-width: 200px; white-space: nowrap;">Purpose</th>
+                                        <th style="min-width: 150px; white-space: nowrap;">Section Person (Out)</th>
+                                        <th style="min-width: 120px; white-space: nowrap;">Section Phone</th>
+                                        <th style="min-width: 150px; white-space: nowrap;">Record Person (Out)</th>
+                                        <th style="min-width: 130px; white-space: nowrap;">Date of Return</th>
+                                        <th style="min-width: 150px; white-space: nowrap;">Section Person (In)</th>
+                                        <th style="min-width: 130px; white-space: nowrap;">Section Phone (In)</th>
+                                        <th style="min-width: 150px; white-space: nowrap;">Record Person (In)</th>
+                                        <th style="min-width: 130px; white-space: nowrap;">Transaction Date</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="trans, iterStat : ${transactions}">
+                                        <td th:text="${iterStat.index + 1}" style="white-space: nowrap;"></td>
+                                        <td th:text="${trans.master.record_serial_no}" style="white-space: nowrap;"></td>
+                                        <td th:text="${trans.master.year}" style="white-space: nowrap;"></td>
+                                        <td th:text="${trans.dateOfOutGoing}" style="white-space: nowrap;"></td>
+                                        <td th:text="${trans.purposeTakingOut}"></td>
+                                        <td th:text="${trans.sectionPersonName_out}" style="white-space: nowrap;"></td>
+                                        <td th:text="${trans.sectionPersonName_number}" style="white-space: nowrap;"></td>
+                                        <td th:text="${trans.recordPersonName_out}" style="white-space: nowrap;"></td>
+                                        <td th:text="${trans.dateOfReturn}" style="white-space: nowrap;"></td>
+                                        <td th:text="${trans.sectionPersonName_in}" style="white-space: nowrap;"></td>
+                                        <td th:text="${trans.sectionPersonPhNumber_in}" style="white-space: nowrap;"></td>
+                                        <td th:text="${trans.recordPersonName_in}" style="white-space: nowrap;"></td>
+                                        <td th:text="${trans.transactionDate}" style="white-space: nowrap;"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>
