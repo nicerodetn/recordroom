@@ -86,14 +86,14 @@ public class CirculationController {
 
     }
 
-    @GetMapping("/searchForOutWardEntry")
+    @GetMapping("/searchForOutwardEntry")
     public String searchFile(@RequestParam String drSerialNo,@RequestParam String dr_year, Model model) {
 
         Optional<FileRecord> record = recordService.findBydrSerialNoAndYear(Long.parseLong(drSerialNo),Integer.parseInt(dr_year));
 
         Optional<RecordTransactionDetails> recordTransactionDetails = recordTransactionService.findBydrSerialNoAndActiveAndYear(Long.parseLong(drSerialNo),Integer.parseInt(dr_year));
 
-        System.out.println("Inside serach");
+        System.out.println("Inside search");
         if (record.isPresent()) {
             if(recordTransactionDetails.isPresent()){
                 model.addAttribute("errorMessage", "✅ File record already  Outward !");
@@ -227,7 +227,6 @@ public class CirculationController {
 
 
 }
-
 
 
 
