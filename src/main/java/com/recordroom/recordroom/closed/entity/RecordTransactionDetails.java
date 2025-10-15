@@ -19,9 +19,11 @@ public class RecordTransactionDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @ManyToOne
     @JoinColumn(name = "record_id")
     private FileRecord fileRecord;
+
     private Long drSerialNo;
     private Integer dr_year;
     private Boolean active;

@@ -21,5 +21,4 @@ public interface LibraryTransactionRepository extends JpaRepository<LibraryTrans
     @Query("SELECT lt FROM LibraryTransaction lt JOIN FETCH lt.library WHERE lt.date_of_return IS NOT NULL")
     List<LibraryTransaction> findReturnedTransactions();
 
-
 }

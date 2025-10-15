@@ -42,6 +42,7 @@ public class HomeController {
         model.addAttribute("stats", dashboardService.getDashboardStats());
         return "layout/insidelayout";
     }
+    //test
 
     @PostMapping("/login")
     public ResponseEntity<Void> login(
