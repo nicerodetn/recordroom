@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!--
+  This fragment displays the master list of all books in the library.
+  The table header is always visible, and DataTables will show a "No data" message if the list is empty.
+-->
+<div id="library-table-container" th:fragment="libraryTableFragment">
+
+    <div class="my-5">
+        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Library Book List</h3>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">All Available Books</h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- The table structure is now permanent. DataTables will handle the "no data" message itself. -->
+                            <table id="libraryTable" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Sl. No.</th>
+                                    <th>Book Name</th>
+                                    <th>Publication</th>
+                                    <th>Description</th>
+                                    <th>Serial No</th>
+                                    <th>Rack No</th>
+                                    <th>Date In</th>
+                                    <th>Remarks</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <!-- This loop generates rows only if the 'libraries' list is not empty. -->
+                                <!-- If the list is empty, the tbody remains empty, and DataTables shows its default message. -->
+                                <tr th:each="library, iterStat : ${libraries}">
+                                    <td th:text="${iterStat.count}"></td>
+                                    <td th:text="${library.name_of_book}"></td>
+                                    <td th:text="${library.publication}"></td>
+                                    <td th:text="${library.description}"></td>
+                                    <td th:text="${library.book_serial_no}"></td>
+                                    <td th:text="${library.rack_no}"></td>
+                                    <td th:text="${#temporals.format(library.date_in, 'dd-MMM-yyyy')}"></td>
+                                    <td th:text="${library.remarks}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize DataTables with a simplified configuration for a professional look.
+        $(function () {
+            $('#libraryTable').DataTable({
+                "responsive": true,
+                "lengthChange": false,
+                "autoWidth": false,
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                dom: 'Bfrtip', // Required to show buttons
+                buttons: [
+                    // Only the "Export PDF" button is configured.
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'Export PDF', // Button text to match your UI style
+                        title: 'Library Book List',
+                        orientation: 'portrait',
+                        pageSize: 'A4',
+                        exportOptions: {
+                            columns: ':visible'
+                        },
+                        customize: function (doc) {
+                            // Style the PDF for a clean, professional look
+                            doc.styles.tableHeader.fillColor = '#343a40'; // Dark gray header
+                            doc.styles.tableHeader.color = 'white';
+                            doc.pageMargins = [40, 60, 40, 60];
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+</div>
+</html>
+

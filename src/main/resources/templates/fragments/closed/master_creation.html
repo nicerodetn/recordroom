@@ -33,10 +33,10 @@
                                             <label class="form-label fw-bold">1. File Type</label><br>
                                             <select class="form-select" th:field="*{fileType}" required>
                                                 <option value="">-- Select Section --</option>
-                                                <option value="1">1 Year</option>
-                                                <option value="3">3 Year</option>
-                                                <option value="5">5 Year</option>
-                                                <option value="10">10 Year</option>
+                                                <option value="1">1 (L.Dis)</option>
+                                                <option value="3">3 (K.Dis)</option>
+                                                <option value="5">10 (D.Dis)</option>
+                                                <option value="10">Permanent (R.Dis)</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 Please select a section before saving.
@@ -54,9 +54,25 @@
                                             <input type="number" class="form-control" th:field="*{drSerialNo}" placeholder="Enter DR serial number">
                                         </div>
 
-                                        <!-- 3. Section Dropdown -->
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">4 .Total No of Volume</label>
+                                            <input type="number" class="form-control" th:field="*{total_volume}" placeholder="Enter Total No of Volume">
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">5. Total No of Pages</label>
+                                            <input type="number" class="form-control" th:field="*{total_pages}" placeholder="Enter Total No of Pages">
+                                        </div>
+
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold"> 6. Total No of Note Pages</label>
+                                            <input type="number" class="form-control" th:field="*{note_pages}" placeholder="Enter Total No of Note Pages">
+                                        </div>
+
+
                                         <div style="padding-top: 17px;" class="col-12">
-                                            <label class="form-label fw-bold">4. Section</label><br>
+                                            <label class="form-label fw-bold">7. Section</label><br>
                                             <select class="form-select" th:field="*{section}" required>
                                                 <option value="">-- Select Section --</option>
                                                 <option th:each="sec: ${sections}"
@@ -68,50 +84,53 @@
                                             </div>
                                         </div>
 
-                                        <!-- 4. File Closing Date -->
+
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">5. File Closing Date</label>
-                                            <input type="date" class="form-control" th:field="*{fileClosingDate}">
+                                            <label class="form-label fw-bold">8. File Closing Date</label>
+                                            <input type="date" class="form-control" th:field="*{fileClosingDate}" required>
                                         </div>
 
-                                        <!-- 5. Handing Over Date -->
+
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">6. Handing Over Date</label>
-                                            <input type="date" class="form-control" th:field="*{handingOverDate}">
+                                            <label class="form-label fw-bold">9. Handing Over Date</label>
+                                            <input type="date" class="form-control" th:field="*{handingOverDate}" required>
                                         </div>
 
-                                        <!-- 6. Rack Details -->
+
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">7. Rack Details</label>
-                                            <input type="number" class="form-control" th:field="*{rackDetails}" placeholder="Enter rack no/details">
+                                            <label class="form-label fw-bold">10. Rack Details</label>
+                                            <input type="number" class="form-control" th:field="*{rackDetails}" placeholder="Enter rack no/details" required>
                                         </div>
 
-                                        <!-- 7. Remarks -->
+
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">8. Remarks</label>
+                                            <label class="form-label fw-bold">11. Remarks</label>
                                             <textarea class="form-control" th:field="*{remarks}" rows="2" placeholder="Enter remarks"></textarea>
                                         </div>
 
-                                        <!-- 8. Section Dealing Hand Name -->
-                                        <div class="col-12">
-                                            <label class="form-label fw-bold">9a) Section Dealing Hand Name</label>
-                                            <input type="text" class="form-control" th:field="*{sectionDealingHandName}" placeholder="Enter dealing hand name">
-                                        </div>
 
-                                        <!-- 9. Section Dealing Hand Phone -->
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">9b) Section Dealing Hand Phone No</label>
-                                            <input type="text" class="form-control" th:field="*{sectionDealingHandPhoneNo}" placeholder="Enter phone no">
+                                            <label class="form-label fw-bold">12a) Section Dealing Hand Name</label>
+                                            <input type="text" class="form-control" th:field="*{sectionDealingHandName}" placeholder="Enter dealing hand name" required>
                                         </div>
 
 
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">12b) Section Dealing Hand Phone No</label>
+                                            <input type="text" pattern="\d{10}"
+                                                   maxlength="10"
+                                                   minlength="10"
+                                                   oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)"  class="form-control" th:field="*{sectionDealingHandPhoneNo}" placeholder="Enter phone no" required>
+                                        </div>
 
 
-                                        <!-- 10. Record Room Dealing Hand Name -->
+
+
+
 
 
                                         <div style="padding-top: 17px;" class="col-12">
-                                            <label class="form-label fw-bold">10. Record Room Dealing Hand Name</label><br>
+                                            <label class="form-label fw-bold">13. Record Room Dealing Hand Name</label><br>
                                             <select class="form-select" th:field="*{recordRoomDealingHandName}" required>
                                                 <option value="">-- Select Section--</option>
                                                 <option value="M. Ramesh">Shri M. Ramesh</option>

@@ -130,17 +130,20 @@
                                         <input type="hidden" th:field="*{fileRecordId}" th:value="${record.id}" />
 
                                         <label for="dateOfFileOutgoing">1. Date of File Outgoing:</label>
-                                        <input type="date" th:field="*{dateOfFileOutgoing}" class="form-control" id="dateOfFileOutgoing" /><br/>
+                                        <input type="date" th:field="*{dateOfFileOutgoing}" class="form-control" id="dateOfFileOutgoing" required/><br/>
 
                                         <label for="purposeOfTakingFile">2. Purpose of Taking File:</label>
-                                        <input type="text" th:field="*{purposeOfTakingFile}" class="form-control" id="purposeOfTakingFile" /><br/>
+                                        <input type="text" th:field="*{purposeOfTakingFile}" class="form-control" id="purposeOfTakingFile" required/><br/>
 
                                         <label for="sectionDealingHandName">3a) Section Dealing Hand Name:</label>
-                                        <input type="text" th:field="*{sectionDealingHandName}" class="form-control" id="sectionDealingHandName" /><br/>
+                                        <input type="text" th:field="*{sectionDealingHandName}" class="form-control" id="sectionDealingHandName" required/><br/>
 
                                         <label for="sectionDealingHandPhoneNo">3b) Section Dealing Hand Phone No:</label>
-                                        <input type="text" th:field="*{sectionDealingHandPhoneNo}" class="form-control" id="sectionDealingHandPhoneNo" /><br/>
-
+                                        <input type="text" th:field="*{sectionDealingHandPhoneNo}" class="form-control" id="sectionDealingHandPhoneNo" pattern="\d{10}"
+                                               maxlength="10"
+                                               minlength="10"
+                                               oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)"
+                                               required/><br/>
 
                                         <div style="padding-top: 17px;" class="col-12">
                                             <label class="form-label fw-bold">4. Record Room Dealing Hand Name</label><br>

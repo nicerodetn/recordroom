@@ -9,10 +9,6 @@ import java.util.Optional;
 
 public interface RecordRepository extends JpaRepository<FileRecord, Integer> {
 
-
-
-
-
     @Query(
             value = "SELECT * FROM file_record f WHERE f.dr_serial_no = :drSerialNo and f.dr_year =:dryear LIMIT 1",
             nativeQuery = true
@@ -20,4 +16,11 @@ public interface RecordRepository extends JpaRepository<FileRecord, Integer> {
     Optional<FileRecord> findByDrSerialNoAndYear(@Param("drSerialNo") Long drSerialNo , @Param("dryear") Integer dryear);
 
     Optional<FileRecord> findById(Integer id);
+
+    @Query(
+            value = "SELECT count(*) FROM file_record",
+            nativeQuery = true
+    )
+    long countClosedFiles();
+
 }

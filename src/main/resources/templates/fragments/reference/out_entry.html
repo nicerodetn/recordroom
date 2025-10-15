@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+<div  th:fragment="loadFormFragment">
+    <div class="my-5" id="b-homedb">
+
+        <div class="container">
+
+            <h3 style="font-size:32px;" class="text-center col-12 b-latest-data">Out Entry for Reference</h3>
+            <div class="row">
+                <div class="container-fluid add-form-list">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div th:if="${successMessage}"
+                                         class="alert alert-success alert-dismissible fade show text-center"
+                                         id="successMsg"
+                                         role="alert"
+                                         th:text="${successMessage}">
+                                    </div>
+
+                                    <form th:object="${reference}" method="post"
+                                          hx-post="/record/reference/save"
+                                          hx-target="#b-homedb"
+                                          hx-swap="outerHTML"
+                                          class="row g-3 border p-3 rounded bg-light shadow-sm"
+                                          id="recordForm">
+                                        <!-- 1. File Type -->
+
+                                        <div style="padding-top: 17px;" class="col-12">
+                                            <label class="form-label fw-bold">1. Category</label><br>
+                                            <select class="form-select" th:field="*{type}" required>
+                                                <option value="">-- Select Section --</option>
+                                                <option value="1">DR</option>
+                                                <option value="2">PR</option>
+                                                <option value="3">File</option>
+                                                <option value="4">Others</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Please select a section before saving.
+                                            </div>
+                                        </div>
+
+
+
+                                        <!-- 2. Section Dropdown -->
+                                        <div style="padding-top: 17px;" class="col-12">
+                                            <label class="form-label fw-bold">2. Section</label><br>
+                                            <select class="form-select" th:field="*{section}" required>
+                                                <option value="">-- Select Section --</option>
+                                                <option th:each="sec: ${sections}"
+                                                        th:value="${sec.id}"
+                                                        th:text="${sec.code + ' - ' + sec.section}"></option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Please select a section before saving.
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">3.File  Year</label>
+                                            <input type="number" class="form-control" id="yearInput" th:field="*{file_year}" name="year" min="1900" max="2099" placeholder="Enter year" required>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">4.File Serial No</label>
+                                            <input type="number" class="form-control" th:field="*{serial_no_user}" placeholder="Enter serial number">
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">5)File Description</label>
+                                            <input type="text" class="form-control" th:field="*{description}" placeholder="Enter file description" required>
+                                        </div>
+
+
+                                        <!-- 3. Section Dealing Hand Name -->
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">6) Section Dealing Hand Name</label>
+                                            <input type="text" class="form-control" th:field="*{out_sectionDealingHandName}" placeholder="Enter dealing hand name" required>
+                                        </div>
+
+                                        <!-- 9. Section Dealing Hand Phone -->
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold">7) Section Dealing Hand Phone No</label>
+                                            <input type="text" class="form-control" th:field="*{out_sectionDealingHandPhoneNo}" placeholder="Enter phone no" pattern="\d{10}"
+                                                   maxlength="10"
+                                                   minlength="10"
+                                                   oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)"
+                                                   required>
+                                        </div>
+
+
+
+
+                                        <!-- 10. Record Room Dealing Hand Name -->
+
+
+                                        <div style="padding-top: 17px;" class="col-12">
+                                            <label class="form-label fw-bold">8. Record Room Dealing Hand Name</label><br>
+                                            <select class="form-select" th:field="*{out_recordRoomDealingHandName}" required>
+                                                <option value="">-- Select Section--</option>
+                                                <option value="M. Ramesh">Shri M. Ramesh</option>
+                                                <option value="Balasubramaniyan">Shri S. Balasubramaniyan</option>
+                                                <option value="N. Karuppusamy">Shri N. Karuppusamy</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Please select a section before saving.
+                                            </div>
+                                        </div>
+
+
+
+                                        <!-- Submit Button -->
+                                        <div class="d-grid mt-4">
+                                            <button type="submit" class="btn btn-primary btn-lg">💾 Save Record</button>
+                                        </div>
+                                    </form>
+
+                                    <script>
+                                        // Auto-hide success message after 3 seconds
+                                        setTimeout(() => {
+                                            let msg = document.getElementById("successMsg");
+                                            if (msg) {
+                                                msg.classList.remove("show");
+                                                msg.remove();
+                                            }
+                                        }, 5000);
+                                    </script>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="response"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</html>

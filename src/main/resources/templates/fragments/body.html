@@ -15,7 +15,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
         <li class="nav-item">
-          <a class="nav-link b-db-color" hx-get="/profile" hx-target="#b-homedb" hx-swap="innerHTML" >Sign Out</a>
+          <a hx-get="/record/logout" class="nav-link b-db-color" >Sign Out</a>
         </li>
       </ul>
     </div>
@@ -27,42 +27,105 @@
       <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Dashboard</h3>
       <div class="">
         <div class="row text-center pl-4" id="sortable-cards">
+
+
+
           <div class="col-lg-6 col-sm-12 p-3 b-customize">
             <div class="bg-light p-4 b-dbcard">
-              <i class="fas fa-user-graduate position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
+              <i class="fas fa-file position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
               <div class="">
-                <p class="text-left font-weight-bold" style="font-size: 14px;">Total Records</p>
-                <h3 class="text-left font-weight-bold" style="margin-top: -5px">1,1870</h3>
+                <p class="text-left font-weight-bold" style="font-size: 14px;">Total Closed Files</p>
+                <h3 th:text="${stats.total_closed_files}" class="text-left font-weight-bold" style="margin-top: -5px">0</h3>
               </div>
             </div>
           </div>
+
+
+
+
+
+
           <div class="col-lg-6 col-sm-12 p-3 b-customize">
             <div class="bg-light p-4 b-dbcard">
-              <i class="fas fa-university position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
+              <i class="fas fa-file position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
               <div class="">
-                <p class="text-left font-weight-bold" style="font-size: 14px;">OutStanding Reocrds</p>
-                <h3 class="text-left font-weight-bold" style="margin-top: -5px">612</h3>
+                <p class="text-left font-weight-bold" style="font-size: 14px;">Closed Out Standing Files</p>
+                <h3 th:text="${stats.total_closed_files_outstanding}" class="text-left font-weight-bold" style="margin-top: -5px">0</h3>
               </div>
             </div>
           </div>
-          <div class="col-lg-6 col-sm-12 p-3 b-customize">
+
+
+            <div class="col-lg-6 col-sm-12 p-3 b-customize">
+                <div class="bg-light p-4 b-dbcard">
+                    <i class="fas fa-users position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
+                    <div class="">
+                        <p class="text-left font-weight-bold" style="font-size: 14px;">Total Call Book Files</p>
+                        <h3  th:text="${stats.total_callbook_files}" class="text-left font-weight-bold" style="margin-top: -5px">0</h3>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="col-lg-6 col-sm-12 p-3 b-customize">
             <div class="bg-light p-4 b-dbcard">
               <i class="fas fa-users position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
               <div class="">
-                <p class="text-left font-weight-bold" style="font-size: 14px;">Out Standing Registers</p>
-                <h3 class="text-left font-weight-bold" style="margin-top: -5px">152,679</h3>
+                <p class="text-left font-weight-bold" style="font-size: 14px;">Call Book Outstanding</p>
+                <h3  th:text="${stats.total_callbook_files_outstanding}" class="text-left font-weight-bold" style="margin-top: -5px">0</h3>
               </div>
             </div>
           </div>
+
+
+            <div class="col-lg-6 col-sm-12 p-3 b-customize">
+                <div class="bg-light p-4 b-dbcard">
+                    <i class="fas fa-question-circle position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
+                    <div class="">
+                        <p class="text-left font-weight-bold" style="font-size: 14px;">Total Refrence Files</p>
+                        <h3 th:text="${stats.total_reference_outstanding}" class="text-left font-weight-bold" style="margin-top: -5px">0</h3>
+                    </div>
+                </div>
+            </div>
+
+
+
+
           <div class="col-lg-6 col-sm-12 p-3 b-customize">
             <div class="bg-light p-4 b-dbcard">
               <i class="fas fa-question-circle position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
               <div class="">
-                <p class="text-left font-weight-bold" style="font-size: 14px;">Total Transcations</p>
-                <h3 class="text-left font-weight-bold" style="margin-top: -5px">39,891</h3>
+                <p class="text-left font-weight-bold" style="font-size: 14px;">Total RTI</p>
+                <h3 th:text="${stats.total_rti}" class="text-left font-weight-bold" style="margin-top: -5px">0</h3>
               </div>
             </div>
           </div>
+
+            <div class="col-lg-6 col-sm-12 p-3 b-customize">
+                <div class="bg-light p-4 b-dbcard">
+                    <i class="fas fa-question-circle position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
+                    <div class="">
+                        <p class="text-left font-weight-bold" style="font-size: 14px;">Total Library Books</p>
+                        <h3 th:text="${stats.total_books}" class="text-left font-weight-bold" style="margin-top: -5px">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-3 b-customize">
+                <div class="bg-light p-4 b-dbcard">
+                    <i class="fas fa-question-circle position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
+                    <div class="">
+                        <p class="text-left font-weight-bold" style="font-size: 14px;">Total Outstanding Library Books</p>
+                        <h3 th:text="${stats.total_books_outstanding}" class="text-left font-weight-bold" style="margin-top: -5px">0</h3>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
         </div>
       </div>
     </div>

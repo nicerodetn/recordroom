@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div id="b-homedb" th:fragment="searchrecord">
+    <div class="my-5" >
+        <div class="container">
+            <h3 style="font-size:32px;" class="text-center col-12 b-latest-data">File Inward Entry</h3>
+            <div class="row">
+                <div class="container-fluid add-form-list">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <script>
+                                        // Auto-hide success message after 3 seconds
+                                        setTimeout(() => {
+                                            let msg = document.getElementById("successMsg");
+                                            if (msg) {
+                                                msg.classList.remove("show");
+                                                msg.remove();
+                                            }
+                                        }, 3000);
+
+                                        setTimeout(() => {
+                                            let msg = document.getElementById("errorMsg");
+                                            if (msg) {
+                                                msg.classList.remove("show");
+                                                msg.remove();
+                                            }
+                                        }, 5000);
+                                    </script>
+                                    <div th:if="${successMessage}"
+                                         class="alert alert-success alert-dismissible fade show text-center"
+                                         id="successMsg"
+                                         role="alert"
+                                         th:text="${successMessage}">
+                                    </div>
+
+                                    <div th:if="${errorMessage}"
+                                         class="alert alert-danger alert-dismissible fade show text-center"
+                                         id="errorMsg"
+                                         role="alert"
+                                         th:text="${errorMessage}">
+                                    </div>
+
+
+                                    <form hx-get="/record/reference/searchForInWardEntry"
+                                          hx-target="#b-homedb"
+                                          hx-swap="outerHTML">
+
+                                        <label class="form-label fw-bold">Search File</label>
+
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <input type="text" name="drSerialNo"
+                                                       class="form-control"
+                                                       placeholder="Enter Serial Number..." required />
+                                            </div>
+                                            <div class="col-auto">
+                                                <button type="submit" class="btn btn-primary">
+                                                    Search
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- file/fragments/notFound.html -->
+
+
+<div id="b-homedb" th:fragment="outwardform">
+    <div class="my-5" >
+        <div class="container">
+            <h3 style="font-size:32px;" class="text-center col-12 b-latest-data">File In Ward Entry</h3>
+            <div class="row">
+                <div class="container-fluid add-form-list">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div>
+                                        <h3>File Details Found</h3>
+                                        <p><strong>File Type:</strong> <span th:text="${reference.type}"></span></p>
+                                        <p><strong>Serial No:</strong> <span th:text="${reference.serialNo}"></span></p>
+                                        <p><strong>Section :</strong> <span th:text="${reference.section.description}"></span></p><br>
+                                        <!--                                        <a class="b-newpage" hx-get="/record/circulation/file_master_out_entry" hx-target="#outwardform" hx-swap="innerHTML">Search Other Record</a>-->
+                                    </div>
+
+                                    <form th:object="${referencedto}" method="post"
+                                          hx-post="/record/reference/saveInWardEntry"
+                                          hx-target="#b-homedb"
+                                          hx-swap="outerHTML"
+                                          class="row g-3 border p-3 rounded bg-light shadow-sm"
+                                          id="recordForm">
+
+                                        <input type="hidden" name="seriolmo" th:value="${reference.serialNo}" />
+
+                                        <label for="sectionDealingHandName">3a) Section Dealing Hand Name:</label>
+                                        <input type="text" th:field="*{in_sectionDealingHandName}" class="form-control" id="sectionDealingHandName" required/><br/>
+
+                                        <label for="sectionDealingHandPhoneNo">3b) Section Dealing Hand Phone No:</label>
+                                        <input type="text" th:field="*{in_sectionDealingHandPhoneNo}" class="form-control" id="sectionDealingHandPhoneNo" pattern="\d{10}"
+                                               maxlength="10"
+                                               minlength="10"
+                                               oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)"
+                                               required/><br/>
+
+
+                                        <div style="padding-top: 17px;" class="col-12">
+                                            <label class="form-label fw-bold">4. Record Room Dealing Hand Name</label><br>
+                                            <select class="form-select" th:field="*{in_recordRoomDealingHandName}" required>
+                                                <option value="">-- Select Section--</option>
+                                                <option value="M. Ramesh">Shri M. Ramesh</option>
+                                                <option value="Balasubramaniyan">Shri S. Balasubramaniyan</option>
+                                                <option value="N. Karuppusamy">Shri N. Karuppusamy</option>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Please select a section before saving.
+                                            </div>
+                                        </div>
+
+
+                                        <div class="d-grid mt-4">
+                                            <button type="submit" class="btn btn-primary btn-lg">💾 Save Record</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</html>

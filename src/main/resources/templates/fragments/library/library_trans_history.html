@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div id="history-container" th:fragment="historyFragment">
+
+    <div class="my-5">
+        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Transaction History</h3>
+
+        <div class="container-fluid">
+            <div class="row">
+                <!-- THIS IS THE FIX: Changed class.col-12" to class="col-12" -->
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">All Returned Books</h3>
+                        </div>
+                        <div class="card-body">
+                            <table id="historyTable" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Book Serial No</th>
+                                    <th>Book Name</th>
+                                    <th>Staff Name</th>
+                                    <th>Date of Taking</th>
+                                    <th>Date of Return</th>
+                                    <th>Remarks</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="transaction : ${returnedTransactions}">
+                                    <td th:text="${transaction.library.book_serial_no}"></td>
+                                    <td th:text="${transaction.book_name}"></td>
+                                    <td th:text="${transaction.nameOfStaffTaking}"></td>
+                                    <td th:text="${#temporals.format(transaction.date_of_taking, 'dd-MMM-yyyy')}"></td>
+                                    <td th:text="${#temporals.format(transaction.date_of_return, 'dd-MMM-yyyy')}"></td>
+                                    <td th:text="${transaction.remarks}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        >
+
+        <script>
+            $(function () {
+                $('#historyTable').DataTable({
+                    "responsive": true,
+                    "lengthChange": false,
+                    "autoWidth": false,
+                    "paging": true,
+                    "searching": true,
+                    "ordering": true,
+                    "info": true,
+                    dom: 'Bfrtip',
+                    buttons: [
+                        {
+                            extend: 'pdfHtml5',
+                            text: 'Export PDF',
+                            title: 'Transaction History',
+                            orientation: 'landscape',
+                            pageSize: 'A4',
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        }
+                    ]
+                });
+            });
+        </script>
+    </div>
+</html>
+

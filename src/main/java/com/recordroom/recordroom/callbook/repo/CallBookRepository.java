@@ -43,5 +43,18 @@ public interface CallBookRepository extends JpaRepository<CallBook, Integer> {
     )
     List<CallBook> findByActive();
 
+    @Query(
+            value = "SELECT count(*) FROM call_book f WHERE f.is_current = true and f.in_out_status=1",
+            nativeQuery = true
+    )
+    long countCallBookOutstanding();
+
+    @Query(
+            value = "SELECT count(*) FROM call_book f WHERE f.is_current = true",
+            nativeQuery = true
+    )
+    long countCallBookTotal();
+
+
 
 }

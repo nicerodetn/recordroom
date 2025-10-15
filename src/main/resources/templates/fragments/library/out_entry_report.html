@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!--
+  This fragment displays a report of all outstanding (checked out) books.
+  The table header is always visible, and DataTables will show a "No data" message if the list is empty.
+-->
+<div id="outstanding-books-container" th:fragment="outstandingBooksFragment">
+
+    <div class="my-5">
+        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Outstanding Book List</h3>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">All Books Currently Checked Out</h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- The table structure is now permanent. DataTables will handle the "no data" message. -->
+                            <table id="outstandingTable" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Book Serial No</th>
+                                    <th>Book Name</th>
+                                    <th>Date of Taking</th>
+                                    <th>Purpose of Taking</th>
+                                    <th>Staff Name</th>
+                                    <th>Staff Phone No</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <!-- The loop will generate rows only if the 'outstandingBooks' list is not empty. -->
+                                <!-- If the list is empty, this tbody will be empty, and DataTables will show its default message. -->
+                                <tr th:each="transaction : ${outstandingBooks}">
+                                    <td th:text="${transaction.library.book_serial_no}"></td>
+                                    <td th:text="${transaction.book_name}"></td>
+                                    <td th:text="${#temporals.format(transaction.date_of_taking, 'dd-MMM-yyyy')}"></td>
+                                    <td th:text="${transaction.purpose_of_taking}"></td>
+                                    <td th:text="${transaction.nameOfStaffTaking}"></td>
+                                    <td th:text="${transaction.ph_no_of_staff_taking}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize DataTables with a simplified configuration.
+        $(function () {
+            $('#outstandingTable').DataTable({
+                "responsive": true,
+                "lengthChange": false,
+                "autoWidth": false,
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                dom: 'Bfrtip', // Required to show buttons
+                buttons: [
+
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'Export PDF', // Changed button text to match the UI
+                        title: 'Outstanding Book List',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        exportOptions: {
+                            columns: ':visible'
+                        },
+                        customize: function (doc) {
+                            // Style the PDF for a professional look
+                            doc.styles.tableHeader.fillColor = '#343a40'; // Dark gray header
+                            doc.styles.tableHeader.color = 'white';
+                            doc.pageMargins = [40, 60, 40, 60];
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+</div>
+</html>
+

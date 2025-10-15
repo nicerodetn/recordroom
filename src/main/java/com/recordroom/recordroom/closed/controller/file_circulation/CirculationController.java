@@ -2,6 +2,7 @@ package com.recordroom.recordroom.closed.controller.file_circulation;
 
 import com.recordroom.recordroom.closed.controller.dto.FileMasterReportDTO;
 import com.recordroom.recordroom.closed.controller.dto.FileOutgoingDTO;
+import com.recordroom.recordroom.closed.controller.dto.FileOutstandingReportDTO;
 import com.recordroom.recordroom.closed.entity.FileRecord;
 import com.recordroom.recordroom.closed.entity.RecordTransactionDetails;
 import com.recordroom.recordroom.closed.service.RecordService;
@@ -61,8 +62,6 @@ public class CirculationController {
 
     @PostMapping("/save")
     public String saveRecord(@ModelAttribute FileRecord record, Model model) {
-
-
 
        Optional<FileRecord> r = recordService.saveRecord(record);
 
@@ -179,7 +178,23 @@ public class CirculationController {
     @GetMapping("/outWardReport")
     public String showReport(Model model) {
         List<RecordTransactionDetails> records = recordTransactionService.getActiveRecords();
-        model.addAttribute("records", records);
+
+        List<FileOutstandingReportDTO> fileOutstandingReportDTOList = records.stream().map(record -> {
+            FileOutstandingReportDTO dto = new FileOutstandingReportDTO();
+
+            dto.setDr_year(record.getDr_year());
+            dto.setDrSerialNo(record.getDrSerialNo());
+            dto.setDateOfFileOutgoing(record.getDateOfFileOutgoing());
+            dto.setPurposeOfTakingFile(record.getPurposeOfTakingFile());
+            dto.setSection(record.getFileRecord().getSection().getSection());
+            dto.setSectionDealingHandName(record.getSectionDealingHandName());
+            dto.setSectionDealingHandPhoneNo(record.getSectionDealingHandPhoneNo());
+            dto.setRecordRoomDealingHandName(record.getRecordRoomDealingHandName());
+
+            return dto;
+        }).collect(Collectors.toList());
+
+        model.addAttribute("records", fileOutstandingReportDTOList);
         return "fragments/closed/out_entry_report :: tabler"; // Thymeleaf template name
     }
 
@@ -191,7 +206,7 @@ public class CirculationController {
             FileMasterReportDTO dto = new FileMasterReportDTO();
             dto.setDrSerialNo(record.getDrSerialNo());
             dto.setFileType(record.getFileType());
-            dto.setSection(record.getSection().getDescription());
+            dto.setSection(record.getSection().getSection());
             dto.setFileClosingDate(record.getFileClosingDate());
             dto.setHandingOverDate(record.getHandingOverDate());
             dto.setRemarks(record.getRemarks());
@@ -199,6 +214,9 @@ public class CirculationController {
             dto.setSectionDealingHandName(record.getSectionDealingHandName());
             dto.setSectionDealingHandPhoneNo(record.getSectionDealingHandPhoneNo());
             dto.setRecordRoomDealingHandName(record.getRecordRoomDealingHandName());
+            dto.setTotal_volume(record.getTotal_volume());
+            dto.setTotal_pages(record.getTotal_pages());
+            dto.setNote_pages(record.getNote_pages());
             return dto;
         }).collect(Collectors.toList());
 
