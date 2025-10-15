@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- FRAGMENT 1: SEARCH FOR A BOOK (No changes here) -->
+<div id="library-inward-container" th:fragment="searchBookFragment">
+    <div class="my-5">
+        <div class="container">
+            <h3 style="font-size:32px;" class="text-center col-12 b-latest-data">Book Outward Entry</h3>
+            <div class="row">
+                <div class="container-fluid add-form-list">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <!-- Script to auto-hide feedback messages -->
+                                    <script>
+                                        setTimeout(() => {
+                                            let msg = document.getElementById("successMsg");
+                                            if (msg) msg.remove();
+                                        }, 3000);
+                                        setTimeout(() => {
+                                            let msg = document.getElementById("errorMsg");
+                                            if (msg) msg.remove();
+                                        }, 5000);
+                                    </script>
+                                    <!-- Thymeleaf blocks to display success or error messages from the controller -->
+                                    <div th:if="${successMessage}"
+                                         class="alert alert-success text-center"
+                                         id="successMsg"
+                                         role="alert"
+                                         th:text="${successMessage}">
+                                    </div>
+                                    <div th:if="${errorMessage}"
+                                         class="alert alert-danger text-center"
+                                         id="errorMsg"
+                                         role="alert"
+                                         th:text="${errorMessage}">
+                                    </div>
+
+                                    <!-- The search form -->
+                                    <form hx-get="/record/library/searchForOutward"
+                                          hx-target="#b-homedb"
+                                          hx-swap="outerHTML">
+                                        <label class="form-label fw-bold">Search Book by Serial Number</label>
+                                        <div class="row g-2">
+                                            <div class="col">
+                                                <input type="number" name="book_serial_no"
+                                                       class="form-control"
+                                                       placeholder="Enter Book Serial Number..." required />
+                                            </div>
+                                            <div class="col-auto">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fas fa-search"></i> Search
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- FRAGMENT 2: DISPLAY BOOK AND CREATE OUTWARD ENTRY (Layout Changed to Vertically Stacked) -->
+<div id="b-homedb" th:fragment="bookOutwardFormFragment">
+    <div class="my-5">
+        <div class="container">
+            <h3 style="font-size:32px;" class="text-center col-12 b-latest-data">Book Outward Entry</h3>
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <!-- Top Card: Book Details -->
+                    <div class="card mb-4">
+                        <div class="card-header text-white" style="background-color: #46a2b0;">
+                            <h5 class="card-title mb-0">Book Details Found</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Book Name:</strong> <span class="text-muted" th:text="${book.name_of_book}"></span></p>
+                            <p><strong>Publication:</strong> <span class="text-muted" th:text="${book.publication}"></span></p>
+                            <p><strong>Description:</strong> <span class="text-muted" th:text="${book.description}"></span></p>
+                            <p><strong>Serial No:</strong> <span class="text-muted" th:text="${book.book_serial_no}"></span></p>
+                            <p><strong>Rack No:</strong> <span class="text-muted" th:text="${book.rack_no}"></span></p>
+                            <button class="btn btn-secondary mt-3" hx-get="/record/library/outward_entry" hx-target="#b-homedb" hx-swap="innerHTML">
+                                Search Another
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Card: Borrower Details Form -->
+                    <div class="card">
+                        <div class="card-header text-white" style="background-color: #46a2b0;">
+                            <h5 class="card-title mb-0">Enter Borrower Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <form th:object="${libraryTransaction}" method="post" hx-post="/record/library/saveOutward" hx-target="#b-homedb" hx-swap="outerHTML" class="row g-3">
+                                <!-- This hidden input is crucial. It sends the book's ID with the form. -->
+                                <input type="hidden" th:field="*{library}" />
+
+                                <div class="col-12">
+                                    <label class="form-label">Date of Taking:</label>
+                                    <input type="date" th:field="*{date_of_taking}" class="form-control" required/>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Purpose:</label>
+                                    <input type="text" th:field="*{purpose_of_taking}" class="form-control" required/>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Staff Name:</label>
+                                    <input type="text" th:field="*{nameOfStaffTaking}" class="form-control" required/>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Staff Phone No:</label>
+                                    <input type="text" th:field="*{ph_no_of_staff_taking}" class="form-control" required/>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Remarks:</label>
+                                    <textarea th:field="*{remarks}" class="form-control" rows="2"></textarea>
+                                </div>
+                                <div class="d-grid mt-3">
+                                    <button type="submit" class="btn btn-primary btn-lg">Save Outward Entry</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

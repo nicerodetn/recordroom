@@ -29,6 +29,9 @@ public class DashboardSnapshot {
     private Long totalReferenceOutstanding;
     private Long totalRti;
 
+    private Long totalBooks;
+    private Long totalbooksOutstanding;
+
 
     private LocalDate snapshotDate;
 

@@ -65,11 +65,17 @@
 
                 <li class='sub-menu'><a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">Library<div class='fa fa-caret-down right'></div></a>
                     <ul>
-                        <li><a class="b-newpage" href='barchart.html'>Book Master Creation</a></li>
-                        <li><a class="b-newpage" href='linechart.html'>Outward Entry</a></li>
-                        <li><a class="b-newpage" href='areachart.html'>Inward Entry</a></li>
-                        <li><a class="b-newpage" href='areachart.html'>Master Book List </a></li>
-                        <li><a class="b-newpage" href='areachart.html'>OutStanding  Book List </a></li>
+                        <li><a class="b-newpage" hx-get="/record/library/load_form" hx-target="#b-homedb" hx-swap="innerHTML">Book Master Creation</a></li>
+                        <li><a class="b-newpage" hx-get="/record/library/outward_entry" hx-target="#b-homedb" hx-swap="innerHTML">Outward Entry</a></li>
+                        <li><a class="b-newpage" hx-get="/record/library/inward_entry" hx-target="#b-homedb" hx-swap="innerHTML">Inward Entry</a></li>
+                        <li class='sub-sub-menu'><a href='javascript:void(0)' class="b-newpage">Report's<div class='fa fa-caret-down right'></div></a>
+                            <ul>
+                                <li><a class="b-newpage" hx-get="/record/library/show_table" hx-target="#b-homedb" hx-swap="innerHTML">Master Book List </a></li>
+                                <li><a class="b-newpage" hx-get="/record/library/outstanding_report" hx-target="#b-homedb" hx-swap="innerHTML">OutStanding  Book List </a></li>
+                            </ul>
+                        </li>
+                        <li><a class="b-newpage" hx-get="/record/library/history" hx-target="#b-homedb">Library Transaction History</a></li>
+
                     </ul>
                 </li>
 
