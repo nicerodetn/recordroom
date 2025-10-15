@@ -118,6 +118,14 @@
                                     <div class="label">Total RTI</div>
                                     <div class="value" th:text="${stats.total_rti}">0</div>
                                 </div>
+                                <div class="report-row">
+                                    <div class="label">Total Library Books</div>
+                                    <div class="value" th:text="${stats.total_books}">0</div>
+                                </div>
+                                <div class="report-row">
+                                    <div class="label">Total Outstanding Books</div>
+                                    <div class="value" th:text="${stats.total_books_outstanding}">0</div>
+                                </div>
                             </div>
                           <button id="export-pdf">Export PDF</button>
                         </div>

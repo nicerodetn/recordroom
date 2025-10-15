@@ -27,6 +27,6 @@ public class RtiService {
     public void deleteSection(Integer id) {
         rtiRepository.deleteById(id);
     }
-
+//test
 
 }

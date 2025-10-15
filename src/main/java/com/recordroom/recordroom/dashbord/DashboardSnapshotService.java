@@ -55,6 +55,8 @@ public class DashboardSnapshotService {
         snap.setTotalCallbookFilesOutstanding(dto.getTotal_callbook_files_outstanding());
         snap.setTotalReferenceOutstanding(dto.getTotal_reference_outstanding());
         snap.setTotalRti(dto.getTotal_rti());
+        snap.setTotalBooks(dto.getTotal_books());
+        snap.setTotalbooksOutstanding(dto.getTotal_books_outstanding());
         dashboardSnapshotRepository.save(snap);
     }
 
