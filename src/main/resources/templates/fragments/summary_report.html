@@ -126,6 +126,16 @@
                                     <div class="label">Total Outstanding Books</div>
                                     <div class="value" th:text="${stats.total_books_outstanding}">0</div>
                                 </div>
+
+                                <div class="report-row">
+                                    <div class="label">Total Old Registers</div>
+                                    <div class="value" th:text="${stats.totalRegisters}">0</div>
+                                </div>
+                                <div class="report-row">
+                                    <div class="label">Total Old Registers Outstsanding</div>
+                                    <div class="value" th:text="${stats.totalRegistersOutstanding}">0</div>
+                                </div>
+
                             </div>
                           <button id="export-pdf">Export PDF</button>
                         </div>

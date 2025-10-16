@@ -107,6 +107,9 @@ public class CallBookController {
             callBookFileOutgoingDTO.setUnique_key(callBook.get().getUnique_key());
             callBookFileOutgoingDTO.setPossible_out_date(callBook.get().getPossible_out_date());
 
+            callBookFileOutgoingDTO.setCall_book_no(callBook.get().getCall_book_no());
+
+
             List<CallBook> records = callBookService.findByUniqueKey(callBook.get().getUnique_key());
             model.addAttribute("records", records);
             model.addAttribute("callbookdto",callBookFileOutgoingDTO);

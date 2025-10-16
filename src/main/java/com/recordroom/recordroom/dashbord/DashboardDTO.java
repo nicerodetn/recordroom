@@ -25,4 +25,7 @@ public class DashboardDTO {
     private Long total_books;
     private Long total_books_outstanding;
 
+    private Long totalRegisters;
+    private Long totalRegistersOutstanding;
+
 }

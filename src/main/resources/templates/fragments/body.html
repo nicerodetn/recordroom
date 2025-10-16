@@ -104,7 +104,7 @@
 
             <div class="col-lg-6 col-sm-12 p-3 b-customize">
                 <div class="bg-light p-4 b-dbcard">
-                    <i class="fas fa-question-circle position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
+                    <i class="fa fa-book position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
                     <div class="">
                         <p class="text-left font-weight-bold" style="font-size: 14px;">Total Library Books</p>
                         <h3 th:text="${stats.total_books}" class="text-left font-weight-bold" style="margin-top: -5px">0</h3>
@@ -114,10 +114,30 @@
 
             <div class="col-lg-6 col-sm-12 p-3 b-customize">
                 <div class="bg-light p-4 b-dbcard">
-                    <i class="fas fa-question-circle position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
+                    <i class="fa fa-book position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
                     <div class="">
                         <p class="text-left font-weight-bold" style="font-size: 14px;">Total Outstanding Library Books</p>
                         <h3 th:text="${stats.total_books_outstanding}" class="text-left font-weight-bold" style="margin-top: -5px">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-3 b-customize">
+                <div class="bg-light p-4 b-dbcard">
+                    <i class="fa fa-bookmark position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
+                    <div class="">
+                        <p class="text-left font-weight-bold" style="font-size: 14px;">Total Old Registers</p>
+                        <h3 th:text="${stats.totalRegisters}" class="text-left font-weight-bold" style="margin-top: -5px">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 col-sm-12 p-3 b-customize">
+                <div class="bg-light p-4 b-dbcard">
+                    <i class="fa fa-bookmark position-absolute" style="font-size:35px; right: 40px; top: 40px;"></i>
+                    <div class="">
+                        <p class="text-left font-weight-bold" style="font-size: 14px;">Total Old Registers Outstsanding</p>
+                        <h3 th:text="${stats.totalRegistersOutstanding}" class="text-left font-weight-bold" style="margin-top: -5px">0</h3>
                     </div>
                 </div>
             </div>
