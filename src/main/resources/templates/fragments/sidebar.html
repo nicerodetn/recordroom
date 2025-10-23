@@ -11,9 +11,9 @@
             <ul id="sortable-menu">
 
 
-                <li><a href='body.html' class="dashboard-bgcolor b-db-color border-bottom b-newpage">Dashboard</a></li>
+                <li><a href="/record/dashboard" class="dashboard-bgcolor b-db-color border-bottom b-newpage">Dashboard</a></li>
 
-                <li class='sub-menu'><a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">File's Circulation<div class='fa fa-caret-down right'></div></a>
+                <li class='sub-menu'><a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">Closed File's<div class='fa fa-caret-down right'></div></a>
                     <ul>
                         <li><a class="b-newpage" hx-get="/record/circulation/load_form" hx-target="#b-homedb" hx-swap="innerHTML">File Master Creation</a></li>
                         <li><a class="b-newpage" hx-get="/record/circulation/file_master_out_entry" hx-target="#b-homedb" hx-swap="innerHTML">Outward Entry</a></li>
@@ -38,12 +38,31 @@
                     </ul>
                 </li>
 
-                <li class='sub-menu'><a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">Old Register's<div class='fa fa-caret-down right'></div></a>
+                <li class='sub-menu'><a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">Reference File's<div class='fa fa-caret-down right'></div></a>
                     <ul>
-                        <li><a class="b-newpage" href='barchart.html'>Register Master Creation</a></li>
-                        <li><a class="b-newpage" href='linechart.html'>Outward Entry</a></li>
-                        <li><a class="b-newpage" href='areachart.html'>Inward Entry</a></li>
-                        <li><a class="b-newpage" href='areachart.html'>View Details</a></li>
+                        <li><a class="b-newpage" hx-get="/record/reference/reference_in_entry" hx-target="#b-homedb" hx-swap="innerHTML">Inward Entry</a></li>
+                        <li><a class="b-newpage" hx-get="/record/reference/reference_out_entry" hx-target="#b-homedb" hx-swap="innerHTML">Outward Entry</a></li>
+                        <li><a class="b-newpage" hx-get="/record/reference/masterReport" hx-target="#b-homedb" hx-swap="innerHTML">Report</a></li>
+                    </ul>
+                </li>
+
+                <li class='sub-menu'>
+                    <a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">
+                        Old Register's
+                        <div class='fa fa-caret-down right'></div>
+                    </a>
+                    <ul>
+                        <li><a class="b-newpage" hx-get="/record/oldregister/master_creation" hx-target="#b-homedb" hx-swap="innerHTML">Register Master Creation</a></li>
+                        <li><a class="b-newpage" hx-get="/record/oldregister/outward_entry" hx-target="#b-homedb" hx-swap="innerHTML">Outward Entry</a></li>
+                        <li><a class="b-newpage" hx-get="/record/oldregister/inward_entry" hx-target="#b-homedb" hx-swap="innerHTML">Inward Entry</a></li>
+
+                        <li class='sub-sub-menu'><a href='javascript:void(0)' class="b-newpage">Report's<div class='fa fa-caret-down right'></div></a>
+                            <ul>
+                                <li><a class="b-newpage" hx-get="/record/oldregister/view_details" hx-target="#b-homedb" hx-swap="innerHTML">View Master Details</a></li>
+                                <li><a class="b-newpage" hx-get="/record/oldregister/outstanding_records" hx-target="#b-homedb" hx-swap="innerHTML">Outstanding Records</a></li>
+                                <li><a class="b-newpage" hx-get="/record/oldregister/transaction_details" hx-target="#b-homedb" hx-swap="innerHTML">Transaction Details</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
 
@@ -67,6 +86,13 @@
                         </li>
                         <li><a class="b-newpage" hx-get="/record/library/history" hx-target="#b-homedb">Library Transaction History</a></li>
 
+                    </ul>
+                </li>
+
+                <li class='sub-menu'><a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">Reports<div class='fa fa-caret-down right'></div></a>
+                    <ul>
+                        <li><a class="b-newpage" hx-get="/record/dashboard/load_search" hx-target="#b-homedb" hx-swap="innerHTML">Date Wise Report</a></li>
+                        <li><a class="b-newpage" hx-get="/record/summaryreport" hx-target="#b-homedb" hx-swap="innerHTML">Summary Report</a></li>
                     </ul>
                 </li>
 

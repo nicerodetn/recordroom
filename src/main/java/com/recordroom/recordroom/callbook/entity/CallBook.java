@@ -23,6 +23,9 @@ public class CallBook {
     private Integer new_drSerialNo;
     private Integer new_dr_year;
 
+
+    private Integer call_book_no;
+
     private Integer old_drSerialNo;
     private Integer old_dr_year;
 

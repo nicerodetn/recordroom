@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div id="b-homedb" th:fragment="tabler">
+    <div class="my-5">
+        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Old Register Master Records</h3>
+
+        <script>
+            $(function () {
+                $('#example1').DataTable({
+                    dom: 'Bfrtip',
+                    buttons: [
+                        {
+                            extend: 'pdfHtml5',
+                            text: 'Export PDF',
+                            title: 'Old Register Records',
+                            messageTop: 'Record Room Old Register Master List',
+                            customize: function (doc) {
+                                doc.pageMargins = [40, 60, 40, 60];
+                                doc.defaultStyle.fontSize = 12;
+                                doc.styles.tableHeader.fillColor = '#4CAF50';
+                                doc.styles.tableHeader.color = 'white';
+                                doc.content[0].text = doc.content[0].text.toUpperCase();
+                                doc.content[0].alignment = 'center';
+                                doc.content[0].fontSize = 18;
+                                doc.content[0].margin = [0, 0, 0, 10];
+                                doc.footer = function(currentPage, pageCount) {
+                                    return {
+                                        columns: [
+                                            'Old Register Records',
+                                            {
+                                                text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
+                                                alignment: 'right',
+                                                margin: [0, 0, 20, 0]
+                                            }
+                                        ],
+                                        margin: [40, 0]
+                                    }
+                                };
+                            },
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        }
+                    ],
+                    "responsive": true,
+                    "lengthChange": false,
+                    "autoWidth": false
+                });
+            });
+        </script>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">All Old Register Records</h3>
+                        </div>
+                        <div class="card-body">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Sr. No.</th>
+                                    <th>Record Serial No</th>
+                                    <th>Year</th>
+                                    <th>Details of Record</th>
+                                    <th>Type of Record</th>
+                                    <th>Rack No</th>
+                                    <th>Created Date</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="record, iterStat : ${records}">
+                                    <td th:text="${iterStat.index + 1}"></td>
+                                    <td th:text="${record.record_serial_no}"></td>
+                                    <td th:text="${record.year}"></td>
+                                    <td th:text="${record.details_of_record}"></td>
+                                    <td th:text="${record.types_of_record}"></td>
+                                    <td th:text="${record.rack_no}"></td>
+                                    <td th:text="${record.created_date}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

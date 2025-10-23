@@ -42,6 +42,8 @@ public class DashboardSnapshotService {
 
 
 
+
+
     @Scheduled(cron = "0 */30 * * * *")
     @Transactional
     public void saveTodaySnapshot() {
@@ -57,6 +59,9 @@ public class DashboardSnapshotService {
         snap.setTotalRti(dto.getTotal_rti());
         snap.setTotalBooks(dto.getTotal_books());
         snap.setTotalbooksOutstanding(dto.getTotal_books_outstanding());
+
+        snap.setTotalRegisters(dto.getTotalRegisters());
+        snap.setTotalRegistersOutstanding(dto.getTotalRegistersOutstanding());
         dashboardSnapshotRepository.save(snap);
     }
 

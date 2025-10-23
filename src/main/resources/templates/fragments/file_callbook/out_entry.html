@@ -99,6 +99,7 @@
                     <tr>
                       <th>DR Serial No</th>
                       <th>DR Year</th>
+                       <th>Call Book Serial No</th>
                       <th>Current Status</th>
                       <th>Closed Status</th>
                       <th>In Coming Date</th>
@@ -114,6 +115,7 @@
 
                       <td th:text="${record.new_drSerialNo}"></td>
                       <td th:text="${record.new_dr_year}"></td>
+                      <td th:text="${record.call_book_no}"></td>
 
                       <td th:text="${record.is_current} ? 'Current' : 'Old'"></td>
                       <td th:text="${record.closed_status} ? 'Closed' : 'Open'"></td>
@@ -148,6 +150,8 @@
                             th:text="${callbookdto.new_drSerialNo_d}"></span></p>
                     <p><strong>Current File Year:</strong> <span th:text="${callbookdto.new_dr_year_d}"></span>
                     </p><br>
+                      <p><strong>Call Book Serial No:</strong> <span th:text="${callbookdto.call_book_no}"></span>
+                      </p><br>
                   </div>
 
 
@@ -163,6 +167,7 @@
                     <!-- passing current reocrd ID for update-->
                     <input type="hidden" th:field="*{id}" />
                     <input type="hidden" th:field="*{unique_key}" />
+                      <input type="hidden" th:field="*{call_book_no}" />
 
 
 

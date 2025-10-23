@@ -190,6 +190,10 @@
                                         <!-- 6. Rack No -->
                                         <label for="rackNo">7. Rack No:</label>
                                         <input type="number" th:field="*{rack_no}" class="form-control"
+                                               id="rackNo" required/>
+
+                                        <label for="rackNo">7. Call Book Serial  No:</label>
+                                        <input type="number" th:field="*{call_book_no}" class="form-control"
                                                id="rackNo" required/><br/>
 
 
@@ -223,6 +227,7 @@
                                         <p><strong>Distribution Register Serial No:</strong> <span
                                                 th:text="${callbook.new_drSerialNo}"></span></p>
                                         <p><strong>Section :</strong> <span th:text="${callbook.new_dr_year}"></span>
+                                        <p><strong>Call Book Serial No :</strong> <span th:text="${callbook.call_book_no}"></span>
                                         </p><br>
                                     </div>
                                     <form th:object="${callbook}" method="post"

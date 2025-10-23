@@ -103,8 +103,12 @@ public class CallBookController {
             callBookFileOutgoingDTO.setId(callBook.get().getId());
             callBookFileOutgoingDTO.setNew_drSerialNo_d(callBook.get().getNew_drSerialNo());
             callBookFileOutgoingDTO.setNew_dr_year_d(callBook.get().getNew_dr_year());
+            callBookFileOutgoingDTO.setCall_book_no(callBook.get().getCall_book_no());
             callBookFileOutgoingDTO.setUnique_key(callBook.get().getUnique_key());
             callBookFileOutgoingDTO.setPossible_out_date(callBook.get().getPossible_out_date());
+
+            callBookFileOutgoingDTO.setCall_book_no(callBook.get().getCall_book_no());
+
 
             List<CallBook> records = callBookService.findByUniqueKey(callBook.get().getUnique_key());
             model.addAttribute("records", records);
@@ -138,6 +142,8 @@ public class CallBookController {
         callBook.setNew_dr_year(callBookFileOutgoingDTO.getNew_dr_year());
         callBook.setOld_drSerialNo(callBook_old.getNew_drSerialNo());
         callBook.setOld_dr_year(callBookFileOutgoingDTO.getNew_dr_year());
+
+        callBook.setCall_book_no(callBookFileOutgoingDTO.getCall_book_no());
         callBook.setSectionDealingHandName(callBookFileOutgoingDTO.getSectionDealingHandName());
         callBook.setSectionDealingHandPhoneNo(callBookFileOutgoingDTO.getSectionDealingHandPhoneNo());
         callBook.setRecordRoomDealingHandName(callBookFileOutgoingDTO.getRecordRoomDealingHandName());

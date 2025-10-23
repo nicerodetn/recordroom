@@ -33,6 +33,10 @@ public class DashboardSnapshot {
     private Long totalbooksOutstanding;
 
 
+    private Long totalRegisters;
+    private Long totalRegistersOutstanding;
+
+
     private LocalDate snapshotDate;
 
     @PrePersist

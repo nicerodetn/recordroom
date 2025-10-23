@@ -7,6 +7,8 @@ import com.recordroom.recordroom.closed.repo.RecordTransactionRepository;
 import com.recordroom.recordroom.closed.repo.SectionRepository;
 import com.recordroom.recordroom.library.repo.LibraryRepository;
 import com.recordroom.recordroom.library.repo.LibraryTransactionRepository;
+import com.recordroom.recordroom.oldregister.repo.OldRecordMasterRepository;
+import com.recordroom.recordroom.oldregister.repo.RegisterTransactionRepository;
 import com.recordroom.recordroom.reference.repo.ReferenceRepo;
 import com.recordroom.recordroom.rti.repo.RtiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,12 @@ public class DashboardService {
     @Autowired
     private LibraryTransactionRepository libraryTransactionRepository;
 
+    @Autowired
+    private OldRecordMasterRepository oldRecordMasterRepository;
+
+    @Autowired
+    private RegisterTransactionRepository registerTransactionRepository;
+
     public DashboardDTO getDashboardStats() {
         DashboardDTO dto = new DashboardDTO();
         // Example data fetching - adjust based on your actual queries
@@ -49,6 +57,10 @@ public class DashboardService {
 
         dto.setTotal_books(libraryRepository.count());
         dto.setTotal_books_outstanding(libraryTransactionRepository.count());
+
+        dto.setTotalRegisters(oldRecordMasterRepository.count());
+        dto.setTotalRegistersOutstanding(registerTransactionRepository.countActiveTransactions());
+
         return dto;
     }
 
