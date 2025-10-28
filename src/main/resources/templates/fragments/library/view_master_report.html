@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<!--
-  This fragment displays the master list of all books in the library.
-  The table header is always visible, and DataTables will show a "No data" message if the list is empty.
--->
 <div id="library-table-container" th:fragment="libraryTableFragment">
 
     <div class="my-5">
@@ -18,7 +14,6 @@
                             <h3 class="card-title">All Available Books</h3>
                         </div>
                         <div class="card-body">
-                            <!-- The table structure is now permanent. DataTables will handle the "no data" message itself. -->
                             <table id="libraryTable" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
@@ -33,18 +28,6 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <!-- This loop generates rows only if the 'libraries' list is not empty. -->
-                                <!-- If the list is empty, the tbody remains empty, and DataTables shows its default message. -->
-                                <tr th:each="library, iterStat : ${libraries}">
-                                    <td th:text="${iterStat.count}"></td>
-                                    <td th:text="${library.name_of_book}"></td>
-                                    <td th:text="${library.publication}"></td>
-                                    <td th:text="${library.description}"></td>
-                                    <td th:text="${library.book_serial_no}"></td>
-                                    <td th:text="${library.rack_no}"></td>
-                                    <td th:text="${#temporals.format(library.date_in, 'dd-MMM-yyyy')}"></td>
-                                    <td th:text="${library.remarks}"></td>
-                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -54,40 +37,131 @@
         </div>
     </div>
 
-    <script>
-        // Initialize DataTables with a simplified configuration for a professional look.
+    <script th:inline="javascript">
+
         $(function () {
-            $('#libraryTable').DataTable({
+
+
+            var g_table;
+
+
+            var ajaxUrl = /*[[@{/library/load_library_data}]]*/ '';
+
+            g_table = $('#libraryTable').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": ajaxUrl,
+                    "type": "POST",
+                    "contentType": "application/json",
+                    "data": function (d) {
+                        return JSON.stringify(d);
+                    }
+                },
+
+
+                "columns": [
+                    { "data": null, "searchable": false, "orderable": false },
+                    { "data": "name_of_book" },
+                    { "data": "publication" },
+                    { "data": "description" },
+                    { "data": "book_serial_no" },
+                    { "data": "rack_no" },
+                    { "data": "date_in" },
+                    { "data": "remarks" }
+                ],
+
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
                 "paging": true,
+                "pageLength": 100,
                 "searching": true,
-                "ordering": true,
+                "ordering": false,
                 "info": true,
-                dom: 'Bfrtip', // Required to show buttons
+                "destroy": true,
+                dom: 'Bfrtip',
                 buttons: [
-
                     {
                         extend: 'pdfHtml5',
                         text: 'Export PDF',
                         title: 'Library Book List',
+                        messageTop: 'Library Book List',
                         orientation: 'portrait',
                         pageSize: 'A4',
-                        exportOptions: {
-                            columns: ':visible'
-                        },
-                        customize: function (doc) {
 
-                            doc.styles.tableHeader.fillColor = '#343a40';
-                            doc.styles.tableHeader.color = 'white';
+
+                        customize: function (doc) {
                             doc.pageMargins = [40, 60, 40, 60];
+                            doc.defaultStyle.fontSize = 12;
+                            doc.styles.tableHeader.fillColor = '#4CAF50';
+                            doc.styles.tableHeader.color = 'white';
+                            doc.content[0].text = doc.content[0].text.toUpperCase();
+                            doc.content[0].alignment = 'center';
+                            doc.content[0].fontSize = 18;
+                            doc.content[0].margin = [0, 0, 0, 10];
+                            doc.footer = function(currentPage, pageCount) {
+                                return {
+                                    columns: [
+                                        'Library Book List',
+                                        {
+                                            text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
+                                            alignment: 'right',
+                                            margin: [0, 0, 20, 0]
+                                        }
+                                    ],
+                                    margin: [40, 0]
+                                }
+                            };
+                        },
+
+
+                        exportOptions: {
+                            columns: ':visible',
+                            format: {
+                                body: function ( data, row, col, node ) {
+
+                                    if (col === 0) {
+                                        return $(node).text();
+                                    }
+
+                                    return data;
+                                }
+                            }
                         }
                     }
-                ]
+                ],
+
+                "fnRowCallback": function(nRow, aData, iDisplayIndex) {
+                    // 1. Calculate Sr. No.
+                    var info = g_table.page.info();
+                    var page = info.page;
+                    var length = info.length;
+                    var index = (page * length) + (iDisplayIndex + 1);
+                    $('td:eq(0)', nRow).html(index);
+
+
+                    var dateIn = aData.date_in;
+                    if (dateIn) {
+                        try {
+                            var date = new Date(dateIn);
+                            var formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+                                              (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                                              date.getFullYear();
+                            $('td:eq(6)', nRow).html(formattedDate);
+                        } catch(e) {
+                             $('td:eq(6)', nRow).html(dateIn); // fallback
+                        }
+                    }
+                }
             });
+
+
+            var searchInput = $('#libraryTable_filter input[type="search"]');
+            searchInput.attr('type', 'number');
+            searchInput.attr('placeholder', 'Search by Serial No...');
+
         });
     </script>
 </div>
 </html>
-

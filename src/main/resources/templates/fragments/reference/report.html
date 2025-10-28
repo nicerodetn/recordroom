@@ -3,78 +3,186 @@
 
 <div id="b-homedb" th:fragment="tabler">
     <div class="my-5">
-
-
         <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Reference File Report</h3>
 
-        <script>
-            $(function () {
-              $('#example1').DataTable({
-          dom: 'Bfrtip',   // Required to show buttons
-          buttons: [
-              {
-                  extend: 'pdfHtml5',
-                  orientation: 'landscape',
-                  text: 'Export PDF',
-                  title: 'Reference File Report',   // Custom PDF title
-                  messageTop: 'Reference File Report',
+        <script th:inline="javascript">
 
-                  // Customize the PDF layout and styles
-                  customize: function (doc) {
-                      // Set page margins
-                      doc.pageMargins = [40, 60, 40, 60];
 
-                      // Change the default font size
-                      doc.defaultStyle.fontSize = 12;
+            var g_fileTypes = /*[[${fileTypes}]]*/ {};
+            var g_table;
 
-                      // Style the table header
-                      doc.styles.tableHeader.fillColor = '#4CAF50';   // Green background for header
-                      doc.styles.tableHeader.color = 'white';         // White text for header
 
-                      // Modify content
-                      // For example, make the title bold and center it
-                      doc.content[0].text = doc.content[0].text.toUpperCase();
-                      doc.content[0].alignment = 'center';
-                      doc.content[0].fontSize = 18;
-                      doc.content[0].margin = [0, 0, 0, 10];
+            function initializeDataTable(selectedType) {
 
-                      // Add a footer
-                      doc.footer = function(currentPage, pageCount) {
-                          return {
-                              columns: [
-                                  'Left footer text',
-                                  {
-                                      text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
-                                      alignment: 'right',
-                                      margin: [0, 0, 20, 0]
-                                  }
-                              ],
-                              margin: [40, 0]
-                          }
-                      };
-                      // You can also manipulate the table layout here if needed
-                  },
+                var ajaxUrl = /*[[@{/reference/load_reference_data}]]*/ '';
+                if (selectedType) {
+                    ajaxUrl += '?fileType=' + selectedType;
+                }
 
-                  // Export only visible columns or all
-                  exportOptions: {
-                      columns: ':visible'
-                  }
-              }
-          ],
-          // Other DataTable options ...
-      });
+                g_table = $('#example1').DataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": ajaxUrl,
+                        "type": "POST",
+                        "contentType": "application/json",
+                        "data": function (d) {
+                            return JSON.stringify(d);
+                        }
+                    },
 
+
+                    "columns": [
+                        { "data": null, "searchable": false, "orderable": false },
+                        { "data": "type" },
+                        { "data": "serialNo" },
+                        { "data": "description" },
+                        { "data": "serial_no_user" },
+                        { "data": "file_year" },
+                        { "data": "out_sectionDealingHandName" },
+                        { "data": "out_sectionDealingHandPhoneNo" },
+                        { "data": "created_date" }
+                    ],
+
+                    dom: 'lBfrtip',
+                    buttons: [
+                        {
+                            extend: 'pdfHtml5',
+                            text: 'Export PDF',
+                            title: 'Reference File Report',
+                            messageTop: 'Reference File Report',
+                            orientation: 'landscape',
+
+
+                            customize: function (doc) {
+                                doc.pageMargins = [40, 60, 40, 60];
+                                doc.defaultStyle.fontSize = 12;
+                                doc.styles.tableHeader.fillColor = '#4CAF50';
+                                doc.styles.tableHeader.color = 'white';
+                                doc.content[0].text = doc.content[0].text.toUpperCase();
+                                doc.content[0].alignment = 'center';
+                                doc.content[0].fontSize = 18;
+                                doc.content[0].margin = [0, 0, 0, 10];
+                                doc.footer = function(currentPage, pageCount) {
+                                    return {
+                                        columns: [
+                                            'Reference File Report',
+                                            {
+                                                text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
+                                                alignment: 'right',
+                                                margin: [0, 0, 20, 0]
+                                            }
+                                        ],
+                                        margin: [40, 0]
+                                    }
+                                };
+                            },
+
+
+                            exportOptions: {
+                                columns: ':visible',
+                                format: {
+                                    body: function ( data, row, col, node ) {
+
+
+                                        if (col === 0 || col === 1) {
+                                            return $(node).text();
+                                        }
+
+                                        return data;
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "responsive": true,
+                    "lengthChange": false,
+                    "pageLength": 100,
+                    "ordering": false,
+                    "autoWidth": false,
+                    "destroy": true,
+
+                    "fnRowCallback": function(nRow, aData, iDisplayIndex) {
+
+                        var info = g_table.page.info();
+                        var page = info.page;
+                        var length = info.length;
+                        var index = (page * length) + (iDisplayIndex + 1);
+                        $('td:eq(0)', nRow).html(index);
+
+
+                        var fileTypeInt = aData.type;
+                        $('td:eq(1)', nRow).html(g_fileTypes[fileTypeInt] || 'N/A');
+                    }
+                });
+
+
+                var filterHtml = `
+                    <div class="d-inline-flex align-items-center" style="margin-right: 15px;">
+                        <label for="fileTypeFilter" class="mr-3 mb-0">Filter by File Type:</label>
+                        <select name="fileType" id="fileTypeFilter" class="form-control form-control-sm" style="width: auto;">
+                            <option value="">-- All Types --</option>
+                        </select>
+                        <a href="#" id="clearFilter" class="btn btn-secondary btn-sm ml-2">Clear</a>
+                    </div>
+                `;
+
+
+                if ($('#fileTypeFilter').length === 0) {
+                    $('#example1_filter').prepend(filterHtml);
+                }
+
+
+                var $select = $('#fileTypeFilter');
+
+                $select.find('option:gt(0)').remove();
+                Object.keys(g_fileTypes).forEach(function(key) {
+                    var value = g_fileTypes[key];
+                    var $option = $('<option></option>').attr('value', key).text(value);
+                    $select.append($option);
+                });
+
+
+                if (selectedType) {
+                    $select.val(selectedType);
+                } else {
+                    $select.val('');
+                }
+
+
+                $('#example1_filter input[type="search"]')
+                    .attr('type', 'number')
+                    .attr('placeholder', 'Search by Serial No...');
+            }
+
+
+
+
+            $(document).ready(function () {
+                var initialSelectedType = /*[[${selectedType}]]*/ null;
+                initializeDataTable(initialSelectedType);
             });
+
+
+            $(document).on('change', '#fileTypeFilter', function() {
+                var selectedType = $(this).val();
+                g_table.destroy();
+                initializeDataTable(selectedType);
+            });
+
+
+            $(document).on('click', '#clearFilter', function(e) {
+                e.preventDefault();
+                g_table.destroy();
+                initializeDataTable(null);
+            });
+
         </script>
 
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title"></h3>
-                        </div>
-                        <!-- /.card-header -->
                         <div class="card-body">
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
@@ -82,43 +190,33 @@
                                     <th>Sr. No.</th>
                                     <th>File Type</th>
                                     <th>Serial No</th>
-
                                     <th>File Description</th>
                                     <th>File Serial No</th>
                                     <th>File Year</th>
-
                                     <th>Section Dealing Hand Name</th>
                                     <th>Section Dealing Phone No</th>
                                     <th>Out Ward Date</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="record, iterStat : ${reference}">
+                                <tr th:each="ref, iterStat : ${references}">
                                     <td th:text="${iterStat.index + 1}"></td>
-                                    <td th:text="${record.typeee}"></td>
-                                    <td th:text="${record.serialNo}"></td>
-
-                                    <td th:text="${record.description}"></td>
-                                    <td th:text="${record.serial_no_user}"></td>
-                                    <td th:text="${record.file_year}"></td>
-
-                                    <td th:text="${record.out_sectionDealingHandName}"></td>
-                                    <td th:text="${record.out_sectionDealingHandPhoneNo}"></td>
-                                    <td th:text="${#temporals.format(record.created_date, 'dd-MM-yyyy')}"></td>
+                                    <td th:text="${ref.type}"></td>
+                                    <td th:text="${ref.serialNo}"></td>
+                                    <td th:text="${ref.description}"></td>
+                                    <td th:text="${ref.serial_no_user}"></td>
+                                    <td th:text="${ref.file_year}"></td>
+                                    <td th:text="${ref.out_sectionDealingHandName}"></td>
+                                    <td th:text="${ref.out_sectionDealingHandPhoneNo}"></td>
+                                    <td th:text="${ref.created_date}"></td>
                                 </tr>
                                 </tbody>
                             </table>
-
                         </div>
-                        <!-- /.card-body -->
                     </div>
-                    <!-- /.card -->
                 </div>
-                <!-- /.col -->
             </div>
-            <!-- /.row -->
         </div>
-
     </div>
 </div>
 </html>

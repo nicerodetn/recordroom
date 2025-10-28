@@ -2,69 +2,215 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <div id="b-homedb"  th:fragment="tabler">
-
     <div class="my-5" >
         <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Master File's List </h3>
-        <script>
-            $(function () {
-              $('#example1').DataTable({
-          dom: 'Bfrtip',   // Required to show buttons
-          buttons: [
-              {
-                  extend: 'pdfHtml5',
-                  text: 'Export PDF',
-                  title: 'Closed Files List',   // Custom PDF title
-                  messageTop: 'Master Files List',
-                  orientation: 'landscape',
 
-                  // Customize the PDF layout and styles
-                  customize: function (doc) {
-                      // Set page margins
-                      doc.pageMargins = [40, 60, 40, 60];
+        <script th:inline="javascript">
 
-                      // Change the default font size
-                      doc.defaultStyle.fontSize = 12;
+            var g_categories = /*[[${categories}]]*/ [];
+            var g_table;
 
-                      // Style the table header
-                      doc.styles.tableHeader.fillColor = '#4CAF50';   // Green background for header
-                      doc.styles.tableHeader.color = 'white';         // White text for header
 
-                      // Modify content
-                      // For example, make the title bold and center it
-                      doc.content[0].text = doc.content[0].text.toUpperCase();
-                      doc.content[0].alignment = 'center';
-                      doc.content[0].fontSize = 18;
-                      doc.content[0].margin = [0, 0, 0, 10];
+            function initializeDataTable(selectedCategory) {
 
-                      // Add a footer
-                      doc.footer = function(currentPage, pageCount) {
-                          return {
-                              columns: [
-                                  'Left footer text',
-                                  {
-                                      text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
-                                      alignment: 'right',
-                                      margin: [0, 0, 20, 0]
-                                  }
-                              ],
-                              margin: [40, 0]
-                          }
-                      };
-                      // You can also manipulate the table layout here if needed
-                  },
 
-                  // Export only visible columns or all
-                  exportOptions: {
-                      columns: ':visible'
-                  }
-              }
-          ],
-          // Other DataTable options ...
-      });
+                var ajaxUrl = /*[[@{/circulation/load_master_data}]]*/ '';
 
+
+                if (selectedCategory) {
+                    ajaxUrl += '?sectionCategory=' + selectedCategory;
+                }
+
+                g_table = $('#example1').DataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": ajaxUrl,
+                        "type": "POST",
+                        "contentType": "application/json",
+                        "data": function (d) {
+                            return JSON.stringify(d);
+                        }
+                    },
+
+
+                    "columns": [
+                        { "data": null, "searchable": false, "orderable": false },
+                        { "data": "fileType" },
+                        { "data": "drSerialNo" },
+                        { "data": "dr_year" },
+                        { "data": "section" },
+                        { "data": "total_volume" },
+                        { "data": "total_pages" },
+                        { "data": "fileClosingDate" },
+                        { "data": "handingOverDate" },
+                        { "data": "remarks" },
+                        { "data": "sectionDealingHandName" },
+                        { "data": "sectionDealingHandPhoneNo" },
+                        { "data": "recordRoomDealingHandName" }
+                    ],
+
+                    dom: 'lBfrtip',
+                    buttons: [
+                        {
+                            extend: 'pdfHtml5',
+                            orientation: 'landscape',
+                            text: 'Export PDF',
+                            title: 'Master File Report',
+                            messageTop: 'Master File Report',
+
+
+                            customize: function (doc) {
+                                doc.pageMargins = [40, 60, 40, 60];
+                                doc.defaultStyle.fontSize = 12;
+                                doc.styles.tableHeader.fillColor = '#4CAF50';
+                                doc.styles.tableHeader.color = 'white';
+                                doc.content[0].text = doc.content[0].text.toUpperCase();
+                                doc.content[0].alignment = 'center';
+                                doc.content[0].fontSize = 18;
+                                doc.content[0].margin = [0, 0, 0, 10];
+                                doc.footer = function(currentPage, pageCount) {
+                                    return {
+                                        columns: [
+                                            'Left footer text',
+                                            {
+                                                text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
+                                                alignment: 'right',
+                                                margin: [0, 0, 20, 0]
+                                            }
+                                        ],
+                                        margin: [40, 0]
+                                    }
+                                };
+                            },
+
+
+                            exportOptions: {
+                                columns: ':visible',
+                                format: {
+                                    body: function ( data, row, col, node ) {
+                                        // For the first column (Sr. No.), get the rendered text
+                                        if (col === 0) {
+                                            return $(node).text();
+                                        }
+                                        // For all other columns, return the original data
+                                        return data;
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "responsive": true,
+                    "lengthChange": false,
+                    "pageLength": 100,
+                    "autoWidth": false,
+                    "ordering": false,
+                    "searching": true,
+                    "destroy": true,
+
+                    "fnRowCallback": function(nRow, aData, iDisplayIndex) {
+                        // 1. Calculate Sr. No.
+                        var info = g_table.page.info();
+                        var page = info.page;
+                        var length = info.length;
+                        var index = (page * length) + (iDisplayIndex + 1);
+                        $('td:eq(0)', nRow).html(index);
+
+                        // 2. Format Dates (fileClosingDate at index 7)
+                        var closingDate = aData.fileClosingDate;
+                        if (closingDate) {
+                            try {
+                                var date = new Date(closingDate);
+                                var formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+                                                  (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                                                  date.getFullYear();
+                                $('td:eq(7)', nRow).html(formattedDate);
+                            } catch(e) {
+                                 $('td:eq(7)', nRow).html(closingDate);
+                            }
+                        }
+
+                        // 3. Format Handing Over Date (index 8)
+                        var handingDate = aData.handingOverDate;
+                        if (handingDate) {
+                            try {
+                                var date = new Date(handingDate);
+                                var formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+                                                  (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                                                  date.getFullYear();
+                                $('td:eq(8)', nRow).html(formattedDate);
+                            } catch(e) {
+                                 $('td:eq(8)', nRow).html(handingDate);
+                            }
+                        }
+                    },
+
+                    "initComplete": function () {
+                        // Create filter HTML
+                        var filterHtml = `
+                            <div class="d-inline-flex align-items-center" style="margin-right: 15px;">
+                                <label for="sectionFilter" class="mr-3 mb-0">Filter by Section:</label>
+                                <select name="sectionCategory" id="sectionFilter" class="form-control form-control-sm" style="width: auto;">
+                                    <option value="">ALL</option>
+                                </select>
+                                <a href="#" id="clearFilter" class="btn btn-secondary btn-sm ml-2">Clear</a>
+                            </div>
+                        `;
+
+                        //  filter to page
+                        if ($('#sectionFilter').length === 0) {
+                            $('#example1_filter').prepend(filterHtml);
+                        }
+
+                        //filter dropdown
+                        var $select = $('#sectionFilter');
+                        $select.find('option:gt(0)').remove();
+                        g_categories.forEach(function(category) {
+                            var $option = $('<option></option>')
+                                .attr('value', category)
+                                .text(category);
+                            $select.append($option);
+                        });
+
+
+                        if (selectedCategory) {
+                            $select.val(selectedCategory);
+                        } else {
+                            $select.val('');
+                        }
+
+
+                        var searchInput = $('#example1_filter input[type="search"]');
+                        searchInput.attr('type', 'number');
+                        searchInput.attr('placeholder', 'Search by DR Serial No...');
+                    }
+
+                });
+            }
+
+            // --- EVENT HANDLERS ---
+
+            // 1. Initialize on page load
+            $(document).ready(function () {
+                var initialSelectedCategory = /*[[${selectedCategory}]]*/ null;
+                initializeDataTable(initialSelectedCategory);
             });
-        </script>
 
+            // 2. Handle dropdown change
+            $(document).on('change', '#sectionFilter', function() {
+                var selectedCategory = $(this).val();
+                g_table.destroy();
+                initializeDataTable(selectedCategory);
+            });
+
+            // 3. Handle clear button
+            $(document).on('click', '#clearFilter', function(e) {
+                e.preventDefault();
+                g_table.destroy();
+                initializeDataTable(null);
+            });
+
+        </script>
 
         <div class="container-fluid">
             <div class="row">
@@ -73,7 +219,6 @@
                         <div class="card-header">
                             <h3 class="card-title"></h3>
                         </div>
-                        <!-- /.card-header -->
                         <div class="card-body">
                             <table id="example1" class="table table-bordered table-striped">
                                 <thead>
@@ -81,50 +226,25 @@
                                     <th>Sr. No.</th>
                                     <th>File Type (Year's)</th>
                                     <th>DR Serial No</th>
+                                    <th>DR Year</th>
                                     <th>Section</th>
                                     <th>Volumes</th>
                                     <th>Pages</th>
-
                                     <th>File Closing Date</th>
                                     <th>Handing Over Date</th>
                                     <th>Remarks</th>
-
                                     <th>Section Dealing Hand Name</th>
                                     <th>Section Dealing Hand Phone No</th>
                                     <th>Record Room Dealing Hand Name</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-
-                                <tr th:each="record, iterStat : ${records}">
-                                    <td th:text="${iterStat.index + 1}"></td>
-                                    <td th:text="${record.fileType}"></td>
-                                    <td th:text="${record.drSerialNo}"></td>
-                                    <td th:text="${record.section}"></td>
-
-                                    <td th:text="${record.total_volume}"></td>
-                                    <td th:text="${record.total_pages}"></td>
-
-
-
-                                    <td th:text="${record.fileClosingDate}"></td>
-                                    <td th:text="${record.handingOverDate}"></td>
-                                    <td th:text="${record.remarks}"></td>
-
-                                    <td th:text="${record.sectionDealingHandName}"></td>
-                                    <td th:text="${record.sectionDealingHandPhoneNo}"></td>
-                                    <td th:text="${record.recordRoomDealingHandName}"></td>
-                                </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <!-- /.card-body -->
                     </div>
-                    <!-- /.card -->
                 </div>
-                <!-- /.col -->
             </div>
-            <!-- /.row -->
         </div>
 
     </div>

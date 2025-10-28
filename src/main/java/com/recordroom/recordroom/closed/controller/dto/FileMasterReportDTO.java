@@ -15,6 +15,7 @@ public class FileMasterReportDTO {
 
     private Integer fileType;
     private Long drSerialNo;
+    private Integer dr_year;
     private String section;
     private LocalDate fileClosingDate;
     private LocalDate handingOverDate;

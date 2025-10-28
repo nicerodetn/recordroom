@@ -2,12 +2,15 @@ package com.recordroom.recordroom.callbook.controller;
 
 import com.recordroom.recordroom.callbook.entity.CallBook;
 import com.recordroom.recordroom.callbook.service.CallBookService;
+import com.recordroom.recordroom.dto.DataTableRequest;
+import com.recordroom.recordroom.dto.DataTableResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +21,7 @@ public class CallBookController {
 
     @Autowired
     private CallBookService callBookService;
+
 
     @GetMapping("/call_book_in_entry")
     public String fileInEntryLoadForm(Model model) {
@@ -33,9 +37,26 @@ public class CallBookController {
 
     @GetMapping("/call_book_view")
     public String fileViewMaster(Model model) {
-        model.addAttribute("callbook",callBookService.findByActive());
+
         return "fragments/file_callbook/out_entry_report :: tabler";
     }
+
+
+    @PostMapping("/load_callbook_data")
+    @ResponseBody
+    public DataTableResponse<CallBook> loadCallBookData(@RequestBody DataTableRequest request) {
+
+        Page<CallBook> page = callBookService.findByFilters(request);
+
+        DataTableResponse<CallBook> response = new DataTableResponse<>();
+        response.setDraw(request.getDraw());
+        response.setRecordsTotal(page.getTotalElements());
+        response.setRecordsFiltered(page.getTotalElements());
+        response.setData(page.getContent());
+
+        return response;
+    }
+
 
 
 
@@ -90,15 +111,12 @@ public class CallBookController {
         return "fragments/file_callbook/in_entry :: searchrecord";
     }
 
-
-
     @GetMapping("/searchForOutWardEntry")
     public String searchForFileAvailabilityAlreadyOutWard(@RequestParam String new_drSerialNo, @RequestParam String new_dr_year, Model model) {
 
         Optional<CallBook> callBook = callBookService.findBydrSerialNoAndYear(Integer.parseInt(new_drSerialNo),Integer.parseInt(new_dr_year));
 
         if(callBook.isPresent()){
-
             CallBookFileOutgoingDTO callBookFileOutgoingDTO = new CallBookFileOutgoingDTO();
             callBookFileOutgoingDTO.setId(callBook.get().getId());
             callBookFileOutgoingDTO.setNew_drSerialNo_d(callBook.get().getNew_drSerialNo());
@@ -106,16 +124,13 @@ public class CallBookController {
             callBookFileOutgoingDTO.setCall_book_no(callBook.get().getCall_book_no());
             callBookFileOutgoingDTO.setUnique_key(callBook.get().getUnique_key());
             callBookFileOutgoingDTO.setPossible_out_date(callBook.get().getPossible_out_date());
-
             callBookFileOutgoingDTO.setCall_book_no(callBook.get().getCall_book_no());
-
 
             List<CallBook> records = callBookService.findByUniqueKey(callBook.get().getUnique_key());
             model.addAttribute("records", records);
             model.addAttribute("callbookdto",callBookFileOutgoingDTO);
             return "fragments/file_callbook/out_entry :: updateform";
         }
-
         else {
             model.addAttribute("successMessage", "✅ SomeThing Went Wrong!");
             return "fragments/file_callbook/out_entry :: searchrecord";
@@ -125,7 +140,6 @@ public class CallBookController {
     @PostMapping("/saveAndUpdateOutWardEntry")
     public String saveCallBookOutWardEntry(@ModelAttribute CallBookFileOutgoingDTO callBookFileOutgoingDTO, Model model) {
 
-        // update current Record and close
         Optional<CallBook> callBook_current = callBookService.findById(callBookFileOutgoingDTO.getId());
         CallBook callBook_old= callBook_current.get();
         callBook_old.setIs_current(false);
@@ -134,15 +148,12 @@ public class CallBookController {
         callBook_old.setOut_going_date(new Date());
         callBookService.updateRecord(callBook_old);
 
-
-        // create new record and Open
         CallBook callBook = new CallBook();
         callBook.setPossible_out_date(callBookFileOutgoingDTO.getPossible_out_date());
         callBook.setNew_drSerialNo(callBookFileOutgoingDTO.getNew_drSerialNo());
         callBook.setNew_dr_year(callBookFileOutgoingDTO.getNew_dr_year());
         callBook.setOld_drSerialNo(callBook_old.getNew_drSerialNo());
         callBook.setOld_dr_year(callBookFileOutgoingDTO.getNew_dr_year());
-
         callBook.setCall_book_no(callBookFileOutgoingDTO.getCall_book_no());
         callBook.setSectionDealingHandName(callBookFileOutgoingDTO.getSectionDealingHandName());
         callBook.setSectionDealingHandPhoneNo(callBookFileOutgoingDTO.getSectionDealingHandPhoneNo());
@@ -155,12 +166,8 @@ public class CallBookController {
         callBook.setRack_no(callBookFileOutgoingDTO.getRack_no());
         callBook.setOut_going_date(new Date());
 
-
         callBookService.saveRecord(callBook);
         model.addAttribute("successMessage", "✅ Record saved successfully!.Take File");
         return "fragments/file_callbook/in_entry :: searchrecord";
     }
-
-
-
 }

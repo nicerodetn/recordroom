@@ -1,10 +1,6 @@
 package com.recordroom.recordroom.reference.controller;
 
 
-import com.recordroom.recordroom.closed.controller.dto.FileMasterReportDTO;
-import com.recordroom.recordroom.closed.controller.dto.FileOutgoingDTO;
-import com.recordroom.recordroom.closed.entity.FileRecord;
-import com.recordroom.recordroom.closed.entity.RecordTransactionDetails;
 import com.recordroom.recordroom.closed.service.RecordService;
 import com.recordroom.recordroom.reference.entity.Reference;
 import com.recordroom.recordroom.reference.entity.ReferenceDTO;
@@ -13,10 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
+import com.recordroom.recordroom.dto.DataTableRequest;
+import com.recordroom.recordroom.dto.DataTableResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.Map;
+
+
 
 @Controller
 @RequestMapping("/reference")
@@ -82,47 +84,35 @@ public class ReferenceController {
         return "fragments/reference/in_entry :: searchrecord";
     }
 
-
     @GetMapping("/masterReport")
     public String masterReport(Model model) {
-        List<Reference> records = referenceService.allListActive();
+        // Create the file types map for the dropdown
+        Map<Integer, String> fileTypes = new HashMap<>();
+        fileTypes.put(1, "DR");
+        fileTypes.put(2, "PR");
+        fileTypes.put(3, "Files");
+        fileTypes.put(4, "Others");
 
-        List<ReferenceDTO> referenceDTOList = records.stream().map(record -> {
-            ReferenceDTO dto = new ReferenceDTO();
-
-            dto.setSerialNo(record.getSerialNo());
-            dto.setOut_sectionDealingHandName(record.getOut_sectionDealingHandName());
-            dto.setOut_sectionDealingHandPhoneNo(record.getOut_sectionDealingHandPhoneNo());
-            dto.setCreated_date(record.getCreated_date());
-
-            dto.setDescription(record.getDescription());
-            dto.setSerial_no_user(record.getSerial_no_user());
-            dto.setFile_year(record.getFile_year());
-
-            if (record.getType()==1)
-            {
-                dto.setTypeee("DR");
-            }
-            if (record.getType()==2)
-            {
-                dto.setTypeee("PR");
-            }
-            if (record.getType()==3)
-            {
-                dto.setTypeee("Files");
-            }
-            if (record.getType()==4)
-            {
-                dto.setTypeee("Others");
-            }
-
-            return dto;
-
-        }).collect(Collectors.toList());
-
-        model.addAttribute("reference", referenceDTOList);
-        return "fragments/reference/report :: tabler"; // Thymeleaf template name for testing
+        model.addAttribute("fileTypes", fileTypes);
+        return "fragments/reference/report :: tabler";
     }
 
+
+    @PostMapping("/load_reference_data")
+    @ResponseBody
+    public DataTableResponse<Reference> loadReferenceData(
+            @RequestBody DataTableRequest request,
+            @RequestParam(name = "fileType", required = false) Integer fileType
+    ) {
+        Page<Reference> page = referenceService.findByFilters(request, fileType);
+
+        DataTableResponse<Reference> response = new DataTableResponse<>();
+        response.setDraw(request.getDraw());
+        response.setRecordsTotal(page.getTotalElements());
+        response.setRecordsFiltered(page.getTotalElements());
+        response.setData(page.getContent());
+
+        return response;
+    }
 
 }
