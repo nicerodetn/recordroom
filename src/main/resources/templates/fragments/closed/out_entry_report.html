@@ -3,66 +3,121 @@
 
 <div id="b-homedb" th:fragment="tabler">
     <div class="my-5">
+        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Outstanding File Report</h3>
 
-
-        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Out Ward Pending Files's</h3>
-
-        <script>
+        <script th:inline="javascript">
             $(function () {
-              $('#example1').DataTable({
-          dom: 'Bfrtip',   // Required to show buttons
-          buttons: [
-              {
-                  extend: 'pdfHtml5',
-                  text: 'Export PDF',
-                  title: 'Out Ward Files List',   // Custom PDF title
-                  messageTop: 'Record Room Out Ward Files List',
+                var g_table;
+                var ajaxUrl = /*[[@{/circulation/load_outward_data}]]*/ '';
 
-                  // Customize the PDF layout and styles
-                  customize: function (doc) {
-                      // Set page margins
-                      doc.pageMargins = [40, 60, 40, 60];
+                g_table = $('#outwardReportTable').DataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": ajaxUrl,
+                        "type": "POST",
+                        "contentType": "application/json",
+                        "data": function (d) {
+                            return JSON.stringify(d);
+                        }
+                    },
+                    "columns": [
+                        { "data": null, "searchable": false, "orderable": false },
+                        { "data": "drSerialNo" },
+                        { "data": "dr_year" },
+                        { "data": "section" },
+                        { "data": "dateOfFileOutgoing" },
+                        { "data": "purposeOfTakingFile" },
+                        { "data": "sectionDealingHandName" },
+                        { "data": "sectionDealingHandPhoneNo" },
+                        { "data": "recordRoomDealingHandName" }
+                    ],
+                    dom: 'lBfrtip',
+                    buttons: [
+                        {
+                            extend: 'pdfHtml5',
+                            text: 'Export PDF',
+                            title: 'Outstanding File Report',
+                            messageTop: 'Outstanding File Report',
+                            orientation: 'landscape',
 
-                      // Change the default font size
-                      doc.defaultStyle.fontSize = 12;
 
-                      // Style the table header
-                      doc.styles.tableHeader.fillColor = '#4CAF50';   // Green background for header
-                      doc.styles.tableHeader.color = 'white';         // White text for header
+                            customize: function (doc) {
+                                doc.pageMargins = [40, 60, 40, 60];
+                                doc.defaultStyle.fontSize = 12;
+                                doc.styles.tableHeader.fillColor = '#4CAF50';
+                                doc.styles.tableHeader.color = 'white';
+                                doc.content[0].text = doc.content[0].text.toUpperCase();
+                                doc.content[0].alignment = 'center';
+                                doc.content[0].fontSize = 18;
+                                doc.content[0].margin = [0, 0, 0, 10];
+                                doc.footer = function(currentPage, pageCount) {
+                                    return {
+                                        columns: [
+                                            'Outstanding Files',
+                                            {
+                                                text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
+                                                alignment: 'right',
+                                                margin: [0, 0, 20, 0]
+                                            }
+                                        ],
+                                        margin: [40, 0]
+                                    }
+                                };
+                            },
 
-                      // Modify content
-                      // For example, make the title bold and center it
-                      doc.content[0].text = doc.content[0].text.toUpperCase();
-                      doc.content[0].alignment = 'center';
-                      doc.content[0].fontSize = 18;
-                      doc.content[0].margin = [0, 0, 0, 10];
 
-                      // Add a footer
-                      doc.footer = function(currentPage, pageCount) {
-                          return {
-                              columns: [
-                                  'Left footer text',
-                                  {
-                                      text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
-                                      alignment: 'right',
-                                      margin: [0, 0, 20, 0]
-                                  }
-                              ],
-                              margin: [40, 0]
-                          }
-                      };
-                      // You can also manipulate the table layout here if needed
-                  },
+                            exportOptions: {
+                                columns: ':visible',
+                                format: {
+                                    body: function ( data, row, col, node ) {
 
-                  // Export only visible columns or all
-                  exportOptions: {
-                      columns: ':visible'
-                  }
-              }
-          ],
-          // Other DataTable options ...
-      });
+                                        if (col === 0) {
+                                            return $(node).text();
+                                        }
 
+                                        return data;
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "responsive": true,
+                    "lengthChange": false,
+                    "pageLength": 100,
+                    "autoWidth": false,
+                    "ordering": false,
+                    "searching": true,
+                    "destroy": true,
+
+                    "fnRowCallback": function(nRow, aData, iDisplayIndex) {
+                        // 1. Calculate Sr. No.
+                        var info = g_table.page.info();
+                        var page = info.page;
+                        var length = info.length;
+                        var index = (page * length) + (iDisplayIndex + 1);
+                        $('td:eq(0)', nRow).html(index);
+
+                        // 2. Format Date (index 4)
+                        var dateOut = aData.dateOfFileOutgoing;
+                        if (dateOut) {
+                            try {
+                                var date = new Date(dateOut);
+                                var formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+                                                  (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                                                  date.getFullYear();
+                                $('td:eq(4)', nRow).html(formattedDate);
+                            } catch(e) {
+                                 $('td:eq(4)', nRow).html(dateOut);
+                            }
+                        }
+                    }
+                });
+
+
+                var searchInput = $('#outwardReportTable_filter input[type="search"]');
+                searchInput.attr('type', 'number');
+                searchInput.attr('placeholder', 'Search by DR Serial No...');
             });
         </script>
 
@@ -70,50 +125,29 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title"></h3>
-                        </div>
-                        <!-- /.card-header -->
                         <div class="card-body">
-                            <table id="example1" class="table table-bordered table-striped">
+                            <table id="outwardReportTable" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
                                     <th>Sr. No.</th>
                                     <th>DR Serial No</th>
-                                    <th>DR year</th>
+                                    <th>DR Year</th>
                                     <th>Section</th>
-                                    <th>Date of File Outgoing</th>
-                                    <th>Purpose of Taking File</th>
-                                    <th>Section Dealing Hand Name</th>
-                                    <th>Section Dealing Hand Phone No</th>
-                                    <th>Record Room Dealing Hand Name</th>
+                                    <th>Date of Outgoing</th>
+                                    <th>Purpose</th>
+                                    <th>Section Hand Name</th>
+                                    <th>Section Hand Phone</th>
+                                    <th>Record Room Hand Name</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="record, iterStat : ${records}">
-                                    <td th:text="${iterStat.index + 1}"></td>
-                                    <td th:text="${record.drSerialNo}"></td>
-                                    <td th:text="${record.dr_year}"></td>
-                                    <td th:text="${record.section}"></td>
-
-                                    <td th:text="${record.dateOfFileOutgoing}"></td>
-                                    <td th:text="${record.purposeOfTakingFile}"></td>
-                                    <td th:text="${record.sectionDealingHandName}"></td>
-                                    <td th:text="${record.sectionDealingHandPhoneNo}"></td>
-                                    <td th:text="${record.recordRoomDealingHandName}"></td>
-                                 </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <!-- /.card-body -->
                     </div>
-                    <!-- /.card -->
                 </div>
-                <!-- /.col -->
             </div>
-            <!-- /.row -->
         </div>
-
     </div>
 </div>
 </html>

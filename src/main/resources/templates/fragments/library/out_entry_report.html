@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<!--
-  This fragment displays a report of all outstanding (checked out) books.
-  The table header is always visible, and DataTables will show a "No data" message if the list is empty.
--->
 <div id="outstanding-books-container" th:fragment="outstandingBooksFragment">
 
     <div class="my-5">
@@ -18,7 +14,6 @@
                             <h3 class="card-title">All Books Currently Checked Out</h3>
                         </div>
                         <div class="card-body">
-                            <!-- The table structure is now permanent. DataTables will handle the "no data" message. -->
                             <table id="outstandingTable" class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
@@ -31,16 +26,6 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <!-- The loop will generate rows only if the 'outstandingBooks' list is not empty. -->
-                                <!-- If the list is empty, this tbody will be empty, and DataTables will show its default message. -->
-                                <tr th:each="transaction : ${outstandingBooks}">
-                                    <td th:text="${transaction.library.book_serial_no}"></td>
-                                    <td th:text="${transaction.book_name}"></td>
-                                    <td th:text="${#temporals.format(transaction.date_of_taking, 'dd-MMM-yyyy')}"></td>
-                                    <td th:text="${transaction.purpose_of_taking}"></td>
-                                    <td th:text="${transaction.nameOfStaffTaking}"></td>
-                                    <td th:text="${transaction.ph_no_of_staff_taking}"></td>
-                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -50,40 +35,107 @@
         </div>
     </div>
 
-    <script>
-        // Initialize DataTables with a simplified configuration.
+    <script th:inline="javascript">
+
         $(function () {
-            $('#outstandingTable').DataTable({
+
+            var g_table;
+            var ajaxUrl = /*[[@{/library/load_outstanding_data}]]*/ '';
+
+            g_table = $('#outstandingTable').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": ajaxUrl,
+                    "type": "POST",
+                    "contentType": "application/json",
+                    "data": function (d) {
+                        return JSON.stringify(d);
+                    }
+                },
+
+
+                "columns": [
+                    { "data": "library.book_serial_no", "searchable": false, "orderable": false },
+                    { "data": "book_name", "searchable": false, "orderable": false },
+                    { "data": "date_of_taking", "searchable": false, "orderable": false },
+                    { "data": "purpose_of_taking", "searchable": false, "orderable": false },
+                    { "data": "nameOfStaffTaking", "searchable": false, "orderable": false },
+                    { "data": "ph_no_of_staff_taking", "searchable": false, "orderable": false }
+                ],
+
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
                 "paging": true,
+                "pageLength": 100,
                 "searching": true,
-                "ordering": true,
+                "ordering": false,
                 "info": true,
-                dom: 'Bfrtip', // Required to show buttons
+                "destroy": true,
+                dom: 'Bfrtip',
                 buttons: [
-
                     {
                         extend: 'pdfHtml5',
-                        text: 'Export PDF', // Changed button text to match the UI
+                        text: 'Export PDF',
                         title: 'Outstanding Book List',
-                        orientation: 'landscape',
+                        messageTop: 'Outstanding Book List',
+                        orientation: 'portrait',
                         pageSize: 'A4',
+
+
+                        customize: function (doc) {
+                            doc.pageMargins = [40, 60, 40, 60];
+                            doc.defaultStyle.fontSize = 12;
+                            doc.styles.tableHeader.fillColor = '#4CAF50';
+                            doc.styles.tableHeader.color = 'white';
+                            doc.content[0].text = doc.content[0].text.toUpperCase();
+                            doc.content[0].alignment = 'center';
+                            doc.content[0].fontSize = 18;
+                            doc.content[0].margin = [0, 0, 0, 10];
+                            doc.footer = function(currentPage, pageCount) {
+                                return {
+                                    columns: [
+                                        'Outstanding Book List',
+                                        {
+                                            text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
+                                            alignment: 'right',
+                                            margin: [0, 0, 20, 0]
+                                        }
+                                    ],
+                                    margin: [40, 0]
+                                }
+                            };
+                        },
+
                         exportOptions: {
                             columns: ':visible'
-                        },
-                        customize: function (doc) {
-                            // Style the PDF for a professional look
-                            doc.styles.tableHeader.fillColor = '#343a40'; // Dark gray header
-                            doc.styles.tableHeader.color = 'white';
-                            doc.pageMargins = [40, 60, 40, 60];
                         }
                     }
-                ]
+                ],
+
+                "fnRowCallback": function(nRow, aData, iDisplayIndex) {
+
+                    var dateIn = aData.date_of_taking;
+                    if (dateIn) {
+                        try {
+                            var date = new Date(dateIn);
+                            var formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+                                              (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                                              date.getFullYear();
+                            $('td:eq(2)', nRow).html(formattedDate);
+                        } catch(e) {
+                             $('td:eq(2)', nRow).html(dateIn);
+                        }
+                    }
+                }
             });
+
+
+            var searchInput = $('#outstandingTable_filter input[type="search"]');
+            searchInput.attr('type', 'number');
+            searchInput.attr('placeholder', 'Search by Serial No...');
         });
     </script>
 </div>
 </html>
-

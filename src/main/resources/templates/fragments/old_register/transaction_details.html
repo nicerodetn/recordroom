@@ -3,32 +3,68 @@
 
 <div id="b-homedb" th:fragment="tabler">
     <div class="my-5">
-        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Old Register Transaction Details </h3>
+        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Old Register Transaction Details</h3>
 
-        <script>
-            $(function () {
-                $('#example1').DataTable({
-                    dom: 'Bfrtip',
+        <script th:inline="javascript">
+
+            var g_table;
+
+            function initializeDataTable() {
+
+
+                var ajaxUrl = /*[[@{/oldregister/load_transactions_data}]]*/ '';
+
+                g_table = $('#example1').DataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": ajaxUrl,
+                        "type": "POST",
+                        "contentType": "application/json",
+                        "data": function (d) {
+                            return JSON.stringify(d);
+                        }
+                    },
+
+                    "columns": [
+                        { "data": null, "searchable": false, "orderable": false }, // Sr. No. (0)
+                        { "data": "master.record_serial_no" },
+                        { "data": "master.year" },
+                        { "data": "dateOfOutGoing" },
+                        { "data": "purposeTakingOut" },
+                        { "data": "sectionPersonName_out" },
+                        { "data": "sectionPersonName_number" },
+                        { "data": "recordPersonName_out" },
+                        { "data": "dateOfReturn" },
+                        { "data": "sectionPersonName_in" },
+                        { "data": "sectionPersonPhNumber_in" },
+                        { "data": "recordPersonName_in" },
+                        { "data": "transactionDate" }
+                    ],
+
+                    dom:'lBfrtip',
                     buttons: [
                         {
                             extend: 'pdfHtml5',
                             text: 'Export PDF',
                             title: 'Old Register Transaction Details',
-                            messageTop: 'Record Room - Completed Transactions (Returned Records)',
+                            messageTop: 'Record Room - Old Register Transactions',
                             orientation: 'landscape',
+
+
                             customize: function (doc) {
                                 doc.pageMargins = [40, 60, 40, 60];
-                                doc.defaultStyle.fontSize = 8;
+                                doc.defaultStyle.fontSize = 12;
                                 doc.styles.tableHeader.fillColor = '#4CAF50';
                                 doc.styles.tableHeader.color = 'white';
                                 doc.content[0].text = doc.content[0].text.toUpperCase();
                                 doc.content[0].alignment = 'center';
-                                doc.content[0].fontSize = 16;
+                                doc.content[0].fontSize = 18;
                                 doc.content[0].margin = [0, 0, 0, 10];
                                 doc.footer = function(currentPage, pageCount) {
                                     return {
                                         columns: [
-                                            'Completed Transactions',
+                                            'Old Register Transactions',
                                             {
                                                 text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
                                                 alignment: 'right',
@@ -39,17 +75,48 @@
                                     }
                                 };
                             },
+
+
                             exportOptions: {
-                                columns: ':visible'
+                                columns: ':visible',
+                                format: {
+                                    body: function ( data, row, col, node ) {
+
+                                        if (col === 0) {
+                                            return $(node).text();
+                                        }
+
+                                        return data;
+                                    }
+                                }
                             }
                         }
                     ],
-                    "responsive": false,
+                    "responsive": true,
                     "lengthChange": false,
+                    "pageLength": 100,
+                    "ordering": false,
+                    "searching": true,
                     "autoWidth": false,
-                    "scrollX": true,
-                    "scrollCollapse": true
+                    "destroy": true,
+
+                    "fnRowCallback": function(nRow, aData, iDisplayIndex) {
+                        var info = g_table.page.info();
+                        var page = info.page;
+                        var length = info.length;
+                        var index = (page * length) + (iDisplayIndex + 1);
+                        $('td:eq(0)', nRow).html(index);
+                    }
                 });
+
+
+                $('#example1_filter input[type="search"]')
+                    .attr('type', 'number')
+                    .attr('placeholder', 'Search by Serial No...');
+            }
+
+            $(document).ready(function () {
+                initializeDataTable();
             });
         </script>
 
@@ -57,7 +124,6 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-
                         <div class="card-body">
                             <div class="table-responsive" style="overflow-x: auto;">
                                 <table id="example1" class="table table-bordered table-striped" style="width: 100%;">
@@ -79,21 +145,6 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr th:each="trans, iterStat : ${transactions}">
-                                        <td th:text="${iterStat.index + 1}" style="white-space: nowrap;"></td>
-                                        <td th:text="${trans.master.record_serial_no}" style="white-space: nowrap;"></td>
-                                        <td th:text="${trans.master.year}" style="white-space: nowrap;"></td>
-                                        <td th:text="${trans.dateOfOutGoing}" style="white-space: nowrap;"></td>
-                                        <td th:text="${trans.purposeTakingOut}"></td>
-                                        <td th:text="${trans.sectionPersonName_out}" style="white-space: nowrap;"></td>
-                                        <td th:text="${trans.sectionPersonName_number}" style="white-space: nowrap;"></td>
-                                        <td th:text="${trans.recordPersonName_out}" style="white-space: nowrap;"></td>
-                                        <td th:text="${trans.dateOfReturn}" style="white-space: nowrap;"></td>
-                                        <td th:text="${trans.sectionPersonName_in}" style="white-space: nowrap;"></td>
-                                        <td th:text="${trans.sectionPersonPhNumber_in}" style="white-space: nowrap;"></td>
-                                        <td th:text="${trans.recordPersonName_in}" style="white-space: nowrap;"></td>
-                                        <td th:text="${trans.transactionDate}" style="white-space: nowrap;"></td>
-                                    </tr>
                                     </tbody>
                                 </table>
                             </div>

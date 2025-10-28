@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import com.recordroom.recordroom.dto.DataTableRequest;
+import com.recordroom.recordroom.dto.DataTableResponse;
+import org.springframework.data.domain.Page;
+
 @Controller
 @RequestMapping("/oldregister")
 public class OldRegisterController {
@@ -30,7 +34,7 @@ public class OldRegisterController {
 
     @PostMapping("/save_master")
     public String saveMasterRecord(@ModelAttribute OldRecordMaster record, Model model) {
-        // created_date is already set from the form via th:field
+
         Optional<OldRecordMaster> saved = oldRecordMasterService.saveRecord(record);
 
         if (saved.isPresent()) {
@@ -90,7 +94,7 @@ public class OldRegisterController {
         if (transaction.isPresent()) {
             RegisterTransactionDetails trans = transaction.get();
             trans.setIs_active_status(false);
-            trans.setIs_out_in(0); // 0 = IN
+            trans.setIs_out_in(0);
             trans.setDateOfReturn(dateOfReturn);
             trans.setSectionPersonName_in(sectionPersonName_in);
             trans.setSectionPersonPhNumber_in(sectionPersonPhNumber_in);
@@ -145,7 +149,7 @@ public class OldRegisterController {
             RegisterTransactionDetails trans = new RegisterTransactionDetails();
             trans.setMaster(master.get());
             trans.setIs_active_status(true);
-            trans.setIs_out_in(1); // 1 = OUT
+            trans.setIs_out_in(1);
             trans.setDateOfOutGoing(dateOfOutGoing);
             trans.setPurposeTakingOut(purposeTakingOut);
             trans.setSectionPersonName_out(sectionPersonName_out);
@@ -164,19 +168,80 @@ public class OldRegisterController {
 
     @GetMapping("/view_details")
     public String viewAllRecords(Model model) {
-        model.addAttribute("records", oldRecordMasterService.getAllRecords());
+        // We only send the record types for the filter
+        model.addAttribute("recordTypes", oldRecordMasterService.getRecordTypes());
+
+        // We don't send the data anymore. The script will fetch it.
         return "fragments/old_register/view_details :: tabler";
+    }
+
+
+    @PostMapping("/load_view_details")
+    @ResponseBody
+    public DataTableResponse<OldRecordMaster> loadViewDetails(
+            @RequestBody DataTableRequest request,
+            @RequestParam(name = "recordType", required = false) String recordType
+    ) {
+        Page<OldRecordMaster> page = oldRecordMasterService.findByFilters(request, recordType);
+
+
+        DataTableResponse<OldRecordMaster> response = new DataTableResponse<>();
+        response.setDraw(request.getDraw());
+        response.setRecordsTotal(page.getTotalElements());
+        response.setRecordsFiltered(page.getTotalElements());
+        response.setData(page.getContent());
+
+        return response;
     }
 
     @GetMapping("/transaction_details")
     public String viewTransactionDetails(Model model) {
-        model.addAttribute("transactions", registerTransactionService.getAllCompletedTransactions());
         return "fragments/old_register/transaction_details :: tabler";
     }
 
+    @PostMapping("/load_transactions_data")
+    @ResponseBody
+    public DataTableResponse<RegisterTransactionDetails> loadTransactionsData(
+            @RequestBody DataTableRequest request
+    ) {
+        // Call the new service method to get the completed records
+        Page<RegisterTransactionDetails> page = registerTransactionService.findCompletedByFilters(request);
+
+        DataTableResponse<RegisterTransactionDetails> response = new DataTableResponse<>();
+        response.setDraw(request.getDraw());
+        response.setRecordsTotal(page.getTotalElements());
+        response.setRecordsFiltered(page.getTotalElements());
+        response.setData(page.getContent());
+
+        return response;
+    }
+
+
     @GetMapping("/outstanding_records")
     public String viewOutstandingRecords(Model model) {
-        model.addAttribute("outstandingRecords", registerTransactionService.getAllActiveTransactions());
+
         return "fragments/old_register/outstanding_records :: tabler";
     }
+
+
+    @PostMapping("/outstanding_records")
+    @ResponseBody
+    public DataTableResponse<RegisterTransactionDetails> loadOutstandingRecords(
+            @RequestBody DataTableRequest request
+    ) {
+
+        Page<RegisterTransactionDetails> page = registerTransactionService.findActiveByFilters(request);
+
+        DataTableResponse<RegisterTransactionDetails> response = new DataTableResponse<>();
+        response.setDraw(request.getDraw());
+        response.setRecordsTotal(page.getTotalElements());
+        response.setRecordsFiltered(page.getTotalElements());
+        response.setData(page.getContent());
+
+        return response;
+    }
+
+
+
+
 }
