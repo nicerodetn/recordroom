@@ -2,13 +2,17 @@ package com.recordroom.recordroom.oldregister.repo;
 
 import com.recordroom.recordroom.oldregister.entity.RegisterTransactionDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface RegisterTransactionRepository extends JpaRepository<RegisterTransactionDetails, Integer> {
+
+public interface RegisterTransactionRepository extends JpaRepository<RegisterTransactionDetails, Integer>, JpaSpecificationExecutor<RegisterTransactionDetails> {
+
+
 
     @Query(value = "SELECT rtd.* FROM register_transaction_details rtd " +
             "JOIN old_record_master orm ON rtd.master_id = orm.id " +

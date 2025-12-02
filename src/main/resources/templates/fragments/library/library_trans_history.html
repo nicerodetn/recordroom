@@ -8,68 +8,148 @@
 
         <div class="container-fluid">
             <div class="row">
-                <!-- THIS IS THE FIX: Changed class.col-12" to class="col-12" -->
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">All Returned Books</h3>
-                        </div>
-                        <div class="card-body">
-                            <table id="historyTable" class="table table-bordered table-striped">
-                                <thead>
-                                <tr>
-                                    <th>Book Serial No</th>
-                                    <th>Book Name</th>
-                                    <th>Staff Name</th>
-                                    <th>Date of Taking</th>
-                                    <th>Date of Return</th>
-                                    <th>Remarks</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="transaction : ${returnedTransactions}">
-                                    <td th:text="${transaction.library.book_serial_no}"></td>
-                                    <td th:text="${transaction.book_name}"></td>
-                                    <td th:text="${transaction.nameOfStaffTaking}"></td>
-                                    <td th:text="${#temporals.format(transaction.date_of_taking, 'dd-MMM-yyyy')}"></td>
-                                    <td th:text="${#temporals.format(transaction.date_of_return, 'dd-MMM-yyyy')}"></td>
-                                    <td th:text="${transaction.remarks}"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">All Returned Books</h3>
+                    </div>
+                    <div class="card-body">
+                        <table id="historyTable" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>Book Serial No</th>
+                                <th>Book Name</th>
+                                <th>Staff Name</th>
+                                <th>Date of Taking</th>
+                                <th>Date of Return</th>
+                                <th>Remarks</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-        >
+    </div>
 
-        <script>
+
+        <script th:inline="javascript">
+
             $(function () {
-                $('#historyTable').DataTable({
+                var g_table;
+                var ajaxUrl = /*[[@{/library/load_history_data}]]*/ '';
+
+                g_table = $('#historyTable').DataTable({
+                    "processing": true,
+                    "serverSide": true,
+                    "ajax": {
+                        "url": ajaxUrl,
+                        "type": "POST",
+                        "contentType": "application/json",
+                        "data": function (d) {
+                            return JSON.stringify(d);
+                        }
+                    },
+
+
+                    "columns": [
+                        { "data": "library.book_serial_no", "searchable": false, "orderable": false },
+                        { "data": "book_name", "searchable": false, "orderable": false },
+                        { "data": "nameOfStaffTaking", "searchable": false, "orderable": false },
+                        { "data": "date_of_taking", "searchable": false, "orderable": false },
+                        { "data": "date_of_return", "searchable": false, "orderable": false },
+                        { "data": "remarks", "searchable": false, "orderable": false }
+                    ],
+
                     "responsive": true,
                     "lengthChange": false,
                     "autoWidth": false,
                     "paging": true,
+                    "pageLength": 100,
                     "searching": true,
-                    "ordering": true,
+                    "ordering": false,
                     "info": true,
+                    "destroy": true,
                     dom: 'Bfrtip',
                     buttons: [
                         {
                             extend: 'pdfHtml5',
                             text: 'Export PDF',
                             title: 'Transaction History',
-                            orientation: 'landscape',
+                            messageTop: 'Transaction History',
+                            orientation: 'portrait',
                             pageSize: 'A4',
+
+
+                            customize: function (doc) {
+                                doc.pageMargins = [40, 60, 40, 60];
+                                doc.defaultStyle.fontSize = 12;
+                                doc.styles.tableHeader.fillColor = '#4CAF50';
+                                doc.styles.tableHeader.color = 'white';
+                                doc.content[0].text = doc.content[0].text.toUpperCase();
+                                doc.content[0].alignment = 'center';
+                                doc.content[0].fontSize = 18;
+                                doc.content[0].margin = [0, 0, 0, 10];
+                                doc.footer = function(currentPage, pageCount) {
+                                    return {
+                                        columns: [
+                                            'Transaction History',
+                                            {
+                                                text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
+                                                alignment: 'right',
+                                                margin: [0, 0, 20, 0]
+                                            }
+                                        ],
+                                        margin: [40, 0]
+                                    }
+                                };
+                            },
+
                             exportOptions: {
                                 columns: ':visible'
                             }
                         }
-                    ]
+                    ],
+
+                    "fnRowCallback": function(nRow, aData, iDisplayIndex) {
+
+                        var dateIn = aData.date_of_taking;
+                        if (dateIn) {
+                            try {
+                                var date = new Date(dateIn);
+                                var formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+                                                  (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                                                  date.getFullYear();
+                                $('td:eq(3)', nRow).html(formattedDate);
+                            } catch(e) {
+                                 $('td:eq(3)', nRow).html(dateIn);
+                            }
+                        }
+
+
+                        var dateOut = aData.date_of_return;
+                        if (dateOut) {
+                            try {
+                                var date = new Date(dateOut);
+                                var formattedDate = date.getDate().toString().padStart(2, '0') + '-' +
+                                                  (date.getMonth() + 1).toString().padStart(2, '0') + '-' +
+                                                  date.getFullYear();
+                                $('td:eq(4)', nRow).html(formattedDate);
+                            } catch(e) {
+                                 $('td:eq(4)', nRow).html(dateOut);
+                            }
+                        }
+                    }
                 });
+
+
+                var searchInput = $('#historyTable_filter input[type="search"]');
+                searchInput.attr('type', 'number');
+                searchInput.attr('placeholder', 'Search by Serial No...');
             });
         </script>
-    </div>
+</div>
+</div>
 </html>
-

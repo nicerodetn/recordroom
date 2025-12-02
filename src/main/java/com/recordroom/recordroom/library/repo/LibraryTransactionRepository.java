@@ -2,12 +2,15 @@ package com.recordroom.recordroom.library.repo;
 
 import com.recordroom.recordroom.library.entity.LibraryTransaction;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
-public interface LibraryTransactionRepository extends JpaRepository<LibraryTransaction, Integer> {
+
+public interface LibraryTransactionRepository extends JpaRepository<LibraryTransaction, Integer>, JpaSpecificationExecutor<LibraryTransaction> {
 
     @Query("SELECT lt FROM LibraryTransaction lt WHERE lt.library.id = :#{#libraryId} AND lt.date_of_return IS NULL")
     Optional<LibraryTransaction> findByLibraryIdAndDateOfReturnIsNull(@Param("libraryId") Integer libraryId);

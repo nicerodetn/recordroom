@@ -3,13 +3,15 @@ package com.recordroom.recordroom.callbook.repo;
 
 import com.recordroom.recordroom.callbook.entity.CallBook;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface CallBookRepository extends JpaRepository<CallBook, Integer> {
+
+public interface CallBookRepository extends JpaRepository<CallBook, Integer>, JpaSpecificationExecutor<CallBook> {
 
     @Query(
             value = "SELECT * FROM call_book f WHERE f.new_dr_serial_no = :new_dr_serial_no and f.new_dr_year =:new_dr_year AND is_current = true AND in_out_status =0 LIMIT 1",
@@ -54,7 +56,5 @@ public interface CallBookRepository extends JpaRepository<CallBook, Integer> {
             nativeQuery = true
     )
     long countCallBookTotal();
-
-
 
 }
