@@ -262,4 +262,30 @@ public class CirculationController {
 
         return response;
     }
+
+    @GetMapping("/destructionreport")
+    public String destructionReport(Model model) {
+        List<FileRecord> records = recordService.destructionReport();
+
+        List<FileMasterReportDTO> fileMasterReportDTOList = records.stream().map(record -> {
+            FileMasterReportDTO dto = new FileMasterReportDTO();
+            dto.setDrSerialNo(record.getDrSerialNo());
+            dto.setFileType(record.getFileType());
+            dto.setSection(record.getSection().getDescription());
+            dto.setFileClosingDate(record.getFileClosingDate());
+            dto.setHandingOverDate(record.getHandingOverDate());
+            dto.setRemarks(record.getRemarks());
+            dto.setRackDetails(record.getRackDetails());
+            dto.setSectionDealingHandName(record.getSectionDealingHandName());
+            dto.setSectionDealingHandPhoneNo(record.getSectionDealingHandPhoneNo());
+            dto.setRecordRoomDealingHandName(record.getRecordRoomDealingHandName());
+            return dto;
+        }).collect(Collectors.toList());
+
+        model.addAttribute("records", fileMasterReportDTOList);
+        return "fragments/closed/destrucion :: tabler"; // Thymeleaf template name
+    }
+
+
+
 }

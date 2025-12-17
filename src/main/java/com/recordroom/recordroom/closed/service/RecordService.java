@@ -117,4 +117,8 @@ public class RecordService {
 
         return recordRepo.findAll(spec, pageable);
     }
+
+    public List<FileRecord> destructionReport() {
+        return recordRepo.findRecordsExceedingYearLimit();
+    }
 }
