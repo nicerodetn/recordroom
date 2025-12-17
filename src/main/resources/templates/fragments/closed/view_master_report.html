@@ -51,29 +51,62 @@
                         { "data": "recordRoomDealingHandName" }
                     ],
 
+
+
                     dom: 'lBfrtip',
                     buttons: [
                         {
                             extend: 'pdfHtml5',
                             orientation: 'landscape',
                             text: 'Export PDF',
-                            title: 'Master File Report',
+                            title: '----------',
+                            filename: 'Master_File_Report',
                             messageTop: 'Master File Report',
 
 
                             customize: function (doc) {
+
+                             doc.header = function () {
+            return {
+                margin: [40, 20, 40, 0],
+                columns: [
+
+                    {
+                        stack: [
+                            { text: 'Erode District Administration', fontSize: 16, bold: true },
+                            { text: 'Record Room L Section', fontSize: 11 },
+                            { text: 'Generated on: ' + new Date().toLocaleDateString(), fontSize: 9 }
+                        ],
+                        alignment: 'center'
+                    },
+                    {
+                        text: '',
+                        width: 60
+                    }
+                ]
+            };
+        };
+
+        // Table header style
+        doc.styles.tableHeader = {
+            fillColor: '#4CAF50',
+            color: 'white',
+            bold: true
+        };
+
+
                                 doc.pageMargins = [40, 60, 40, 60];
-                                doc.defaultStyle.fontSize = 12;
+                                doc.defaultStyle.fontSize = 10;
                                 doc.styles.tableHeader.fillColor = '#4CAF50';
                                 doc.styles.tableHeader.color = 'white';
                                 doc.content[0].text = doc.content[0].text.toUpperCase();
                                 doc.content[0].alignment = 'center';
-                                doc.content[0].fontSize = 18;
-                                doc.content[0].margin = [0, 0, 0, 10];
+                                doc.content[0].fontSize = 15;
+                                doc.content[0].margin = [0, 0, 0, 8];
                                 doc.footer = function(currentPage, pageCount) {
                                     return {
                                         columns: [
-                                            'Left footer text',
+                                            'Erode District',
                                             {
                                                 text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
                                                 alignment: 'right',
