@@ -5,62 +5,17 @@
     <div class="my-5">
         <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Old Register Master Records</h3>
 
-        <script th:inline="javascript">
-
-
-
-            var g_recordTypes = /*[[${recordTypes}]]*/ [];
-
-
-            var g_table;
-
-
-
-            function initializeDataTable(selectedType) {
-
-
-                var ajaxUrl = /*[[@{/oldregister/load_view_details}]]*/ '';
-                if (selectedType) {
-                    ajaxUrl += '?recordType=' + selectedType;
-                }
-
-
-                g_table = $('#example1').DataTable({
-
-                    "processing": true,
-                    "serverSide": true,
-                    "ajax": {
-                        "url": ajaxUrl,
-                        "type": "POST",
-                        "contentType": "application/json",
-                        "data": function (d) {
-                            return JSON.stringify(d);
-                        }
-                    },
-
-
-                    "columns": [
-                        { "data": null, "searchable": false, "orderable": false },
-                        { "data": "record_serial_no" },
-                        { "data": "year" },
-                        { "data": "details_of_record" },
-                        { "data": "types_of_record" },
-                        { "data": "rack_no" },
-                        { "data": "created_date" }
-                    ],
-
-
-                    dom: 'lBfrtip',
-
+        <script>
+            $(function () {
+                $('#example1').DataTable({
+                    dom: 'Bfrtip',
                     buttons: [
                         {
                             extend: 'pdfHtml5',
                             text: 'Export PDF',
+                            orientation: 'landscape',
                             title: 'Old Register Records',
                             messageTop: 'Record Room Old Register Master List',
-                            orientation: 'portrait',
-
-
                             customize: function (doc) {
                                 doc.pageMargins = [40, 60, 40, 60];
                                 doc.defaultStyle.fontSize = 12;
@@ -73,7 +28,7 @@
                                 doc.footer = function(currentPage, pageCount) {
                                     return {
                                         columns: [
-                                            'Old Register Master List',
+                                            'Old Register Records',
                                             {
                                                 text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
                                                 alignment: 'right',
@@ -84,145 +39,16 @@
                                     }
                                 };
                             },
-
-
                             exportOptions: {
-                                columns: ':visible',
-                                format: {
-                                    body: function ( data, row, col, node ) {
-
-                                        if (col === 0) {
-                                            return $(node).text();
-                                        }
-
-                                        return data;
-                                    }
-                                }
+                                columns: ':visible'
                             }
                         }
                     ],
                     "responsive": true,
-
-
                     "lengthChange": false,
-                    "pageLength": 100,
-
-
-                    "ordering": false,
-
-                    "autoWidth": false,
-                    "destroy": true,
-
-
-                    "fnRowCallback": function(nRow, aData, iDisplayIndex) {
-                        var info = g_table.page.info();
-                        var page = info.page;
-                        var length = info.length;
-                        var index = (page * length) + (iDisplayIndex + 1);
-                        $('td:eq(0)', nRow).html(index);
-                    }
-                });
-
-
-                var filterHtml = `
-                    <div id="customFilterGroup" class="d-inline-flex align-items-center" style="margin-right: 15px;">
-                        <label for="recordTypeFilter" class="mr-3 mb-0">Filter by Record Type:</label>
-                        <select name="recordType" id="recordTypeFilter" class="form-control form-control-sm" style="width: auto;">
-                            <option value="">-- All Types --</option>
-                            </select>
-                        <a href="#" id="clearFilter" class="btn btn-secondary btn-sm ml-2">Clear</a>
-                    </div>
-                `;
-
-
-                var $filterContainer = $('#example1_filter');
-
-
-                if ($('#customFilterGroup').length === 0) {
-                     $filterContainer.prepend(filterHtml);
-                }
-
-
-                var $select = $('#recordTypeFilter');
-                // Clear previous options except the first one (" All Types ")
-                $select.find('option:not(:first)').remove();
-                g_recordTypes.forEach(function(type) {
-                    var $option = $('<option></option>').attr('value', type).text(type);
-                    $select.append($option);
-                });
-
-
-                if (selectedType) {
-                    $select.val(selectedType);
-                } else {
-                    $select.val('');
-                }
-
-
-
-                $filterContainer.find('label:not(#customFilterGroup label)')
-                    .contents()
-                    .filter(function() { return this.nodeType == 3; })
-                    .first()
-                    .replaceWith('Search by Record Number: ');
-
-
-                $filterContainer.find('input[type="search"]')
-                    .attr('type', 'number')
-                    .attr('placeholder', 'Enter the record number');
-            }
-
-            // --- SCRIPT EXECUTION (EVENT HANDLERS) ---
-
-
-            function getFinalUrl(selectedType) {
-                var filterUrl = /*[[@{/oldregister/load_view_details}]]*/ '';
-                var cacheBuster = "_ts=" + new Date().getTime();
-
-                var finalUrl = filterUrl;
-                if (selectedType) {
-                    finalUrl += '?recordType=' + selectedType + '&' + cacheBuster;
-                } else {
-                    finalUrl += '?' + cacheBbuster;
-                }
-                finalUrl += ' #b-homedb > *';
-                return finalUrl;
-            }
-
-
-            $(document).ready(function () {
-
-                var initialSelectedType = /*[[${selectedType}]]*/ null;
-                initializeDataTable(initialSelectedType);
-            });
-
-
-            $(document).on('change', '#recordTypeFilter', function() {
-
-                var selectedType = $(this).val();
-                var finalUrl = getFinalUrl(selectedType);
-
-
-                g_table.destroy();
-                $('#b-homedD').load(finalUrl, function() {
-
-                    initializeDataTable(selectedType);
+                    "autoWidth": false
                 });
             });
-
-
-            $(document).on('click', '#clearFilter', function(e) {
-                e.preventDefault();
-                var finalUrl = getFinalUrl(null);
-
-
-                g_table.destroy();
-                $('#b-homedD').load(finalUrl, function() {
-
-                    initializeDataTable(null);
-                });
-            });
-
         </script>
 
         <div class="container-fluid">
@@ -230,7 +56,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"></h3>
+                            <h3 class="card-title">All Old Register Records</h3>
                         </div>
                         <div class="card-body">
                             <table id="example1" class="table table-bordered table-striped">
@@ -239,6 +65,9 @@
                                     <th>Sr. No.</th>
                                     <th>Record Serial No</th>
                                     <th>Year</th>
+                                    <th>Taluk</th>
+                                    <th>Village</th>
+                                    <th>Quality</th>
                                     <th>Details of Record</th>
                                     <th>Type of Record</th>
                                     <th>Rack No</th>
@@ -246,6 +75,20 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+                                <tr th:each="record, iterStat : ${records}">
+                                    <td th:text="${iterStat.index + 1}"></td>
+                                    <td th:text="${record.record_serial_no}"></td>
+                                    <td th:text="${record.year}"></td>
+                                    <td th:text="${record.taluk}"></td>
+                                    <td th:text="${record.village}"></td>
+
+                                    <td th:text="${record.qualityStatusLabel}"></td>
+
+                                    <td th:text="${record.details_of_record}"></td>
+                                    <td th:text="${record.types_of_record}"></td>
+                                    <td th:text="${record.rack_no}"></td>
+                                    <td th:text="${record.created_date}"></td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -253,7 +96,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 </html>

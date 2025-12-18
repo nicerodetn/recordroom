@@ -2,16 +2,13 @@ package com.recordroom.recordroom.oldregister.repo;
 
 import com.recordroom.recordroom.oldregister.entity.RegisterTransactionDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
-
-public interface RegisterTransactionRepository extends JpaRepository<RegisterTransactionDetails, Integer>, JpaSpecificationExecutor<RegisterTransactionDetails> {
-
+public interface RegisterTransactionRepository extends JpaRepository<RegisterTransactionDetails, Integer> {
 
 
     @Query(value = "SELECT rtd.* FROM register_transaction_details rtd " +
@@ -21,7 +18,7 @@ public interface RegisterTransactionRepository extends JpaRepository<RegisterTra
             "AND rtd.is_active_status = true " +
             "LIMIT 1",
             nativeQuery = true)
-    Optional<RegisterTransactionDetails> findActiveBySerialNoAndYear(@Param("serial_no") Long serialNo,
+    Optional<RegisterTransactionDetails> findActiveBySerialNoAndYear(@Param("serial_no") String serialNo,
                                                                      @Param("year") Long year);
 
     @Query(value = "SELECT * FROM register_transaction_details WHERE is_active_status = true",

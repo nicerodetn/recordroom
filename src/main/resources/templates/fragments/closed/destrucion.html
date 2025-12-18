@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<div id="b-homedb"  th:fragment="tabler">
 
-<div id="b-homedb" th:fragment="tabler">
-  <div class="my-5">
-
-
-    <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">RTI Report</h3>
-
+  <div class="my-5" >
+    <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Destruction File's List </h3>
     <script>
       $(function () {
         $('#example1').DataTable({
@@ -14,10 +9,9 @@
     buttons: [
         {
             extend: 'pdfHtml5',
-            orientation: 'landscape',
             text: 'Export PDF',
-            title: 'RTI Report',   // Custom PDF title
-            messageTop: 'RTI Report',
+            title: 'Destruction Files List',   // Custom PDF title
+            messageTop: 'Destruction Files List',
 
             // Customize the PDF layout and styles
             customize: function (doc) {
@@ -67,6 +61,7 @@
       });
     </script>
 
+
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
@@ -79,40 +74,37 @@
               <table id="example1" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                  <th>Sr. No.</th>
-                  <th>Petitioner Name</th>
-                  <th>Petitioner Address</th>
-                  <th>Petitioner Phone No</th>
-                  <th>Letter No</th>
-                  <th>Subject</th>
-                  <th>RTI Date</th>
-                  <th>In Time</th>
-                  <th>Out Time</th>
-                  <th>Check No</th>
-                  <th>Amount</th>
-                  <th>Record Room Dealing Hand Name</th>
+                  <th>File Type (Year's)</th>
+                  <th>DR Serial No</th>
+                  <th>Section</th>
+                  <th>Rack Details</th>
+
+                  <th>File Closing Date</th>
+                  <th>Handing Over Date</th>
                   <th>Remarks</th>
+
+                  <th>Section Dealing Hand Name</th>
+                  <th>Section Dealing Hand Phone No</th>
+                  <th>Record Room Dealing Hand Name</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="record, iterStat : ${rti}">
-                  <td th:text="${iterStat.index + 1}"></td>
-                  <td th:text="${record.pettitioner_name}"></td>
-                  <td th:text="${record.pettitioner_address}"></td>
-                  <td th:text="${record.pettitioner_phoneno}"></td>
-                  <td th:text="${record.letter_no}"></td>
-                  <td th:text="${record.subject}"></td>
-                  <td th:text="${#temporals.format(record.rtiDate, 'dd-MM-yyyy')}"></td>
-                  <td th:text="${#temporals.format(record.in_time, 'HH:mm')}"></td>
-                  <td th:text="${#temporals.format(record.out_time, 'HH:mm')}"></td>
-                  <td th:text="${record.e_challan_no}"></td>
-                  <td th:text="${record.amount}"></td>
-                  <td th:text="${record.rr_dealing_name}"></td>
+                <tr th:each="record : ${records}">
+                  <td th:text="${record.fileType}"></td>
+                  <td th:text="${record.drSerialNo}"></td>
+                  <td th:text="${record.section}"></td>
+                  <td th:text="${record.rackDetails}"></td>
+
+                  <td th:text="${record.fileClosingDate}"></td>
+                  <td th:text="${record.handingOverDate}"></td>
                   <td th:text="${record.remarks}"></td>
+
+                  <td th:text="${record.sectionDealingHandName}"></td>
+                  <td th:text="${record.sectionDealingHandPhoneNo}"></td>
+                  <td th:text="${record.recordRoomDealingHandName}"></td>
                 </tr>
                 </tbody>
               </table>
-
             </div>
             <!-- /.card-body -->
           </div>
