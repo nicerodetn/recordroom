@@ -36,9 +36,7 @@
     </div>
 
     <script th:inline="javascript">
-
         $(function () {
-
             var g_table;
             var ajaxUrl = /*[[@{/library/load_outstanding_data}]]*/ '';
 
@@ -53,8 +51,6 @@
                         return JSON.stringify(d);
                     }
                 },
-
-
                 "columns": [
                     { "data": "library.book_serial_no", "searchable": false, "orderable": false },
                     { "data": "book_name", "searchable": false, "orderable": false },
@@ -63,7 +59,6 @@
                     { "data": "nameOfStaffTaking", "searchable": false, "orderable": false },
                     { "data": "ph_no_of_staff_taking", "searchable": false, "orderable": false }
                 ],
-
                 "responsive": true,
                 "lengthChange": false,
                 "autoWidth": false,
@@ -77,45 +72,98 @@
                 buttons: [
                     {
                         extend: 'pdfHtml5',
-                        text: 'Export PDF',
-                        title: 'Outstanding Book List',
-                        messageTop: 'Outstanding Book List',
                         orientation: 'portrait',
-                        pageSize: 'A4',
-
-
+                        text: 'Export PDF',
+                        className: 'btn btn-secondary mr-2',
+                        filename: 'Outstanding_Book_List',
+                        title: '',
                         customize: function (doc) {
-                            doc.pageMargins = [40, 60, 40, 60];
-                            doc.defaultStyle.fontSize = 12;
-                            doc.styles.tableHeader.fillColor = '#4CAF50';
-                            doc.styles.tableHeader.color = 'white';
-                            doc.content[0].text = doc.content[0].text.toUpperCase();
-                            doc.content[0].alignment = 'center';
-                            doc.content[0].fontSize = 18;
-                            doc.content[0].margin = [0, 0, 0, 10];
-                            doc.footer = function(currentPage, pageCount) {
-                                return {
-                                    columns: [
-                                        'Outstanding Book List',
-                                        {
-                                            text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
-                                            alignment: 'right',
-                                            margin: [0, 0, 20, 0]
-                                        }
-                                    ],
-                                    margin: [40, 0]
-                                }
-                            };
+                            doc.pageMargins = [40, 70, 40, 60];
+                            doc.defaultStyle.fontSize = 10;
+                            doc.content.unshift({
+                                margin: [0, 0, 0, 12],
+                                stack: [
+                                    { text: 'Erode District Administration', fontSize: 16, bold: true, alignment: 'center' },
+                                    { text: 'Record Room L Section', fontSize: 11, alignment: 'center' },
+                                    { text: 'OUTSTANDING BOOK LIST', fontSize: 13, bold: true, alignment: 'center', margin: [0, 6, 0, 0] },
+                                    { text: 'Generated on: ' + new Date().toLocaleDateString(), fontSize: 9, alignment: 'center' }
+                                ]
+                            });
+                            doc.styles.tableHeader = { fillColor: '#4CAF50', color: 'white', bold: true, alignment: 'center' };
                         },
-
-                        exportOptions: {
-                            columns: ':visible'
-                        }
+                        exportOptions: { columns: ':visible' }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Export Excel',
+                        className: 'btn btn-secondary',
+                        filename: 'Outstanding_Book_List',
+                        title: '',
+                        sheetName: 'Report',
+                        customize: function (xlsx) {
+                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                            var $sheet = $(sheet);
+                            var styles = xlsx.xl['styles.xml'];
+                            $(styles).find('xf').each(function () {
+                                var xf = $(this);
+                                if (xf.attr('xfId') === '0') {
+                                    xf.attr('applyAlignment', '1');
+                                    if (!xf.find('alignment').length) {
+                                        xf.append('<alignment horizontal="center" vertical="center"/>');
+                                    }
+                                }
+                            });
+                            $('row', sheet).each(function () {
+                                var r = parseInt($(this).attr('r'));
+                                $(this).attr('r', r + 5);
+                                $('c', this).each(function () {
+                                    var ref = $(this).attr('r');
+                                    var col = ref.replace(/[0-9]/g, '');
+                                    $(this).attr('r', col + (r + 5));
+                                });
+                            });
+                            var today = new Date().toLocaleDateString();
+                            var sheetData = $('sheetData', sheet);
+                            sheetData.prepend(
+                                '<row r="1" ht="28" customHeight="1"><c r="A1" t="inlineStr" s="51"><is><t>Erode District Administration</t></is></c></row>' +
+                                '<row r="2" ht="22" customHeight="1"><c r="A2" t="inlineStr" s="51"><is><t>Record Room L Section</t></is></c></row>' +
+                                '<row r="3" ht="20" customHeight="1"><c r="A3" t="inlineStr" s="51"><is><t>Generated on: ' + today + '</t></is></c></row>' +
+                                '<row r="4" ht="26" customHeight="1"><c r="A4" t="inlineStr" s="51"><is><t>OUTSTANDING BOOK LIST</t></is></c></row>' +
+                                '<row r="5"></row>'
+                            );
+                            var mergeCells = $sheet.find('mergeCells');
+                            if (!mergeCells.length) {
+                                mergeCells = $('<mergeCells count="0"/>');
+                                $sheet.append(mergeCells);
+                            }
+                            mergeCells.append('<mergeCell ref="A1:F1"/>');
+                            mergeCells.append('<mergeCell ref="A2:F2"/>');
+                            mergeCells.append('<mergeCell ref="A3:F3"/>');
+                            mergeCells.append('<mergeCell ref="A4:F4"/>');
+                            var currentCount = parseFloat(mergeCells.attr('count')) || 0;
+                            mergeCells.attr('count', currentCount + 4);
+                            var colWidths = [];
+                            $('row', sheet).each(function () {
+                                var r = parseInt($(this).attr('r'));
+                                if (r > 5) {
+                                    $('c', this).each(function (i) {
+                                        var text = $('t', this).text();
+                                        var len = text ? text.length : 0;
+                                        colWidths[i] = Math.max(colWidths[i] || 10, len);
+                                    });
+                                }
+                            });
+                            var colsXml = '<cols>';
+                            colWidths.forEach(function (w, i) {
+                                colsXml += '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + Math.min(w + 5, 50) + '"/>';
+                            });
+                            colsXml += '</cols>';
+                            $sheet.find('worksheet').prepend(colsXml);
+                        },
+                        exportOptions: { columns: ':visible' }
                     }
                 ],
-
                 "fnRowCallback": function(nRow, aData, iDisplayIndex) {
-
                     var dateIn = aData.date_of_taking;
                     if (dateIn) {
                         try {
@@ -130,7 +178,6 @@
                     }
                 }
             });
-
 
             var searchInput = $('#outstandingTable_filter input[type="search"]');
             searchInput.attr('type', 'number');
