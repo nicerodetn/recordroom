@@ -5,124 +5,56 @@
     <div class="my-5">
         <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Outstanding Old Register Records</h3>
 
-        <script th:inline="javascript">
-
+        <script>
             $(function () {
+                $('#example1').DataTable({
+                    // Standard DOM from your 'Old Register' example
+                    dom: 'Bfrtip',
 
-                var g_table;
+                    buttons: [
+                        {
+                            extend: 'pdfHtml5',
+                            orientation: 'landscape',
+                            text: 'Export PDF',
+                            title: 'Old Register Outstanding Report',
+                            messageTop: 'Old Register Outstanding Report',
 
-                function initializeDataTable() {
-
-
-                    var ajaxUrl = /*[[@{/oldregister/outstanding_records}]]*/ '/oldregister/outstanding_records';
-
-                    console.log('AJAX URL:', ajaxUrl);
-
-                    g_table = $('#example1').DataTable({
-                        "processing": true,
-                        "serverSide": true,
-                        "ajax": {
-                            "url": ajaxUrl,
-                            "type": "POST",
-                            "contentType": "application/json",
-                            "data": function (d) {
-                                console.log('Sending request:', d);
-                                return JSON.stringify(d);
-                            },
-                            "error": function(xhr, error, code) {
-                                console.log('AJAX Error:', xhr, error, code);
-                            }
-                        },
-
-                        "columns": [
-                            { "data": null, "searchable": false, "orderable": false },
-                            { "data": "master.record_serial_no" },
-                            { "data": "master.year" },
-                            { "data": "master.details_of_record" },
-                            { "data": "master.types_of_record" },
-                            { "data": "dateOfOutGoing" },
-                            { "data": "purposeTakingOut" },
-                            { "data": "sectionPersonName_out" },
-                            { "data": "sectionPersonName_number" },
-                            { "data": "recordPersonName_out" }
-                        ],
-
-                        dom:'lBfrtip',
-                        buttons: [
-                            {
-                                extend: 'pdfHtml5',
-                                text: 'Export PDF',
-                                title: 'Outstanding Old Register Records',
-                                messageTop: 'Record Room - Outstanding Old Register Records',
-                                orientation: 'landscape',
-
-
-                                customize: function (doc) {
-                                    doc.pageMargins = [40, 60, 40, 60];
-                                    doc.defaultStyle.fontSize = 12;
-                                    doc.styles.tableHeader.fillColor = '#4CAF50';
-                                    doc.styles.tableHeader.color = 'white';
-                                    doc.content[0].text = doc.content[0].text.toUpperCase();
-                                    doc.content[0].alignment = 'center';
-                                    doc.content[0].fontSize = 18;
-                                    doc.content[0].margin = [0, 0, 0, 10];
-                                    doc.footer = function(currentPage, pageCount) {
-                                        return {
-                                            columns: [
-                                                'Outstanding Old Register',
-                                                {
-                                                    text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
-                                                    alignment: 'right',
-                                                    margin: [0, 0, 20, 0]
-                                                }
-                                            ],
-                                            margin: [40, 0]
-                                        }
-                                    };
-                                },
-
-
-                                exportOptions: {
-                                    columns: ':visible',
-                                    format: {
-                                        body: function ( data, row, col, node ) {
-
-                                            if (col === 0) {
-                                                return $(node).text();
+                            customize: function (doc) {
+                                doc.pageMargins = [40, 60, 40, 60];
+                                doc.defaultStyle.fontSize = 8; // Small font as per your example
+                                doc.styles.tableHeader.fillColor = '#4CAF50';
+                                doc.styles.tableHeader.color = 'white';
+                                doc.content[0].text = doc.content[0].text.toUpperCase();
+                                doc.content[0].alignment = 'center';
+                                doc.content[0].fontSize = 16;
+                                doc.content[0].margin = [0, 0, 0, 10];
+                                doc.footer = function(currentPage, pageCount) {
+                                    return {
+                                        columns: [
+                                            'RTI Report',
+                                            {
+                                                text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
+                                                alignment: 'right',
+                                                margin: [0, 0, 20, 0]
                                             }
-
-                                            return data;
-                                        }
+                                        ],
+                                        margin: [40, 0]
                                     }
-                                }
+                                };
+                            },
+                            exportOptions: {
+                                columns: ':visible'
                             }
-                        ],
-                        "responsive": true,
-                        "lengthChange": false,
-                        "pageLength": 100,
-                        "ordering": false,
-                        "searching": true,
-                        "autoWidth": false,
-                        "destroy": true,
-
-                        "fnRowCallback": function(nRow, aData, iDisplayIndex) {
-                            var info = g_table.page.info();
-                            var page = info.page;
-                            var length = info.length;
-                            var index = (page * length) + (iDisplayIndex + 1);
-                            $('td:eq(0)', nRow).html(index);
                         }
-                    });
-
-
-                    var searchInput = $('#example1_filter input[type="search"]');
-                    searchInput.attr('type', 'number');
-                    searchInput.attr('placeholder', 'Search by Serial No...');
-
-                }
-
-
-                initializeDataTable();
+                    ],
+                    "responsive": false,
+                    "lengthChange": false,
+                    "autoWidth": false,
+                    "scrollX": true,        // Enables horizontal scrolling
+                    "scrollCollapse": true, // Collapses table if few rows
+                    "searching": true,
+                    "pageLength": 100
+                });
             });
         </script>
 
@@ -139,6 +71,8 @@
                                     <th>Year</th>
                                     <th>Details</th>
                                     <th>Type</th>
+                                    <th>Taluk</th>
+                                    <th>Village</th>
                                     <th>Date of Outgoing</th>
                                     <th>Purpose of Taking</th>
                                     <th>Section Person Name</th>
@@ -147,6 +81,20 @@
                                 </tr>
                                 </thead>
                                 <tbody>
+                                <tr th:each="outstandingRecords, iterStat : ${outstandingRecords}">
+                                    <td th:text="${iterStat.index + 1}"></td>
+                                    <td th:text="${outstandingRecords.master.record_serial_no}"></td>
+                                    <td th:text="${outstandingRecords.master.year}"></td>
+                                    <td th:text="${outstandingRecords.master.details_of_record}"></td>
+                                    <td th:text="${outstandingRecords.master.types_of_record}"></td>
+                                    <td th:text="${outstandingRecords.master.taluk}"></td>
+                                    <td th:text="${outstandingRecords.master.village}"></td>
+                                    <td th:text="${outstandingRecords.dateOfOutGoing}"></td>
+                                    <td th:text="${outstandingRecords.purposeTakingOut}"></td>
+                                    <td th:text="${outstandingRecords.sectionPersonName_out}"></td>
+                                    <td th:text="${outstandingRecords.sectionPersonName_number}"></td>
+                                    <td th:text="${outstandingRecords.recordPersonName_out}"></td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>

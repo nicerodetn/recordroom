@@ -28,5 +28,20 @@ public class RtiService {
         rtiRepository.deleteById(id);
     }
 
+    public List<Rti> getRtiReport(Integer month, Integer year) {
+        if (month != null && year != null) {
+            return rtiRepository.findByMonthAndYear(month, year);
+        }
+        return rtiRepository.findAll();
+    }
+
+    public List<Rti> getFilteredRti(Integer month, Integer year) {
+        if (year != null && month != null) {
+            return rtiRepository.findByMonthAndYear(month, year);
+        } else if (year != null) {
+            return rtiRepository.findByYear(year);
+        }
+        return new java.util.ArrayList<>(); // Return empty if no year selected
+    }
 
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html xmlns:th="http://www.thymeleaf.org">
 <div id="b-homedb" th:fragment="form">
     <div class="my-5">
         <div class="container">
@@ -10,15 +10,18 @@
                         <div class="col-sm-12">
                             <div class="card">
                                 <div class="card-body">
+
                                     <script>
+                                        // Hide Success Message after 5 seconds
                                         setTimeout(() => {
                                             let msg = document.getElementById("successMsg");
                                             if (msg) {
                                                 msg.classList.remove("show");
                                                 msg.remove();
                                             }
-                                        }, 3000);
+                                        }, 5000);
 
+                                        // Hide Error Message after 5 seconds
                                         setTimeout(() => {
                                             let msg = document.getElementById("errorMsg");
                                             if (msg) {
@@ -29,19 +32,18 @@
                                     </script>
 
                                     <div th:if="${successMessage}"
-                                         class="alert alert-success alert-dismissible fade show text-center"
                                          id="successMsg"
-                                         role="alert"
-                                         th:text="${successMessage}">
+                                         class="alert alert-success alert-dismissible fade show text-center"
+                                         role="alert">
+                                        <strong th:text="${successMessage}"></strong>
                                     </div>
 
                                     <div th:if="${errorMessage}"
-                                         class="alert alert-danger alert-dismissible fade show text-center"
                                          id="errorMsg"
-                                         role="alert"
-                                         th:text="${errorMessage}">
+                                         class="alert alert-danger alert-dismissible fade show text-center"
+                                         role="alert">
+                                        <strong th:text="${errorMessage}"></strong>
                                     </div>
-
                                     <form th:object="${record}" method="post"
                                           hx-post="/record/oldregister/save_master"
                                           hx-target="#b-homedb"
@@ -49,53 +51,91 @@
                                           class="row g-3 border p-3 rounded bg-light shadow-sm">
 
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">1. Record Serial Number</label>
-                                            <input type="number" th:field="*{record_serial_no}"
-                                                   class="form-control" required/>
-                                        </div>
-
-                                        <div class="col-12">
-                                            <label class="form-label fw-bold">2. Year</label>
-                                            <input type="number" th:field="*{year}"
-                                                   class="form-control"
-                                                   min="1900"
-                                                   max="2100"
-                                                   required/>
-                                        </div>
-
-                                        <div class="col-12">
-                                            <label class="form-label fw-bold">3. Created Date</label>
-                                            <input type="date" th:field="*{created_date}"
-                                                   class="form-control" required/>
-                                        </div>
-
-                                        <div class="col-12">
-                                            <label class="form-label fw-bold">4. Details of Record</label>
-                                            <textarea th:field="*{details_of_record}"
-                                                      class="form-control" rows="3" required></textarea>
-                                        </div>
-
-                                        <div class="col-12">
-                                            <label class="form-label fw-bold">5. Types of Record</label></br>
-                                            <select th:field="*{types_of_record}" class="form-select" required>
-                                                <option value="">-- Select Option --</option>
-                                                <option value="RSR">RSR</option>
-                                                <option value="DR">SLR</option>
-                                                <option value="LSR">SR</option>
+                                            <label class="form-label fw-bold d-block">1. Taluk</label>
+                                            <select id="talukSelect" th:field="*{taluk}" class="form-select"
+                                                    hx-get="/record/oldregister/get_villages"
+                                                    hx-target="#villageSelect"
+                                                    hx-swap="innerHTML"
+                                                    hx-trigger="change"
+                                                    name="taluk"
+                                                    required>
+                                                <option value="">-- Select Taluk --</option>
+                                                <option th:each="t : ${talukList}"
+                                                        th:value="${t}"
+                                                        th:text="${t}"></option>
                                             </select>
                                         </div>
 
-
                                         <div class="col-12">
-                                            <label class="form-label fw-bold">6. Rack Number</label>
-                                            <input type="number" th:field="*{rack_no}"
-                                                   class="form-control" required/>
+                                            <label class="form-label fw-bold d-block">2. Village</label>
+                                            <select id="villageSelect" th:field="*{village}" class="form-select" required>
+                                                <option value="">-- Select Taluk First --</option>
+                                            </select>
                                         </div>
 
-                                        <div class="d-grid mt-4">
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold d-block">3. Type of Record</label>
+                                            <select th:field="*{types_of_record}" class="form-select" required>
+                                                <option value="">-- Select Type --</option>
+                                                <option value="RSR">RSR</option>
+                                                <option value="SLR">SLR</option>
+                                                <option value="SR">SR</option>
+                                                <option value="Natham-SF">Natham-SF</option>
+                                                <option value="Natham-Adangal">Natham-Adangal</option>
+                                                <option value="Natham-Chitra">Natham-Chitra</option>
+                                                <option value="Natham-FMB">Natham-FMB</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold d-block">4. Quality Status</label>
+
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" th:field="*{quality_status}" value="1" id="q1" required>
+                                                <label class="form-check-label" for="q1">Good</label>
+                                            </div>
+
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" th:field="*{quality_status}" value="2" id="q2">
+                                                <label class="form-check-label" for="q2">Not Available</label>
+                                            </div>
+
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" th:field="*{quality_status}" value="3" id="q3">
+                                                <label class="form-check-label" for="q3">Damaged</label>
+                                            </div>
+
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" th:field="*{quality_status}" value="4" id="q4">
+                                                <label class="form-check-label" for="q4">Fully Damaged</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold d-block">5. Year</label>
+                                            <input type="number" th:field="*{year}" class="form-control" min="1900" max="2100" required/>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold d-block">6. Created Date</label>
+                                            <input type="date" th:field="*{created_date}" class="form-control" required/>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold d-block">7. Details of Record</label>
+                                            <textarea th:field="*{details_of_record}" class="form-control" rows="3" required></textarea>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label fw-bold d-block">8. Rack Number</label>
+                                            <input type="number" th:field="*{rack_no}" class="form-control" required/>
+                                        </div>
+
+                                        <div class="d-grid mt-4 d-block">
                                             <button type="submit" class="btn btn-primary btn-lg">💾 Save Record</button>
                                         </div>
                                     </form>
+
                                 </div>
                             </div>
                         </div>
@@ -105,4 +145,12 @@
         </div>
     </div>
 </div>
+
+<th:block th:fragment="villageOptions">
+    <option value="">-- Select Village --</option>
+    <option th:each="v : ${villageList}"
+            th:value="${v}"
+            th:text="${v}"></option>
+</th:block>
+
 </html>

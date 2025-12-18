@@ -4,6 +4,7 @@ import com.recordroom.recordroom.closed.controller.dto.FileMasterReportDTO;
 import com.recordroom.recordroom.closed.controller.dto.FileOutgoingDTO;
 import com.recordroom.recordroom.closed.controller.dto.FileOutstandingReportDTO;
 import com.recordroom.recordroom.closed.entity.FileRecord;
+import com.recordroom.recordroom.closed.entity.Section;
 import com.recordroom.recordroom.closed.entity.RecordTransactionDetails;
 import com.recordroom.recordroom.closed.service.RecordService;
 import com.recordroom.recordroom.closed.service.RecordTransactionService;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -76,6 +78,14 @@ public class CirculationController {
             model.addAttribute("successMessage", "✅ Dulpicate DR Number given!");
             return "fragments/closed/master_creation :: loadFormFragment";
         }
+    }
+
+    @GetMapping("/api/section/{id}")
+    @ResponseBody
+    public ResponseEntity<Section> getSectionDetails(@PathVariable Integer id) {
+        return recordService.getSectionById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/searchForOutWardEntry")

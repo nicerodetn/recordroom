@@ -14,12 +14,6 @@
             <div class="col-sm-12">
               <div class="card">
                 <div class="card-body">
-                  <div th:if="${successMessage}"
-                       class="alert alert-success alert-dismissible fade show text-center"
-                       id="successMsg"
-                       role="alert"
-                       th:text="${successMessage}">
-                  </div>
 
                   <form th:object="${rti}" method="post"
                         hx-post="/record/rti/save"
@@ -86,8 +80,8 @@
 
                     <!-- 9. Check No -->
                     <div class="col-12">
-                      <label for="checkNo" class="form-label fw-bold">9. Check No</label>
-                      <input type="text" class="form-control" id="checkNo" th:field="*{check_no}" placeholder="Enter check number">
+                      <label for="checkNo" class="form-label fw-bold">9. e-Challan No</label>
+                      <input type="text" class="form-control" id="checkNo" th:field="*{e_challan_no}" placeholder="Enter e-Challan No">
                     </div>
 
                     <!-- 10. Amount -->
@@ -98,7 +92,7 @@
 
                       <div class="col-12">
                           <label for="remarks" class="form-label fw-bold">11. Remarks</label>
-                          <input type="text" class="form-control" id="remarks" th:field="*{remarks}" placeholder="Enter amount" min="0" step="0.01">
+                          <input type="text" class="form-control" id="remarks" th:field="*{remarks}" placeholder="Enter remarks">
                       </div>
 
 
@@ -122,6 +116,12 @@
                     </div>
                   </form>
 
+                    <div th:if="${successMessage}"
+                         class="alert alert-success alert-dismissible fade show text-center"
+                         id="successMsg"
+                         role="alert"
+                         th:text="${successMessage}">
+                    </div>
                   <script>
                     // Auto-hide success message after 3 seconds
                     setTimeout(() => {

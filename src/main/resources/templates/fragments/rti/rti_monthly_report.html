@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div id="b-homedb" th:fragment="tabler">
+
+    <div class="my-5">
+
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-12">
+
+                    <div class="card shadow-sm border-0 rounded-3">
+                        <div class="card-body p-4">
+
+                            <h3 style="font-size: 28px; color: #333;" class="text-center mb-4 fw-bold">
+                                RTI Monthly Report
+                            </h3>
+
+                            <div class="bg-light p-3 rounded-3 mb-4">
+                                <form hx-get="/record/rti/rti_monthly_report"
+                                      hx-target="#b-homedb"
+                                      hx-swap="outerHTML"
+                                      class="d-flex flex-wrap align-items-center justify-content-center">
+
+                                    <div class="d-flex align-items-center mb-2" style="margin-right: 40px;">
+                                        <label class="fw-bold text-secondary mb-0" style="margin-right: 15px;">Year:</label>
+                                        <input type="number"
+                                               name="year"
+                                               class="form-control border-secondary"
+                                               th:value="${selectedYear}"
+                                               placeholder="YYYY"
+                                               min="1900"
+                                               max="2100"
+                                               style="width: 120px;"
+                                               required>
+                                    </div>
+
+                                    <div class="d-flex align-items-center mb-2" style="margin-right: 40px;">
+                                        <label class="fw-bold text-secondary mb-0" style="margin-right: 15px;">Month:</label>
+                                        <select class="form-select border-secondary" name="month" style="width: 180px;">
+                                            <option value="" th:selected="${selectedMonth == null}">-- All Months --</option>
+                                            <option value="1"  th:selected="${selectedMonth == 1}">January</option>
+                                            <option value="2"  th:selected="${selectedMonth == 2}">February</option>
+                                            <option value="3"  th:selected="${selectedMonth == 3}">March</option>
+                                            <option value="4"  th:selected="${selectedMonth == 4}">April</option>
+                                            <option value="5"  th:selected="${selectedMonth == 5}">May</option>
+                                            <option value="6"  th:selected="${selectedMonth == 6}">June</option>
+                                            <option value="7"  th:selected="${selectedMonth == 7}">July</option>
+                                            <option value="8"  th:selected="${selectedMonth == 8}">August</option>
+                                            <option value="9"  th:selected="${selectedMonth == 9}">September</option>
+                                            <option value="10" th:selected="${selectedMonth == 10}">October</option>
+                                            <option value="11" th:selected="${selectedMonth == 11}">November</option>
+                                            <option value="12" th:selected="${selectedMonth == 12}">December</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <button type="submit" class="btn btn-primary px-4 fw-bold">
+                                            <i class="fas fa-search me-2"></i> Load Data
+                                        </button>
+                                    </div>
+
+                                </form>
+                            </div>
+
+                            <hr class="text-muted opacity-25 my-4">
+
+                            <div class="table-responsive">
+                                <table id="example1" class="table table-bordered table-striped table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>Sr. No.</th>
+                                        <th>Petitioner Name</th>
+                                        <th>Address</th>
+                                        <th>Phone No</th>
+                                        <th>Letter No</th>
+                                        <th>Subject</th>
+                                        <th>RTI Date</th>
+                                        <th>e-Challan No</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="record, iterStat : ${rti}">
+                                        <td th:text="${iterStat.index + 1}"></td>
+                                        <td th:text="${record.pettitioner_name}"></td>
+                                        <td th:text="${record.pettitioner_address}"></td>
+                                        <td th:text="${record.pettitioner_phoneno}"></td>
+                                        <td th:text="${record.letter_no}"></td>
+                                        <td th:text="${record.subject}"></td>
+                                        <td th:text="${#temporals.format(record.rtiDate, 'dd-MM-yyyy')}"></td>
+                                        <td th:text="${record.e_challan_no}"></td>
+                                        <td th:text="${record.amount}"></td>
+                                        <td th:text="${record.remarks}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(function () {
+            $('#example1').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'pdfHtml5',
+                        orientation: 'landscape',
+                        text: 'Export PDF',
+                        title: 'RTI Monthly Report',
+                        messageTop: 'Filtered Report',
+                        customize: function (doc) {
+                            doc.pageMargins = [40, 60, 40, 60];
+                            doc.defaultStyle.fontSize = 12;
+                            doc.styles.tableHeader.fillColor = '#4CAF50';
+                            doc.styles.tableHeader.color = 'white';
+                            doc.content[0].text = doc.content[0].text.toUpperCase();
+                            doc.content[0].alignment = 'center';
+                            doc.content[0].fontSize = 18;
+                            doc.content[0].margin = [0, 0, 0, 10];
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+
+</div>
+</html>

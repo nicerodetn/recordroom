@@ -14,12 +14,6 @@
                         <div class="col-sm-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <div th:if="${successMessage}"
-                                         class="alert alert-success alert-dismissible fade show text-center"
-                                         id="successMsg"
-                                         role="alert"
-                                         th:text="${successMessage}">
-                                    </div>
 
                                     <form th:object="${record}" method="post"
                                           hx-post="/record/circulation/save"
@@ -36,7 +30,7 @@
                                                 <option value="1">1 (L.Dis)</option>
                                                 <option value="3">3 (K.Dis)</option>
                                                 <option value="10">10 (D.Dis)</option>
-                                                <option value="">Permanent (R.Dis)</option>
+                                                <option value="30">Permanent (R.Dis)</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 Please select a section before saving.
@@ -111,7 +105,7 @@
 
                                         <div class="col-12">
                                             <label class="form-label fw-bold">12a) Section Dealing Hand Name</label>
-                                            <input type="text" class="form-control" th:field="*{sectionDealingHandName}" placeholder="Enter dealing hand name" required>
+                                            <input type="text" class="form-control" th:field="*{sectionDealingHandName}" placeholder="Enter dealing hand name"  required>
                                         </div>
 
 
@@ -120,14 +114,8 @@
                                             <input type="text" pattern="\d{10}"
                                                    maxlength="10"
                                                    minlength="10"
-                                                   oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)"  class="form-control" th:field="*{sectionDealingHandPhoneNo}" placeholder="Enter phone no" required>
+                                                   oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)"  class="form-control" th:field="*{sectionDealingHandPhoneNo}" placeholder="Enter phone no"  required>
                                         </div>
-
-
-
-
-
-
 
                                         <div style="padding-top: 17px;" class="col-12">
                                             <label class="form-label fw-bold">13. Record Room Dealing Hand Name</label><br>
@@ -150,15 +138,50 @@
                                         </div>
                                     </form>
 
-                                    <script>
-                                        // Auto-hide success message after 3 seconds
-                                        setTimeout(() => {
-                                            let msg = document.getElementById("successMsg");
-                                            if (msg) {
-                                                msg.classList.remove("show");
-                                                msg.remove();
-                                            }
-                                        }, 3000);
+                                    <div th:if="${successMessage}"
+                                         class="alert alert-success alert-dismissible fade show text-center"
+                                         id="successMsg"
+                                         role="alert"
+                                         th:text="${successMessage}">
+                                    </div>
+
+                                    <script th:inline="javascript">
+                                        $(document).ready(function() {
+                                            // 1. Get the correct base URL using Thymeleaf (Handles '/record' context path automatically)
+                                            var baseApiUrl = /*[[@{/circulation/api/section/}]]*/ '/circulation/api/section/';
+
+                                            // 2. Use Event Delegation (Use $(document).on) for HTMX compatibility
+                                            $(document).on('change', '#section', function() {
+                                                var sectionId = $(this).val();
+
+                                                // Debugging: Check console to see if the URL is correct now
+                                                console.log("Section ID:", sectionId);
+                                                console.log("Fetching URL:", baseApiUrl + sectionId);
+
+                                                if (sectionId) {
+                                                    $.get(baseApiUrl + sectionId, function(data) {
+                                                        if (data) {
+                                                            $('#sectionDealingHandName').val(data.sectionDealingHandName);
+                                                            $('#sectionDealingHandPhoneNo').val(data.sectionDealingHandPhoneNo);
+                                                        }
+                                                    }).fail(function() {
+                                                        console.error("Failed to fetch section details.");
+                                                    });
+                                                } else {
+                                                    $('#sectionDealingHandName').val('');
+                                                    $('#sectionDealingHandPhoneNo').val('');
+                                                }
+                                            });
+
+                                            // Auto-hide success message
+                                            setTimeout(() => {
+                                                let msg = document.getElementById("successMsg");
+                                                if (msg) {
+                                                    msg.classList.remove("show");
+                                                    msg.remove();
+                                                }
+                                            }, 3000);
+                                        });
                                     </script>
 
 

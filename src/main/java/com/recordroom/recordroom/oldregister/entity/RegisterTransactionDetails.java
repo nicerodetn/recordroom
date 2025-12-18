@@ -31,7 +31,7 @@ public class RegisterTransactionDetails {
     private String recordPersonName_out;
     private LocalDate dateOfReturn;
     private String sectionPersonName_in;
-    private Integer SectionPersonPhNumber_in;
+    private Long SectionPersonPhNumber_in;
     private String recordPersonName_in;
     private LocalDate transactionDate;
 
