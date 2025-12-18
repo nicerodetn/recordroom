@@ -1,6 +1,6 @@
 package com.recordroom.recordroom.dashbord;
 
-
+import com.recordroom.recordroom.dashbord.DashboardComparisonDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -43,6 +43,24 @@ public class DashboardSnapshotController {
         return "fragments/summary_report/snapshot-table :: tabler"; // returns just the <table>
     }
 
+    @GetMapping("/month_wise_report_view")
+    public String loadMonthWiseReportForm(Model model) {
+        return "fragments/summary_report/month_wise_report :: tabler";
+    }
 
+    @GetMapping("/month_wise_data")
+    public String getMonthWiseData(
+            @RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+            @RequestParam("toDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
+            Model model) {
 
+        List<DashboardComparisonDTO> comparisonList = dashboardSnapshotService.getComparisonReport(fromDate, toDate);
+
+        model.addAttribute("comparisonList", comparisonList);
+        model.addAttribute("fromDate", fromDate);
+        model.addAttribute("toDate", toDate);
+
+        // Returns just the table body part
+        return "fragments/summary_report/month_wise_report :: resultTable";
+    }
 }

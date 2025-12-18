@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div id="b-homedb" th:fragment="tabler">
+    <div class="my-5">
+        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Month Wise Range Report</h3>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-light">
+                            <h6 class="m-0 font-weight-bold text-primary">Select Date Range</h6>
+                        </div>
+                        <div class="card-body">
+                            <form hx-get="/record/dashboard/month_wise_data"
+                                  hx-target="#comparison-results"
+                                  hx-indicator="#loading"
+                                  class="row align-items-end mb-4">
+
+                                <div class="col-md-4">
+                                    <label class="fw-bold">From Date:</label>
+                                    <input type="date" name="fromDate" class="form-control" required />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="fw-bold">To Date:</label>
+                                    <input type="date" name="toDate" class="form-control" required />
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i> Load Data
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div id="loading" style="display:none;" class="text-center text-primary mb-3">
+                                <i class="fas fa-spinner fa-spin fa-2x"></i>
+                                <span class="ml-2">Fetching Report Data...</span>
+                            </div>
+
+                            <div id="comparison-results">
+                                <div class="alert alert-info text-center">
+                                    Please select a date range and click "Load Data".
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="resultTable">
+
+    <div class="text-center mt-3 mb-4">
+        <h5>
+            Comparison Report:
+            <span class="text-primary font-weight-bold" th:text="${#temporals.format(fromDate, 'dd-MM-yyyy')}"></span>
+            to
+            <span class="text-primary font-weight-bold" th:text="${#temporals.format(toDate, 'dd-MM-yyyy')}"></span>
+        </h5>
+    </div>
+
+    <div class="table-responsive">
+        <table id="comparisonTable" class="table table-bordered table-striped text-center">
+            <thead class="thead-dark">
+            <tr>
+                <th class="text-left" style="width: 40%;">Field / Category</th>
+                <th style="width: 20%;">Count (From)</th>
+                <th style="width: 20%;">Count (To)</th>
+                <th style="width: 20%;">Difference</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${comparisonList}">
+                <td class="text-left font-weight-bold" th:text="${item.label}">Label</td>
+                <td th:text="${item.fromValue}">0</td>
+                <td th:text="${item.toValue}">0</td>
+
+                <td th:style="${item.difference > 0} ? 'color: green; font-weight: bold;' : (${item.difference < 0} ? 'color: red; font-weight: bold;' : '')">
+                    <span th:if="${item.difference > 0}">+</span><span th:text="${item.difference}">0</span>
+                </td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(comparisonList)}">
+                <td colspan="4" class="text-center text-danger">No data available for the selected dates.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script th:inline="javascript">
+        $(document).ready(function () {
+
+            var fromDateStr = [[${#temporals.format(fromDate, 'dd-MM-yyyy')}]];
+            var toDateStr = [[${#temporals.format(toDate, 'dd-MM-yyyy')}]];
+
+
+            if ($.fn.DataTable.isDataTable('#comparisonTable')) {
+                $('#comparisonTable').DataTable().destroy();
+            }
+
+
+            $('#comparisonTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'pdfHtml5',
+                        text: '<i class="fas fa-file-pdf"></i> Export PDF',
+                        title: 'Month Wise Range Report',
+
+                        messageTop: 'Report Period: ' + fromDateStr + '  to  ' + toDateStr,
+                        orientation: 'portrait',
+                        pageSize: 'A4',
+
+                        customize: function (doc) {
+
+                            doc.pageMargins = [40, 40, 40, 40];
+
+
+                            doc.defaultStyle.alignment = 'center';
+
+
+                            doc.styles.title = {
+                                fontSize: 18,
+                                bold: true,
+                                alignment: 'center',
+                                margin: [0, 0, 0, 10]
+                            };
+
+
+                            doc.styles.message = {
+                                fontSize: 12,
+                                bold: true,
+                                alignment: 'center',
+                                color: '#555555',
+                                margin: [0, 0, 0, 20]
+                            };
+
+
+                            doc.styles.tableHeader.fillColor = '#4CAF50';
+                            doc.styles.tableHeader.color = 'white';
+                            doc.styles.tableHeader.alignment = 'center';
+
+
+                            var tableNode = doc.content[2].table;
+                            tableNode.widths = ['*', 'auto', 'auto', 'auto'];
+                        }
+                    }
+                ],
+
+                paging: false,
+                searching: false,
+                info: false
+            });
+        });
+    </script>
+</div>
+
+</html>
