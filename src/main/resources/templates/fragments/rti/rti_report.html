@@ -2,127 +2,146 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <div id="b-homedb" th:fragment="tabler">
-  <div class="my-5">
+    <div class="my-5">
 
+        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">RTI Report</h3>
 
-    <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">RTI Report</h3>
-
-    <script>
-      $(function () {
-        $('#example1').DataTable({
-    dom: 'Bfrtip',   // Required to show buttons
-    buttons: [
-        {
-            extend: 'pdfHtml5',
-            orientation: 'landscape',
-            text: 'Export PDF',
-            title: 'RTI Report',   // Custom PDF title
-            messageTop: 'RTI Report',
-
-            // Customize the PDF layout and styles
-            customize: function (doc) {
-                // Set page margins
-                doc.pageMargins = [40, 60, 40, 60];
-
-                // Change the default font size
-                doc.defaultStyle.fontSize = 12;
-
-                // Style the table header
-                doc.styles.tableHeader.fillColor = '#4CAF50';   // Green background for header
-                doc.styles.tableHeader.color = 'white';         // White text for header
-
-                // Modify content
-                // For example, make the title bold and center it
-                doc.content[0].text = doc.content[0].text.toUpperCase();
-                doc.content[0].alignment = 'center';
-                doc.content[0].fontSize = 18;
-                doc.content[0].margin = [0, 0, 0, 10];
-
-                // Add a footer
-                doc.footer = function(currentPage, pageCount) {
-                    return {
-                        columns: [
-                            'Left footer text',
-                            {
-                                text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
-                                alignment: 'right',
-                                margin: [0, 0, 20, 0]
-                            }
-                        ],
-                        margin: [40, 0]
-                    }
-                };
-                // You can also manipulate the table layout here if needed
-            },
-
-            // Export only visible columns or all
-            exportOptions: {
-                columns: ':visible'
+        <style>
+            /* 1. Wrapper as reference point */
+            .dataTables_wrapper {
+                position: relative;
+                padding-top: 10px; /* Space for the absolute search bar */
             }
-        }
-    ],
-    // Other DataTable options ...
-});
 
-      });
-    </script>
+            /* 2. Search bar fixed position (Immovable) */
+            .dataTables_filter {
+                position: absolute;
+                top: 0;
+                left: 850px; /* Adjust this to move the search bar Left/Right */
+                z-index: 100;
+            }
 
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title"></h3>
+            /* 3. Pagination Alignment */
+            .dataTables_paginate {
+                display: flex !important;
+                justify-content: flex-end !important;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            /* 4. Force Table Width for Scrolling */
+            table.dataTable {
+                width: max-content !important;
+                max-width: none !important;
+            }
+        </style>
+
+        <script>
+            $(function () {
+                $('#example1').DataTable({
+                    // Standard DOM from your 'Old Register' example
+                    dom: 'Bfrtip',
+
+                    buttons: [
+                        {
+                            extend: 'pdfHtml5',
+                            orientation: 'landscape',
+                            text: 'Export PDF',
+                            title: 'RTI Report',
+                            messageTop: 'RTI Report',
+
+                            customize: function (doc) {
+                                doc.pageMargins = [40, 60, 40, 60];
+                                doc.defaultStyle.fontSize = 8; // Small font as per your example
+                                doc.styles.tableHeader.fillColor = '#4CAF50';
+                                doc.styles.tableHeader.color = 'white';
+                                doc.content[0].text = doc.content[0].text.toUpperCase();
+                                doc.content[0].alignment = 'center';
+                                doc.content[0].fontSize = 16;
+                                doc.content[0].margin = [0, 0, 0, 10];
+                                doc.footer = function(currentPage, pageCount) {
+                                    return {
+                                        columns: [
+                                            'RTI Report',
+                                            {
+                                                text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
+                                                alignment: 'right',
+                                                margin: [0, 0, 20, 0]
+                                            }
+                                        ],
+                                        margin: [40, 0]
+                                    }
+                                };
+                            },
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        }
+                    ],
+                    "responsive": false,
+                    "lengthChange": false,
+                    "autoWidth": false,
+                    "scrollX": true,        // Enables horizontal scrolling
+                    "scrollCollapse": true, // Collapses table if few rows
+                    "searching": true,
+                    "pageLength": 100
+                });
+            });
+        </script>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <div class="table-responsive" style="overflow-x: auto;">
+                                <table id="example1" class="table table-bordered table-striped" style="width: 100%;">
+                                    <thead>
+                                    <tr>
+                                        <th style="min-width: 60px; white-space: nowrap;">Sr. No.</th>
+                                        <th style="min-width: 150px; white-space: nowrap;">Petitioner Name</th>
+                                        <th style="min-width: 200px; white-space: nowrap;">Petitioner Address</th>
+                                        <th style="min-width: 120px; white-space: nowrap;">Petitioner Phone No</th>
+                                        <th style="min-width: 120px; white-space: nowrap;">Letter No</th>
+                                        <th style="min-width: 150px; white-space: nowrap;">Subject</th>
+
+                                        <th style="min-width: 100px; white-space: nowrap;">RTI Date</th>
+
+                                        <th style="min-width: 80px; white-space: nowrap;">In Time</th>
+                                        <th style="min-width: 80px; white-space: nowrap;">Out Time</th>
+                                        <th style="min-width: 120px; white-space: nowrap;">e-Challan No</th>
+                                        <th style="min-width: 100px; white-space: nowrap;">Amount</th>
+                                        <th style="min-width: 200px; white-space: nowrap;">Record Room Dealing Hand Name</th>
+                                        <th style="min-width: 150px; white-space: nowrap;">Remarks</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="record, iterStat : ${rti}">
+                                        <td th:text="${iterStat.index + 1}"></td>
+                                        <td th:text="${record.pettitioner_name}"></td>
+                                        <td th:text="${record.pettitioner_address}"></td>
+                                        <td th:text="${record.pettitioner_phoneno}"></td>
+                                        <td th:text="${record.letter_no}"></td>
+                                        <td th:text="${record.subject}"></td>
+                                        <td th:text="${#temporals.format(record.rtiDate, 'dd-MM-yyyy')}"></td>
+                                        <td th:text="${#temporals.format(record.in_time, 'HH:mm')}"></td>
+                                        <td th:text="${#temporals.format(record.out_time, 'HH:mm')}"></td>
+                                        <td th:text="${record.e_challan_no}"></td>
+                                        <td th:text="${record.amount}"></td>
+                                        <td th:text="${record.rr_dealing_name}"></td>
+                                        <td th:text="${record.remarks}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- /.card-header -->
-            <div class="card-body">
-              <table id="example1" class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                  <th>Sr. No.</th>
-                  <th>Petitioner Name</th>
-                  <th>Petitioner Address</th>
-                  <th>Petitioner Phone No</th>
-                  <th>Letter No</th>
-                  <th>Subject</th>
-                  <th>RTI Date</th>
-                  <th>In Time</th>
-                  <th>Out Time</th>
-                  <th>Check No</th>
-                  <th>Amount</th>
-                  <th>Record Room Dealing Hand Name</th>
-                  <th>Remarks</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="record, iterStat : ${rti}">
-                  <td th:text="${iterStat.index + 1}"></td>
-                  <td th:text="${record.pettitioner_name}"></td>
-                  <td th:text="${record.pettitioner_address}"></td>
-                  <td th:text="${record.pettitioner_phoneno}"></td>
-                  <td th:text="${record.letter_no}"></td>
-                  <td th:text="${record.subject}"></td>
-                  <td th:text="${#temporals.format(record.rtiDate, 'dd-MM-yyyy')}"></td>
-                  <td th:text="${#temporals.format(record.in_time, 'HH:mm')}"></td>
-                  <td th:text="${#temporals.format(record.out_time, 'HH:mm')}"></td>
-                  <td th:text="${record.check_no}"></td>
-                  <td th:text="${record.amount}"></td>
-                  <td th:text="${record.rr_dealing_name}"></td>
-                  <td th:text="${record.remarks}"></td>
-                </tr>
-                </tbody>
-              </table>
-
-            </div>
-            <!-- /.card-body -->
-          </div>
-          <!-- /.card -->
         </div>
-        <!-- /.col -->
-      </div>
-      <!-- /.row -->
-    </div>
 
-  </div>
+    </div>
 </div>
 </html>

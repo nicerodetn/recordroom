@@ -24,4 +24,6 @@ public class Section {
     private String section;
     private String seat;
     private String description;
+    private String sectionDealingHandName;
+    private String sectionDealingHandPhoneNo;
 }

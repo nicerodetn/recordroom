@@ -69,7 +69,14 @@
                 <li class='sub-menu'><a href='javascript:void(0)' class="dashboard-bgcolor border-bottom b-db-color b-newpage">RTI<div class='fa fa-caret-down right'></div></a>
                     <ul>
                         <li><a class="b-newpage" hx-get="/record/rti/load_form" hx-target="#b-homedb" hx-swap="innerHTML">RTI Entry</a></li>
-                        <li><a class="b-newpage" hx-get="/record/rti/rti_Report" hx-target="#b-homedb" hx-swap="innerHTML">Report</a></li>
+                        <li class='sub-sub-menu'><a href='javascript:void(0)' class="b-newpage">Report's<div class='fa fa-caret-down right'></div></a>
+                            <ul>
+                                <li><a class="b-newpage" hx-get="/record/rti/rti_report" hx-target="#b-homedb" hx-swap="innerHTML">Report</a></li>
+                                <li><a class="b-newpage" hx-get="/record/rti/rti_monthly_report" hx-target="#b-homedb" hx-swap="innerHTML">Monthly Report</a></li>
+
+                            </ul>
+                        </li>
+
 
                     </ul>
                 </li>

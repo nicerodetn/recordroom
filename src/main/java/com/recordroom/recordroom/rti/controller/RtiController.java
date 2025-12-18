@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import java.time.LocalDate;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,11 +45,27 @@ public class RtiController {
         }
     }
 
-    @GetMapping("/rti_Report")
+    @GetMapping("/rti_report")
     public String showReport(Model model) {
         List<Rti> rti = rtiService.getAllRti();
         model.addAttribute("rti", rti);
-        return "fragments/rti/rti_report :: tabler"; // Thymeleaf template name
+        return "fragments/rti/rti_report :: tabler";
+    }
+
+    @GetMapping("/rti_monthly_report")
+    public String showMonthlyReport(
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer year,
+            Model model
+    ) {
+        List<Rti> rtiList = rtiService.getFilteredRti(month, year);
+
+        model.addAttribute("rti", rtiList);
+        model.addAttribute("selectedYear", year);
+        model.addAttribute("selectedMonth", month);
+
+        // Pointing to the NEW file created in Step 1
+        return "fragments/rti/rti_monthly_report :: tabler";
     }
 
 }

@@ -73,6 +73,10 @@ public class RecordService {
         return sectionRepo.findDistinctCategories();
     }
 
+    public Optional<Section> getSectionById(Integer id) {
+        return sectionRepo.findById(id);
+    }
+
     public Page<FileRecord> findByFilters(DataTableRequest request, String sectionCategory) {
 
         Specification<FileRecord> spec = (root, query, cb) -> {

@@ -28,7 +28,7 @@ public class Rti {
     private String pettitioner_phoneno;
     private String letter_no;
     private String subject;
-    private String check_no;
+    private String e_challan_no;
     private Long amount;
     private String rr_dealing_name;
     private String remarks;
