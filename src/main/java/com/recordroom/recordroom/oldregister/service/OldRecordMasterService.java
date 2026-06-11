@@ -69,7 +69,10 @@ public class OldRecordMasterService {
         return repository.countTotalRecords();
     }
 
-    public void deleteRecord(Integer id) {
-        repository.deleteById(id);
+    public OldRecordMaster updateRecord(OldRecordMaster record) {
+        return repository.save(record);
     }
+
+
+
 }

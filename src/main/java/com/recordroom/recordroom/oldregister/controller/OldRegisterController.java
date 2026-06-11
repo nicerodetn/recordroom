@@ -191,11 +191,6 @@ public class OldRegisterController {
     }
 
 
-    @GetMapping("/view_details")
-    public String viewAllRecords(Model model) {
-        model.addAttribute("records", oldRecordMasterService.getAllRecords());
-        return "fragments/old_register/view_details :: tabler";
-    }
 
     @GetMapping("/transaction_details")
     public String viewTransactionDetails(Model model) {
@@ -209,9 +204,31 @@ public class OldRegisterController {
         return "fragments/old_register/outstanding_records :: tabler";
     }
 
-    @PostMapping("/outstanding_records")
-    public String viewOutstandingRecordsP(Model model) {
-        model.addAttribute("outstandingRecords", registerTransactionService.getAllActiveTransactions());
-        return "fragments/old_register/outstanding_records :: tabler";
+    // ----- Edit Record -----
+    @GetMapping("/edit/{id}")
+    public String editRecord(@PathVariable Integer id, Model model) {
+        var optional = oldRecordMasterService.findById(id);
+        if (optional.isPresent()) {
+            model.addAttribute("record", optional.get());
+            model.addAttribute("talukList", districtMasterService.getAllTaluks());
+            return "fragments/old_register/master_creation :: form";
+        }
+        model.addAttribute("errorMessage", "Record not found");
+        return "fragments/old_register/master_creation :: form";
+    }
+
+    @PostMapping("/edit")
+    public String updateRecord(@ModelAttribute OldRecordMaster record, Model model) {
+        oldRecordMasterService.updateRecord(record);
+        model.addAttribute("successMessage", "✅ Record updated successfully!");
+        return "redirect:/oldregister/view_details";
+    }
+
+
+    // ----- View Details -----
+    @GetMapping("/view_details")
+    public String viewAllRecords(Model model) {
+        model.addAttribute("records", oldRecordMasterService.getAllRecords());
+        return "fragments/old_register/view_details :: tabler";
     }
 }
