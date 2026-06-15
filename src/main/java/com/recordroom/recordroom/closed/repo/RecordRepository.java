@@ -32,5 +32,4 @@ public interface RecordRepository extends JpaRepository<FileRecord, Integer>, Jp
         WHERE EXTRACT(YEAR FROM AGE(CURRENT_DATE, handing_over_date)) > file_type
         """, nativeQuery = true)
     List<FileRecord> findRecordsExceedingYearLimit();
-
 }
