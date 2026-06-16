@@ -6,6 +6,7 @@ import com.recordroom.recordroom.oldregister.service.DistrictMasterService; // U
 import com.recordroom.recordroom.oldregister.service.OldRecordMasterService;
 import com.recordroom.recordroom.oldregister.service.RegisterTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -51,17 +52,36 @@ public class OldRegisterController {
 
     @PostMapping("/save_master")
     public String saveMasterRecord(@ModelAttribute OldRecordMaster record, Model model) {
-        Optional<OldRecordMaster> saved = oldRecordMasterService.saveRecord(record);
+        if (record.getId() != null) {
+            Optional<OldRecordMaster> oldRecord = oldRecordMasterService.findById(record.getId());
+            if (oldRecord.isPresent()) {
+                Optional<RegisterTransactionDetails> activeTrans = registerTransactionService.findActiveBySerialNoAndYear(
+                        oldRecord.get().getRecord_serial_no(), oldRecord.get().getYear()
+                );
+                if (activeTrans.isPresent()) {
+                    model.addAttribute("record", record);
+                    model.addAttribute("talukList", districtMasterService.getAllTaluks());
+                    model.addAttribute("errorMessage", "❌ Cannot edit record. Record is outstanding!");
+                    return "fragments/old_register/master_creation :: form";
+                }
+            }
+        }
 
+        Optional<OldRecordMaster> saved;
+        if (record.getId() != null) {
+            saved = oldRecordMasterService.updateRecord(record);
+        } else {
+            saved = oldRecordMasterService.saveRecord(record);
+        }
 
         model.addAttribute("talukList", districtMasterService.getAllTaluks());
 
         if (saved.isPresent()) {
             OldRecordMaster newRecord = saved.get();
             model.addAttribute("record", new OldRecordMaster());
-            model.addAttribute("successMessage", "✅ Record Saved! Generated Serial No: " + newRecord.getRecord_serial_no());
+            model.addAttribute("successMessage", record.getId() != null ? "✅ Record updated successfully!" : "✅ Record Saved! Generated Serial No: " + newRecord.getRecord_serial_no());
         } else {
-            model.addAttribute("record", new OldRecordMaster());
+            model.addAttribute("record", record);
             model.addAttribute("errorMessage", "❌ Error: Duplicate Entry.");
         }
         return "fragments/old_register/master_creation :: form";
@@ -228,7 +248,48 @@ public class OldRegisterController {
     // ----- View Details -----
     @GetMapping("/view_details")
     public String viewAllRecords(Model model) {
-        model.addAttribute("records", oldRecordMasterService.getAllRecords());
+        List<OldRecordMaster> records = oldRecordMasterService.getAllRecords();
+        for (OldRecordMaster record : records) {
+            boolean isOutstanding = registerTransactionService.findActiveBySerialNoAndYear(
+                    record.getRecord_serial_no(), record.getYear()
+            ).isPresent();
+            record.setOutstanding(isOutstanding);
+        }
+        model.addAttribute("records", records);
         return "fragments/old_register/view_details :: tabler";
+    }
+
+    @PostMapping("/delete/{id}")
+    @ResponseBody
+    public ResponseEntity<String> deleteRecord(@PathVariable Integer id) {
+        Optional<OldRecordMaster> record = oldRecordMasterService.findById(id);
+        if (record.isEmpty()) {
+            return ResponseEntity.status(404).body("Record not found");
+        }
+        Optional<RegisterTransactionDetails> activeTrans = registerTransactionService.findActiveBySerialNoAndYear(
+                record.get().getRecord_serial_no(), record.get().getYear()
+        );
+        if (activeTrans.isPresent()) {
+            return ResponseEntity.badRequest().body("Cannot delete outstanding record");
+        }
+        oldRecordMasterService.deleteRecordSoft(id);
+        return ResponseEntity.ok("Record deleted successfully");
+    }
+
+    @GetMapping("/deletedHistory")
+    public String deletedHistory(Model model) {
+        model.addAttribute("records", oldRecordMasterService.getDeletedRecords());
+        return "fragments/old_register/deleted_history :: tabler";
+    }
+
+    @PostMapping("/restore/{id}")
+    @ResponseBody
+    public ResponseEntity<String> restoreRecord(@PathVariable Integer id) {
+        Optional<OldRecordMaster> record = oldRecordMasterService.findById(id);
+        if (record.isEmpty()) {
+            return ResponseEntity.status(404).body("Record not found");
+        }
+        oldRecordMasterService.restoreRecord(id);
+        return ResponseEntity.ok("Record restored successfully");
     }
 }

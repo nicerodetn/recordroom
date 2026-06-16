@@ -47,4 +47,20 @@ public class OldRecordMaster {
             default: return String.valueOf(quality_status);
         }
     }
+
+    private Boolean deleted = false;
+    private LocalDate deletedDate;
+
+    @Transient
+    private boolean outstanding;
+
+    @Transient
+    private Long remainingDays;
+
+    public Long getRemainingDays() {
+        if (deletedDate == null) return null;
+        long daysPassed = java.time.temporal.ChronoUnit.DAYS.between(deletedDate, LocalDate.now());
+        long remaining = 7 - daysPassed;
+        return remaining < 0 ? 0 : remaining;
+    }
 }

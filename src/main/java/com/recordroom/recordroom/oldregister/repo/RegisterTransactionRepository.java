@@ -32,4 +32,9 @@ public interface RegisterTransactionRepository extends JpaRepository<RegisterTra
     @Query(value = "SELECT COUNT(*) FROM register_transaction_details WHERE is_active_status = true",
             nativeQuery = true)
     long countActiveTransactions();
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.transaction.annotation.Transactional
+    @Query("DELETE FROM RegisterTransactionDetails rtd WHERE rtd.master.id = :masterId")
+    void deleteByMasterId(@Param("masterId") Integer masterId);
 }

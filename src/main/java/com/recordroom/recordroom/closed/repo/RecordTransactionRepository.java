@@ -22,6 +22,11 @@ public interface RecordTransactionRepository extends JpaRepository<RecordTransac
 
     List<RecordTransactionDetails> findByActiveTrue();
 
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.transaction.annotation.Transactional
+    @Query("DELETE FROM RecordTransactionDetails t WHERE t.fileRecord.id = :fileRecordId")
+    void deleteByFileRecordId(@Param("fileRecordId") Integer fileRecordId);
+
     @Query(
             value = "SELECT count(*) FROM record_transaction_details WHERE active = true",
             nativeQuery = true

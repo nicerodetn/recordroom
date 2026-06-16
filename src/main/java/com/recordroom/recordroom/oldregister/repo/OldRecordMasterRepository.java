@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface OldRecordMasterRepository extends JpaRepository<OldRecordMaster, Integer> {
@@ -20,4 +21,10 @@ public interface OldRecordMasterRepository extends JpaRepository<OldRecordMaster
 
     @Query(value = "SELECT COUNT(*) FROM old_record_master WHERE record_serial_no = :serial_no", nativeQuery = true)
     int countByRecordSerialNo(@Param("serial_no") String serialNo);
+
+    List<OldRecordMaster> findByDeletedTrueAndDeletedDateLessThanEqual(java.time.LocalDate cutoff);
+
+    List<OldRecordMaster> findByDeletedFalseOrDeletedIsNull();
+
+    List<OldRecordMaster> findByDeletedTrue();
 }

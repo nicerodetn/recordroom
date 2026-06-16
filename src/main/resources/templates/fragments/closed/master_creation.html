@@ -21,6 +21,7 @@
                                           hx-swap="outerHTML"
                                           class="row g-3 border p-3 rounded bg-light shadow-sm"
                                           id="recordForm">
+                                        <input type="hidden" th:field="*{id}" />
                                         <!-- 1. File Type -->
 
                                         <div style="padding-top: 17px;" class="col-12">
@@ -145,6 +146,13 @@
                                          th:text="${successMessage}">
                                     </div>
 
+                                    <div th:if="${errorMessage}"
+                                         class="alert alert-danger alert-dismissible fade show text-center"
+                                         id="errorMsg"
+                                         role="alert"
+                                         th:text="${errorMessage}">
+                                    </div>
+
                                     <script th:inline="javascript">
                                         $(document).ready(function() {
                                             // 1. Get the correct base URL using Thymeleaf (Handles '/record' context path automatically)
@@ -181,6 +189,15 @@
                                                     msg.remove();
                                                 }
                                             }, 3000);
+
+                                            // Auto-hide error message
+                                            setTimeout(() => {
+                                                let msg = document.getElementById("errorMsg");
+                                                if (msg) {
+                                                    msg.classList.remove("show");
+                                                    msg.remove();
+                                                }
+                                            }, 5000);
                                         });
                                     </script>
 

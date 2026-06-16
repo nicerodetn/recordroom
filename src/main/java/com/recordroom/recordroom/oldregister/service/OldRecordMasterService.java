@@ -15,6 +15,9 @@ public class OldRecordMasterService {
     @Autowired
     private OldRecordMasterRepository repository;
 
+    @Autowired
+    private com.recordroom.recordroom.oldregister.repo.RegisterTransactionRepository transactionRepository;
+
     public Optional<OldRecordMaster> saveRecord(OldRecordMaster record) {
 
 
@@ -62,17 +65,58 @@ public class OldRecordMasterService {
     }
 
     public List<OldRecordMaster> getAllRecords() {
-        return repository.findAll();
+        return repository.findByDeletedFalseOrDeletedIsNull();
+    }
+
+    public List<OldRecordMaster> getDeletedRecords() {
+        return repository.findByDeletedTrue();
     }
 
     public long getTotalRecordsCount() {
         return repository.countTotalRecords();
     }
 
-    public OldRecordMaster updateRecord(OldRecordMaster record) {
-        return repository.save(record);
+    public Optional<OldRecordMaster> updateRecord(OldRecordMaster record) {
+        Optional<OldRecordMaster> existing = repository.findBySerialNoAndYear(record.getRecord_serial_no(), record.getYear());
+        if (existing.isPresent() && !existing.get().getId().equals(record.getId())) {
+            return Optional.empty();
+        }
+        return Optional.of(repository.save(record));
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    public void deleteRecord(Integer id) {
+        transactionRepository.deleteByMasterId(id);
+        repository.deleteById(id);
+    }
 
+    public void deleteRecordSoft(Integer id) {
+        Optional<OldRecordMaster> recordOpt = repository.findById(id);
+        if (recordOpt.isPresent()) {
+            OldRecordMaster record = recordOpt.get();
+            record.setDeleted(true);
+            record.setDeletedDate(java.time.LocalDate.now());
+            repository.save(record);
+        }
+    }
 
+    public void restoreRecord(Integer id) {
+        Optional<OldRecordMaster> recordOpt = repository.findById(id);
+        if (recordOpt.isPresent()) {
+            OldRecordMaster record = recordOpt.get();
+            record.setDeleted(false);
+            record.setDeletedDate(null);
+            repository.save(record);
+        }
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    @org.springframework.scheduling.annotation.Scheduled(cron = "0 0 0 * * ?") // Daily at midnight
+    public void cleanExpiredDeletedRecords() {
+        java.time.LocalDate cutoff = java.time.LocalDate.now().minusDays(7);
+        List<OldRecordMaster> expiredRecords = repository.findByDeletedTrueAndDeletedDateLessThanEqual(cutoff);
+        for (OldRecordMaster r : expiredRecords) {
+            deleteRecord(r.getId());
+        }
+    }
 }

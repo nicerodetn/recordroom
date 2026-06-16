@@ -64,20 +64,134 @@ public class CirculationController {
 
     @PostMapping("/save")
     public String saveRecord(@ModelAttribute FileRecord record, Model model) {
-        Optional<FileRecord> r = recordService.saveRecord(record);
-        if(r.isPresent())
-        {
-            model.addAttribute("record", new FileRecord());
-            model.addAttribute("sections", recordService.getAllSections());
-            model.addAttribute("successMessage", "✅ Record saved successfully!");
-            return "fragments/closed/master_creation :: loadFormFragment";
+        if (record.getId() != null) {
+            Optional<FileRecord> oldRecord = recordService.findById(record.getId());
+            if (oldRecord.isPresent()) {
+                Optional<RecordTransactionDetails> activeTrans = recordTransactionService.findBydrSerialNoAndActiveAndYear(
+                        oldRecord.get().getDrSerialNo(), oldRecord.get().getDr_year()
+                );
+                if (activeTrans.isPresent()) {
+                    model.addAttribute("record", record);
+                    model.addAttribute("sections", recordService.getAllSections());
+                    model.addAttribute("errorMessage", "❌ Cannot edit record. File is outstanding!");
+                    return "fragments/closed/master_creation :: loadFormFragment";
+                }
+            }
+        }
 
-        }else {
+        Optional<FileRecord> r;
+        if (record.getId() != null) {
+            r = recordService.updateRecord(record);
+        } else {
+            r = recordService.saveRecord(record);
+        }
+
+        if (r.isPresent()) {
             model.addAttribute("record", new FileRecord());
             model.addAttribute("sections", recordService.getAllSections());
-            model.addAttribute("successMessage", "✅ Dulpicate DR Number given!");
+            model.addAttribute("successMessage", record.getId() != null ? "✅ Record updated successfully!" : "✅ Record saved successfully!");
+            return "fragments/closed/master_creation :: loadFormFragment";
+        } else {
+            model.addAttribute("record", record);
+            model.addAttribute("sections", recordService.getAllSections());
+            model.addAttribute("errorMessage", "❌ Duplicate DR Number given!");
             return "fragments/closed/master_creation :: loadFormFragment";
         }
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editRecord(@PathVariable Integer id, Model model) {
+        Optional<FileRecord> optional = recordService.findById(id);
+        if (optional.isPresent()) {
+            model.addAttribute("record", optional.get());
+            model.addAttribute("sections", recordService.getAllSections());
+            return "fragments/closed/master_creation :: loadFormFragment";
+        }
+        return "redirect:/circulation/masterReport";
+    }
+
+    @PostMapping("/delete/{id}")
+    @ResponseBody
+    public ResponseEntity<String> deleteRecord(@PathVariable Integer id) {
+        Optional<FileRecord> record = recordService.findById(id);
+        if (record.isEmpty()) {
+            return ResponseEntity.status(404).body("Record not found");
+        }
+        Optional<RecordTransactionDetails> activeTrans = recordTransactionService.findBydrSerialNoAndActiveAndYear(
+                record.get().getDrSerialNo(), record.get().getDr_year()
+        );
+        if (activeTrans.isPresent()) {
+            return ResponseEntity.badRequest().body("Cannot delete outstanding file");
+        }
+        recordService.deleteRecordSoft(id);
+        return ResponseEntity.ok("Record deleted successfully");
+    }
+
+    @GetMapping("/deletedHistory")
+    public String deletedHistory(Model model) {
+        return "fragments/closed/deleted_history :: tabler";
+    }
+
+    @PostMapping("/load_deleted_data")
+    @ResponseBody
+    public DataTableResponse<FileMasterReportDTO> loadDeletedData(
+            @RequestBody DataTableRequest request
+    ) {
+        Page<FileRecord> page = recordService.findDeletedByFilters(request);
+
+        List<FileMasterReportDTO> dtoList = page.getContent().stream().map(record -> {
+            FileMasterReportDTO dto = new FileMasterReportDTO();
+            dto.setId(record.getId());
+            dto.setDrSerialNo(record.getDrSerialNo());
+            dto.setDr_year(record.getDr_year());
+            dto.setFileType(record.getFileType());
+
+            if (record.getSection() != null) {
+                dto.setSection(record.getSection().getSection());
+            } else {
+                dto.setSection("N/A");
+            }
+            dto.setFileClosingDate(record.getFileClosingDate());
+            dto.setHandingOverDate(record.getHandingOverDate());
+            dto.setRemarks(record.getRemarks());
+            dto.setRackDetails(record.getRackDetails());
+            dto.setSectionDealingHandName(record.getSectionDealingHandName());
+            dto.setSectionDealingHandPhoneNo(record.getSectionDealingHandPhoneNo());
+            dto.setRecordRoomDealingHandName(record.getRecordRoomDealingHandName());
+            dto.setTotal_volume(record.getTotal_volume());
+            dto.setTotal_pages(record.getTotal_pages());
+            dto.setNote_pages(record.getNote_pages());
+
+            // Calculate remaining days
+            if (record.getDeletedDate() != null) {
+                long daysPassed = java.time.temporal.ChronoUnit.DAYS.between(record.getDeletedDate(), java.time.LocalDate.now());
+                long remaining = 7 - daysPassed;
+                dto.setRemainingDays(remaining < 0 ? 0 : remaining);
+            } else {
+                dto.setRemainingDays(7L);
+            }
+
+            return dto;
+        }).collect(Collectors.toList());
+
+        DataTableResponse<FileMasterReportDTO> response = new DataTableResponse<>();
+        response.setDraw(request.getDraw());
+        response.setRecordsTotal(page.getTotalElements());
+        response.setRecordsFiltered(page.getTotalElements());
+        response.setData(dtoList);
+
+        return response;
+    }
+
+    @PostMapping("/restore/{id}")
+    @ResponseBody
+    public ResponseEntity<String> restoreRecord(@PathVariable Integer id) {
+        Optional<FileRecord> record = recordService.findById(id);
+        if (record.isEmpty()) {
+            return ResponseEntity.status(404).body("Record not found");
+        }
+        recordService.restoreRecord(id);
+        return ResponseEntity.ok("Record restored successfully");
     }
 
     @GetMapping("/api/section/{id}")
@@ -241,6 +355,7 @@ public class CirculationController {
 
         List<FileMasterReportDTO> dtoList = page.getContent().stream().map(record -> {
             FileMasterReportDTO dto = new FileMasterReportDTO();
+            dto.setId(record.getId());
             dto.setDrSerialNo(record.getDrSerialNo());
             dto.setDr_year(record.getDr_year());
             dto.setFileType(record.getFileType());
@@ -260,6 +375,12 @@ public class CirculationController {
             dto.setTotal_volume(record.getTotal_volume());
             dto.setTotal_pages(record.getTotal_pages());
             dto.setNote_pages(record.getNote_pages());
+
+            boolean isOutstanding = recordTransactionService.findBydrSerialNoAndActiveAndYear(
+                    record.getDrSerialNo(), record.getDr_year()
+            ).isPresent();
+            dto.setOutstanding(isOutstanding);
+
             return dto;
         }).collect(Collectors.toList());
 

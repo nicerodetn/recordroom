@@ -57,6 +57,14 @@ public class RecordService {
         }
     }
 
+    public Optional<FileRecord> updateRecord(FileRecord r) {
+        Optional<FileRecord> existing = recordRepo.findByDrSerialNoAndYear(r.getDrSerialNo(), r.getDr_year());
+        if (existing.isPresent() && !existing.get().getId().equals(r.getId())) {
+            return Optional.empty();
+        }
+        return Optional.of(recordRepo.save(r));
+    }
+
     public Optional<FileRecord> findBydrSerialNoAndYear(Long drSerialNo,Integer dr_year) {
         return recordRepo.findByDrSerialNoAndYear(drSerialNo,dr_year);
     }
@@ -65,7 +73,9 @@ public class RecordService {
         return recordRepo.findById(id);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public void deleteRecord(Integer id) {
+        transRepo.deleteByFileRecordId(id);
         recordRepo.deleteById(id);
     }
 
@@ -83,6 +93,11 @@ public class RecordService {
 
             List<Predicate> predicates = new ArrayList<>();
 
+            // Exclude soft-deleted records
+            predicates.add(cb.or(
+                cb.equal(root.get("deleted"), false),
+                cb.isNull(root.get("deleted"))
+            ));
 
             if (sectionCategory != null && !sectionCategory.isEmpty()) {
                 predicates.add(cb.equal(
@@ -120,6 +135,70 @@ public class RecordService {
         );
 
         return recordRepo.findAll(spec, pageable);
+    }
+
+    public Page<FileRecord> findDeletedByFilters(DataTableRequest request) {
+        Specification<FileRecord> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Include only soft-deleted records
+            predicates.add(cb.equal(root.get("deleted"), true));
+
+            String searchValue = request.getSearch().getValue();
+            if (searchValue != null && !searchValue.isEmpty()) {
+                try {
+                    Long searchSerialNo = Long.parseLong(searchValue);
+                    predicates.add(cb.equal(root.get("drSerialNo"), searchSerialNo));
+                } catch (NumberFormatException e) {
+                    predicates.add(cb.isFalse(cb.literal(true)));
+                }
+            }
+
+            if (query.getResultType() != Long.class && query.getResultType() != long.class) {
+                root.fetch("section", jakarta.persistence.criteria.JoinType.LEFT);
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Pageable pageable = PageRequest.of(
+                request.getStart() / request.getLength(),
+                request.getLength(),
+                Sort.unsorted()
+        );
+
+        return recordRepo.findAll(spec, pageable);
+    }
+
+    public void deleteRecordSoft(Integer id) {
+        Optional<FileRecord> recordOpt = recordRepo.findById(id);
+        if (recordOpt.isPresent()) {
+            FileRecord record = recordOpt.get();
+            record.setDeleted(true);
+            record.setDeletedDate(java.time.LocalDate.now());
+            recordRepo.save(record);
+        }
+    }
+
+    public void restoreRecord(Integer id) {
+        Optional<FileRecord> recordOpt = recordRepo.findById(id);
+        if (recordOpt.isPresent()) {
+            FileRecord record = recordOpt.get();
+            record.setDeleted(false);
+            record.setDeletedDate(null);
+            recordRepo.save(record);
+        }
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    @org.springframework.scheduling.annotation.Scheduled(cron = "0 0 0 * * ?") // Daily at midnight
+    public void cleanExpiredDeletedRecords() {
+        java.time.LocalDate cutoff = java.time.LocalDate.now().minusDays(7);
+        List<FileRecord> expiredRecords = recordRepo.findByDeletedTrueAndDeletedDateLessThanEqual(cutoff);
+        for (FileRecord r : expiredRecords) {
+            transRepo.deleteByFileRecordId(r.getId());
+            recordRepo.delete(r);
+        }
     }
 
     public List<FileRecord> destructionReport() {

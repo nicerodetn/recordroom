@@ -24,4 +24,9 @@ public interface LibraryTransactionRepository extends JpaRepository<LibraryTrans
     @Query("SELECT lt FROM LibraryTransaction lt JOIN FETCH lt.library WHERE lt.date_of_return IS NOT NULL")
     List<LibraryTransaction> findReturnedTransactions();
 
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.transaction.annotation.Transactional
+    @Query("DELETE FROM LibraryTransaction lt WHERE lt.library.id = :libraryId")
+    void deleteByLibraryId(@Param("libraryId") Integer libraryId);
+
 }

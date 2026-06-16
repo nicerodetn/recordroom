@@ -1,6 +1,5 @@
 package com.recordroom.recordroom.closed.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +12,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor  
 public class FileRecord {
 
     @Id
@@ -22,13 +21,13 @@ public class FileRecord {
 
     private Integer fileType;
 
-    @Column( unique = true)
+    @Column(unique = true)
     private Long drSerialNo;
 
     private Integer dr_year;
 
     @ManyToOne
-    @JoinColumn(name = "section_id",referencedColumnName = "id")
+    @JoinColumn(name = "section_id", referencedColumnName = "id")
     private Section section;
 
     private Integer total_volume;
@@ -43,8 +42,10 @@ public class FileRecord {
     private String sectionDealingHandPhoneNo;
     private String recordRoomDealingHandName;
 
-
     private LocalDate created_date;
+
+    private Boolean deleted = false;
+    private LocalDate deletedDate;
 
     @PrePersist
     protected void onCreate() {

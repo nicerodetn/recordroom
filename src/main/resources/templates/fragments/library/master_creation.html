@@ -34,6 +34,7 @@
                                           hx-swap="outerHTML"
                                           class="row g-3 border p-3 rounded bg-light shadow-sm"
                                           id="recordForm">
+                                        <input type="hidden" th:field="*{id}" />
 
 
                                         <!-- 1. Name Of The Book  -->
@@ -93,6 +94,15 @@
                                                 msg.remove();
                                             }
                                         }, 3000);
+
+                                        // Auto-hide error message after 5 seconds
+                                        setTimeout(() => {
+                                            let msg = document.getElementById("errorMsg");
+                                            if (msg) {
+                                                msg.classList.remove("show");
+                                                msg.remove();
+                                            }
+                                        }, 5000);
                                     </script>
 
                                 </div>

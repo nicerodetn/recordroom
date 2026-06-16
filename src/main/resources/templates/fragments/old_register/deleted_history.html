@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div id="b-homedb" th:fragment="tabler">
+    <style>
+        .action-buttons-container .btn {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .action-buttons-container .btn:hover:not([disabled]) {
+            transform: scale(1.15);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .action-buttons-container .btn:active:not([disabled]) {
+            transform: scale(0.95);
+        }
+    </style>
+    <div class="my-5">
+        <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Deleted Register Records History</h3>
+
+        <script>
+            $(function () {
+                $('#example1').DataTable({
+                    dom: 'Bfrtip',
+                    buttons: [
+                        {
+                            extend: 'pdfHtml5',
+                            orientation: 'landscape',
+                            text: 'Export PDF',
+                            className: 'btn btn-secondary mr-2',
+                            filename: 'Deleted_Register_Records',
+                            title: '',
+                            customize: function (doc) {
+                                doc.pageMargins = [40, 70, 40, 60];
+                                doc.defaultStyle.fontSize = 10;
+                                doc.content.unshift({
+                                    margin: [0, 0, 0, 12],
+                                    stack: [
+                                        { text: 'Erode District Administration', fontSize: 16, bold: true, alignment: 'center' },
+                                        { text: 'Record Room', fontSize: 11, alignment: 'center' },
+                                        { text: 'DELETED REGISTER RECORDS (RECYCLE BIN)', fontSize: 13, bold: true, alignment: 'center', margin: [0, 6, 0, 0] },
+                                        { text: 'Generated on: ' + new Date().toLocaleDateString(), fontSize: 9, alignment: 'center' }
+                                    ]
+                                });
+                                doc.styles.tableHeader = { fillColor: '#e74c3c', color: 'white', bold: true, alignment: 'center' };
+                            },
+                            exportOptions: { columns: ':visible:not(:last-child)' }
+                        },
+                        {
+                            extend: 'excelHtml5',
+                            text: 'Export Excel',
+                            className: 'btn btn-secondary',
+                            filename: 'Deleted_Register_Records',
+                            title: '',
+                            sheetName: 'Report',
+                            customize: function (xlsx) {
+                                var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                                var $sheet = $(sheet);
+                                var styles = xlsx.xl['styles.xml'];
+                                $(styles).find('xf').each(function () {
+                                    var xf = $(this);
+                                    if (xf.attr('xfId') === '0') {
+                                        xf.attr('applyAlignment', '1');
+                                        if (!xf.find('alignment').length) {
+                                            xf.append('<alignment horizontal="center" vertical="center"/>');
+                                        }
+                                    }
+                                });
+                                $('row', sheet).each(function () {
+                                    var r = parseInt($(this).attr('r'));
+                                    $(this).attr('r', r + 5);
+                                    $('c', this).each(function () {
+                                        var ref = $(this).attr('r');
+                                        var col = ref.replace(/[0-9]/g, '');
+                                        $(this).attr('r', col + (r + 5));
+                                    });
+                                });
+                                var today = new Date().toLocaleDateString();
+                                var sheetData = $('sheetData', sheet);
+                                sheetData.prepend(
+                                    '<row r="1" ht="28" customHeight="1"><c r="A1" t="inlineStr" s="51"><is><t>Erode District Administration</t></is></c></row>' +
+                                    '<row r="2" ht="22" customHeight="1"><c r="A2" t="inlineStr" s="51"><is><t>Record Room</t></is></c></row>' +
+                                    '<row r="3" ht="20" customHeight="1"><c r="A3" t="inlineStr" s="51"><is><t>Generated on: ' + today + '</t></is></c></row>' +
+                                    '<row r="4" ht="26" customHeight="1"><c r="A4" t="inlineStr" s="51"><is><t>DELETED REGISTER RECORDS (RECYCLE BIN)</t></is></c></row>' +
+                                    '<row r="5"></row>'
+                                );
+                                var mergeCells = $sheet.find('mergeCells');
+                                if (!mergeCells.length) {
+                                    mergeCells = $('<mergeCells count="0"/>');
+                                    $sheet.append(mergeCells);
+                                }
+                                mergeCells.append('<mergeCell ref="A1:K1"/>');
+                                mergeCells.append('<mergeCell ref="A2:K2"/>');
+                                mergeCells.append('<mergeCell ref="A3:K3"/>');
+                                mergeCells.append('<mergeCell ref="A4:K4"/>');
+                                var currentCount = parseFloat(mergeCells.attr('count')) || 0;
+                                mergeCells.attr('count', currentCount + 4);
+                                var colWidths = [];
+                                $('row', sheet).each(function () {
+                                    var r = parseInt($(this).attr('r'));
+                                    if (r > 5) {
+                                        $('c', this).each(function (i) {
+                                            var text = $('t', this).text();
+                                            var len = text ? text.length : 0;
+                                            colWidths[i] = Math.max(colWidths[i] || 10, len);
+                                        });
+                                    }
+                                });
+                                var colsXml = '<cols>';
+                                colWidths.forEach(function (w, i) {
+                                    colsXml += '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + Math.min(w + 5, 50) + '"/>';
+                                });
+                                colsXml += '</cols>';
+                                $sheet.find('worksheet').prepend(colsXml);
+                            },
+                            exportOptions: { columns: ':visible:not(:last-child)' }
+                        }
+                    ],
+                    "responsive": false,
+                    "lengthChange": false,
+                    "autoWidth": false
+                });
+
+                var restoreUrl = '/record/oldregister/restore/';
+
+                var restoreRecordId = null;
+                $(document).on('click', '.btn-restore-record', function() {
+                    restoreRecordId = $(this).data('id');
+                    if (restoreRecordId) {
+                        $('#restoreConfirmModal').modal('show');
+                    }
+                });
+
+                $(document).on('click', '#btnConfirmRestore', function() {
+                    if (restoreRecordId) {
+                        $.ajax({
+                            url: restoreUrl + restoreRecordId,
+                            type: 'POST',
+                            success: function(response) {
+                                $('#restoreConfirmModal').modal('hide');
+                                htmx.ajax('GET', '/record/oldregister/deletedHistory', {target: '#b-homedb', swap: 'outerHTML'});
+                            },
+                            error: function(xhr, status, error) {
+                                $('#restoreConfirmModal').modal('hide');
+                                alert('Error restoring record: ' + xhr.responseText);
+                            }
+                        });
+                    }
+                });
+            });
+        </script>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-danger">
+                        <div class="card-header bg-danger text-white">
+                            <h3 class="card-title">Soft Deleted Register Records (Kept for 7 Days)</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive" style="overflow-x: auto;">
+                                <table id="example1" class="table table-bordered table-striped" style="width: 100%;">
+                                    <thead>
+                                    <tr>
+                                        <th>Sr. No.</th>
+                                        <th>Record Serial No</th>
+                                        <th>Year</th>
+                                        <th>Taluk</th>
+                                        <th>Village</th>
+                                        <th>Quality</th>
+                                        <th>Details of Record</th>
+                                        <th>Type of Record</th>
+                                        <th>Rack No</th>
+                                        <th>Created Date</th>
+                                        <th>Remaining Days</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                    </thead>
+                                <tbody>
+                                <tr th:each="record, iterStat : ${records}">
+                                    <td th:text="${iterStat.index + 1}"></td>
+                                    <td th:text="${record.record_serial_no}"></td>
+                                    <td th:text="${record.year}"></td>
+                                    <td th:text="${record.taluk}"></td>
+                                    <td th:text="${record.village}"></td>
+                                    <td th:text="${record.qualityStatusLabel}"></td>
+                                    <td th:text="${record.details_of_record}"></td>
+                                    <td th:text="${record.types_of_record}"></td>
+                                    <td th:text="${record.rack_no}"></td>
+                                    <td th:text="${record.created_date}"></td>
+                                    <td>
+                                        <span class="badge badge-warning" style="font-size: 14px;" th:text="${record.remainingDays + ' Days'}"></span>
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <div class="btn-group action-buttons-container">
+                                            <button class="btn btn-sm btn-success btn-restore-record" 
+                                                    th:data-id="${record.id}" 
+                                                    title="Restore Record">
+                                                <i class="fas fa-undo"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Restore Confirmation Modal -->
+        <div class="modal fade" id="restoreConfirmModal" tabindex="-1" role="dialog" aria-labelledby="restoreConfirmModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content shadow-lg border-0 rounded-lg">
+                    <div class="modal-header bg-success text-white border-bottom-0">
+                        <h5 class="modal-title" id="restoreConfirmModalLabel">Confirm Restore</h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-4 text-center">
+                        <i class="fas fa-undo text-success fa-3x mb-3"></i>
+                        <p class="mb-0 font-weight-bold" style="font-size: 16px;">Are you sure you want to restore this register record back to the active list?</p>
+                    </div>
+                    <div class="modal-footer border-top-0 d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary px-4 mr-2" data-dismiss="modal">Cancel</button>
+                        <button type="button" id="btnConfirmRestore" class="btn btn-success px-4">Restore</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</html>
