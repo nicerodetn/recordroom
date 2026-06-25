@@ -123,22 +123,17 @@
                 var editUrl = '/record/oldregister/edit/';
                 var deleteUrl = '/record/oldregister/delete/';
 
-                $(document).on('click', '.btn-edit-record', function() {
-                    var id = $(this).data('id');
-                    if (id) {
-                        htmx.ajax('GET', editUrl + id, {target: '#b-homedb', swap: 'outerHTML'});
-                    }
-                });
+
 
                 var deleteRecordId = null;
-                $(document).on('click', '.btn-delete-record', function() {
+                $(document).off('click', '.btn-delete-record').on('click', '.btn-delete-record', function() {
                     deleteRecordId = $(this).data('id');
                     if (deleteRecordId) {
                         $('#deleteConfirmModal').modal('show');
                     }
                 });
 
-                $(document).on('click', '#btnConfirmDelete', function() {
+                $(document).off('click', '#btnConfirmDelete').on('click', '#btnConfirmDelete', function() {
                     if (deleteRecordId) {
                         $.ajax({
                             url: deleteUrl + deleteRecordId,
@@ -198,13 +193,6 @@
                                     <td th:text="${record.created_date}"></td>
                                     <td class="text-center align-middle">
                                         <div class="btn-group action-buttons-container">
-                                            <button class="btn btn-sm btn-info btn-edit-record mr-1" 
-                                                    th:data-id="${record.id}" 
-                                                    th:disabled="${record.outstanding}" 
-                                                    th:style="${record.outstanding ? 'cursor: not-allowed; opacity: 0.5;' : ''}" 
-                                                    th:title="${record.outstanding ? 'Cannot edit an outstanding record' : 'Edit Record'}">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
                                             <button class="btn btn-sm btn-danger btn-delete-record" 
                                                     th:data-id="${record.id}" 
                                                     th:disabled="${record.outstanding}" 

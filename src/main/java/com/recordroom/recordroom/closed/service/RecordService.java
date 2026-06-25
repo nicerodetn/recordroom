@@ -41,8 +41,16 @@ public class RecordService {
         return sectionRepo.save(s);
     }
 
-    public void deleteSection(Integer id) {
-        sectionRepo.deleteById(id);
+    public void updateSection(Integer id, String handName, String phoneNo) {
+        Optional<Section> optionalSection = sectionRepo.findById(id);
+        if (optionalSection.isPresent()) {
+            Section s = optionalSection.get();
+            s.setSectionDealingHandName(handName);
+            s.setSectionDealingHandPhoneNo(phoneNo);
+            sectionRepo.save(s);
+        } else {
+            throw new RuntimeException("Section not found");
+        }
     }
 
     public List<FileRecord> getAllRecords() {

@@ -11,7 +11,9 @@ import com.recordroom.recordroom.closed.service.RecordTransactionService;
 import com.recordroom.recordroom.dto.DataTableRequest;
 import com.recordroom.recordroom.dto.DataTableResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -201,6 +203,43 @@ public class CirculationController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/section_management")
+    public String sectionManagement(Model model) {
+        model.addAttribute("sections", recordService.getAllSections());
+        model.addAttribute("newSection", new Section());
+        return "fragments/closed/section_management :: content";
+    }
+
+    @PostMapping("/section/save")
+    @ResponseBody
+    public ResponseEntity<String> saveSection(
+            @RequestParam("section") String sectionName,
+            @RequestParam("sectionDealingHandName") String dealingHandName,
+            @RequestParam("sectionDealingHandPhoneNo") String phoneNo) {
+        Section s = new Section();
+        s.setSection(sectionName);
+        s.setSectionDealingHandName(dealingHandName);
+        s.setSectionDealingHandPhoneNo(phoneNo);
+        recordService.saveSection(s);
+        return ResponseEntity.ok("Section saved successfully");
+    }
+
+    @PostMapping("/section/update")
+    @ResponseBody
+    public ResponseEntity<String> updateSection(
+            @RequestParam("id") Integer id,
+            @RequestParam("sectionDealingHandName") String dealingHandName,
+            @RequestParam("sectionDealingHandPhoneNo") String phoneNo) {
+        try {
+            recordService.updateSection(id, dealingHandName, phoneNo);
+            return ResponseEntity.ok("Section updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error updating section.");
+        }
+    }
+
 
     @GetMapping("/searchForOutWardEntry")
     public String searchFile(@RequestParam String drSerialNo,@RequestParam String dr_year, Model model) {

@@ -47,4 +47,7 @@ public class Rti {
         this.updated_date = LocalDate.now();
     }
 
+    @Column(name = "is_deleted", nullable = false, columnDefinition = "boolean default false")
+    private boolean isDeleted = false;
+
 }

@@ -17,7 +17,7 @@ public class RtiService {
 
 
     public List<Rti> getAllRti() {
-        return rtiRepository.findAll();
+        return rtiRepository.findAllNotDeleted();
     }
 
     public Optional<Rti> saveRti(Rti s) {
@@ -28,11 +28,33 @@ public class RtiService {
         rtiRepository.deleteById(id);
     }
 
+    public void deleteRtiSoft(Integer id) {
+        Optional<Rti> optionalRti = rtiRepository.findById(id);
+        if (optionalRti.isPresent()) {
+            Rti rti = optionalRti.get();
+            rti.setDeleted(true);
+            rtiRepository.save(rti);
+        }
+    }
+
+    public void restoreRti(Integer id) {
+        Optional<Rti> optionalRti = rtiRepository.findById(id);
+        if (optionalRti.isPresent()) {
+            Rti rti = optionalRti.get();
+            rti.setDeleted(false);
+            rtiRepository.save(rti);
+        }
+    }
+
+    public List<Rti> getDeletedRti() {
+        return rtiRepository.findAllDeleted();
+    }
+
     public List<Rti> getRtiReport(Integer month, Integer year) {
         if (month != null && year != null) {
             return rtiRepository.findByMonthAndYear(month, year);
         }
-        return rtiRepository.findAll();
+        return rtiRepository.findAllNotDeleted();
     }
 
     public List<Rti> getFilteredRti(Integer month, Integer year) {

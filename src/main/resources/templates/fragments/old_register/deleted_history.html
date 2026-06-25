@@ -116,6 +116,7 @@
                         }
                     ],
                     "responsive": false,
+                    "scrollX": true,
                     "lengthChange": false,
                     "autoWidth": false
                 });
@@ -123,14 +124,14 @@
                 var restoreUrl = '/record/oldregister/restore/';
 
                 var restoreRecordId = null;
-                $(document).on('click', '.btn-restore-record', function() {
+                $(document).off('click', '.btn-restore-record').on('click', '.btn-restore-record', function() {
                     restoreRecordId = $(this).data('id');
                     if (restoreRecordId) {
                         $('#restoreConfirmModal').modal('show');
                     }
                 });
 
-                $(document).on('click', '#btnConfirmRestore', function() {
+                $(document).off('click', '#btnConfirmRestore').on('click', '#btnConfirmRestore', function() {
                     if (restoreRecordId) {
                         $.ajax({
                             url: restoreUrl + restoreRecordId,
@@ -171,8 +172,7 @@
                                         <th>Type of Record</th>
                                         <th>Rack No</th>
                                         <th>Created Date</th>
-                                        <th>Remaining Days</th>
-                                        <th class="text-center">Actions</th>
+                                        <th class="text-center">Remaining Days</th>
                                     </tr>
                                     </thead>
                                 <tbody>
@@ -187,11 +187,9 @@
                                     <td th:text="${record.types_of_record}"></td>
                                     <td th:text="${record.rack_no}"></td>
                                     <td th:text="${record.created_date}"></td>
-                                    <td>
-                                        <span class="badge badge-warning" style="font-size: 14px;" th:text="${record.remainingDays + ' Days'}"></span>
-                                    </td>
                                     <td class="text-center align-middle">
-                                        <div class="btn-group action-buttons-container">
+                                        <span class="badge badge-warning mb-2" style="font-size: 14px;" th:text="${record.remainingDays + ' Days'}"></span>
+                                        <div class="action-buttons-container">
                                             <button class="btn btn-sm btn-success btn-restore-record" 
                                                     th:data-id="${record.id}" 
                                                     title="Restore Record">

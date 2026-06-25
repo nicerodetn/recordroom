@@ -34,4 +34,4 @@ public interface RecordRepository extends JpaRepository<FileRecord, Integer>, Jp
     List<FileRecord> findRecordsExceedingYearLimit();
 
     List<FileRecord> findByDeletedTrueAndDeletedDateLessThanEqual(java.time.LocalDate cutoff);
-}
+}

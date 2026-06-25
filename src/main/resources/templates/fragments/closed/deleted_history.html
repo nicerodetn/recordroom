@@ -51,25 +51,18 @@
                         { data: "sectionDealingHandPhoneNo" },
                         { data: "recordRoomDealingHandName" },
                         { 
-                            data: "remainingDays", 
-                            render: function(data) {
-                                return `<span class="badge badge-warning" style="font-size: 14px;">${data} Days</span>`;
-                            } 
-                        },
-                        {
-                            data: null,
-                            searchable: false,
-                            orderable: false,
+                            data: null, 
                             className: "text-center align-middle",
-                            render: function (data, type, row) {
+                            render: function(data, type, row) {
                                 return `
-                                    <div class="btn-group action-buttons-container">
+                                    <div class="d-flex flex-column align-items-center">
+                                        <span class="badge badge-warning mb-2" style="font-size: 14px;">${row.remainingDays} Days</span>
                                         <button class="btn btn-sm btn-success btn-restore-record" data-id="${row.id}" title="Restore File">
                                             <i class="fas fa-undo"></i>
                                         </button>
                                     </div>
                                 `;
-                            }
+                            } 
                         }
                     ],
 
@@ -177,6 +170,7 @@
                     ],
 
                     responsive: false,
+                    scrollX: true,
                     lengthChange: false,
                     pageLength: 100,
                     autoWidth: false,
@@ -210,14 +204,14 @@
             });
 
             var restoreRecordId = null;
-            $(document).on('click', '.btn-restore-record', function() {
+            $(document).off('click', '.btn-restore-record').on('click', '.btn-restore-record', function() {
                 restoreRecordId = $(this).data('id');
                 if (restoreRecordId) {
                     $('#restoreConfirmModal').modal('show');
                 }
             });
 
-            $(document).on('click', '#btnConfirmRestore', function() {
+            $(document).off('click', '#btnConfirmRestore').on('click', '#btnConfirmRestore', function() {
                 if (restoreRecordId) {
                     $.ajax({
                         url: restoreUrl + restoreRecordId,
@@ -262,8 +256,7 @@
                                         <th>Section Dealing Hand Name</th>
                                         <th>Section Dealing Hand Phone No</th>
                                         <th>Record Room Dealing Hand Name</th>
-                                        <th>Remaining Days</th>
-                                        <th class="text-center">Actions</th>
+                                        <th class="text-center">Remaining Days</th>
                                     </tr>
                                     </thead>
                                     <tbody>

@@ -70,9 +70,6 @@
                                 
                                 return `
                                     <div class="btn-group action-buttons-container">
-                                        <button class="btn btn-sm btn-info btn-edit-record mr-1" data-id="${row.id}" ${disabledAttr} style="${btnStyle}" title="${titleTextEdit}">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
                                         <button class="btn btn-sm btn-danger btn-delete-record" data-id="${row.id}" ${disabledAttr} style="${btnStyle}" title="${titleTextDelete}">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -267,22 +264,15 @@
                 initializeDataTable(null);
             });
 
-            $(document).on('click', '.btn-edit-record', function() {
-                var id = $(this).data('id');
-                if (id) {
-                    htmx.ajax('GET', editUrl + id, {target: '#b-homedb', swap: 'outerHTML'});
-                }
-            });
-
             var deleteRecordId = null;
-            $(document).on('click', '.btn-delete-record', function() {
+            $(document).off('click', '.btn-delete-record').on('click', '.btn-delete-record', function() {
                 deleteRecordId = $(this).data('id');
                 if (deleteRecordId) {
                     $('#deleteConfirmModal').modal('show');
                 }
             });
 
-            $(document).on('click', '#btnConfirmDelete', function() {
+            $(document).off('click', '#btnConfirmDelete').on('click', '#btnConfirmDelete', function() {
                 if (deleteRecordId) {
                     $.ajax({
                         url: deleteUrl + deleteRecordId,

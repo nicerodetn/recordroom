@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
 import java.time.LocalDate;
 
 import java.util.List;
@@ -66,6 +69,27 @@ public class RtiController {
 
         // Pointing to the NEW file created in Step 1
         return "fragments/rti/rti_monthly_report :: tabler";
+    }
+
+    @PostMapping("/delete/{id}")
+    @ResponseBody
+    public ResponseEntity<String> deleteRti(@PathVariable Integer id) {
+        rtiService.deleteRtiSoft(id);
+        return ResponseEntity.ok("Record deleted successfully");
+    }
+
+    @GetMapping("/deletedHistory")
+    public String deletedHistory(Model model) {
+        List<Rti> deletedRti = rtiService.getDeletedRti();
+        model.addAttribute("rti", deletedRti);
+        return "fragments/rti/deleted_history :: tabler";
+    }
+
+    @PostMapping("/restore/{id}")
+    @ResponseBody
+    public ResponseEntity<String> restoreRti(@PathVariable Integer id) {
+        rtiService.restoreRti(id);
+        return ResponseEntity.ok("Record restored successfully");
     }
 
 }
