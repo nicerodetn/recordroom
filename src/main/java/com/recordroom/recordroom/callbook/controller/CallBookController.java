@@ -2,8 +2,11 @@ package com.recordroom.recordroom.callbook.controller;
 
 import com.recordroom.recordroom.callbook.entity.CallBook;
 import com.recordroom.recordroom.callbook.service.CallBookService;
+import com.recordroom.recordroom.closed.entity.Section;
+import com.recordroom.recordroom.closed.service.RecordService;
 import com.recordroom.recordroom.dto.DataTableRequest;
 import com.recordroom.recordroom.dto.DataTableResponse;
+import com.recordroom.recordroom.staff.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -22,6 +25,21 @@ public class CallBookController {
     @Autowired
     private CallBookService callBookService;
 
+    @Autowired
+    private StaffService staffService;
+
+    @Autowired
+    private RecordService recordService;
+
+    @ModelAttribute("staffList")
+    public List<String> staffList() {
+        return staffService.getActiveStaffNames();
+    }
+
+    @ModelAttribute("sections")
+    public List<Section> sectionsList() {
+        return recordService.getAllSectionsSorted();
+    }
 
     @GetMapping("/call_book_in_entry")
     public String fileInEntryLoadForm(Model model) {
@@ -61,9 +79,10 @@ public class CallBookController {
 
 
     @GetMapping("/searchForInWardEntry")
-    public String searchForFileAvailabilityAlready(@RequestParam String new_drSerialNo, @RequestParam String new_dr_year, Model model) {
+    public String searchForFileAvailabilityAlready(@RequestParam String call_book_no, @RequestParam String call_book_year, Model model) {
 
-        Optional<CallBook> callBook = callBookService.findBydrSerialNoAndYearInward(Integer.parseInt(new_drSerialNo),Integer.parseInt(new_dr_year));
+        Integer callBookYear = Integer.parseInt(call_book_year);
+        Optional<CallBook> callBook = callBookService.findByCallBookNoAndYearInward(Integer.parseInt(call_book_no), callBookYear);
         if(callBook.isPresent()){
             model.addAttribute("callbook",callBook.get());
             model.addAttribute("successMsg", "✅ File is not New!. Update for Receving!");
@@ -71,6 +90,7 @@ public class CallBookController {
         }
         else {
             model.addAttribute("errorMessage", "✅ File is Not Available!. You Can't Receive this File!");
+            model.addAttribute("lastCallBookNo", callBookService.findLastCallBookNoByYear(callBookYear).orElse(null));
             model.addAttribute("callbook",new CallBook());
             return "fragments/file_callbook/in_entry :: insertform";
         }
@@ -82,11 +102,11 @@ public class CallBookController {
         callBook.setIs_current(true);
         callBook.setClosed_status(false);
         callBook.setIn_out_status(0);
-        callBook.setUnique_key(Integer.parseInt(String.valueOf(callBook.getNew_drSerialNo()) + String.valueOf(callBook.getNew_dr_year())));
+        callBook.setUnique_key(Integer.parseInt(String.valueOf(callBook.getCall_book_no()) + String.valueOf(callBook.getNew_dr_year())));
         callBook.setOld_drSerialNo(callBook.getNew_drSerialNo());
         callBook.setOld_dr_year(callBook.getNew_dr_year());
         callBook.setIn_coming_date(new Date());
-        Optional<CallBook> callBook_check = callBookService.findForDuplicate(Integer.parseInt( String.valueOf(callBook.getNew_drSerialNo()) ),Integer.parseInt(String.valueOf(callBook.getNew_dr_year())));
+        Optional<CallBook> callBook_check = callBookService.findForDuplicate(callBook.getCall_book_no(), callBook.getNew_dr_year());
         if(callBook_check.isPresent()){
             model.addAttribute("errorMessage", "This DR Serial No .Already Used");
             model.addAttribute("callbook",new CallBook());
@@ -112,9 +132,9 @@ public class CallBookController {
     }
 
     @GetMapping("/searchForOutWardEntry")
-    public String searchForFileAvailabilityAlreadyOutWard(@RequestParam String new_drSerialNo, @RequestParam String new_dr_year, Model model) {
+    public String searchForFileAvailabilityAlreadyOutWard(@RequestParam String call_book_no, @RequestParam String call_book_year, Model model) {
 
-        Optional<CallBook> callBook = callBookService.findBydrSerialNoAndYear(Integer.parseInt(new_drSerialNo),Integer.parseInt(new_dr_year));
+        Optional<CallBook> callBook = callBookService.findByCallBookNoAndYear(Integer.parseInt(call_book_no),Integer.parseInt(call_book_year));
 
         if(callBook.isPresent()){
             CallBookFileOutgoingDTO callBookFileOutgoingDTO = new CallBookFileOutgoingDTO();

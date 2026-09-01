@@ -37,12 +37,24 @@ public class RecordService {
         return sectionRepo.findAll();
     }
 
+    public List<Section> getAllSectionsSorted() {
+        return sectionRepo.findAllByOrderBySectionAsc();
+    }
+
     public Section saveSection(Section s) {
         return sectionRepo.save(s);
     }
 
-    public void deleteSection(Integer id) {
-        sectionRepo.deleteById(id);
+    public void updateSection(Integer id, String handName, String phoneNo) {
+        Optional<Section> optionalSection = sectionRepo.findById(id);
+        if (optionalSection.isPresent()) {
+            Section s = optionalSection.get();
+            s.setSectionDealingHandName(handName);
+            s.setSectionDealingHandPhoneNo(phoneNo);
+            sectionRepo.save(s);
+        } else {
+            throw new RuntimeException("Section not found");
+        }
     }
 
     public List<FileRecord> getAllRecords() {
@@ -57,6 +69,14 @@ public class RecordService {
         }
     }
 
+    public Optional<FileRecord> updateRecord(FileRecord r) {
+        Optional<FileRecord> existing = recordRepo.findByDrSerialNoAndYear(r.getDrSerialNo(), r.getDr_year());
+        if (existing.isPresent() && !existing.get().getId().equals(r.getId())) {
+            return Optional.empty();
+        }
+        return Optional.of(recordRepo.save(r));
+    }
+
     public Optional<FileRecord> findBydrSerialNoAndYear(Long drSerialNo,Integer dr_year) {
         return recordRepo.findByDrSerialNoAndYear(drSerialNo,dr_year);
     }
@@ -65,7 +85,9 @@ public class RecordService {
         return recordRepo.findById(id);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public void deleteRecord(Integer id) {
+        transRepo.deleteByFileRecordId(id);
         recordRepo.deleteById(id);
     }
 
@@ -82,7 +104,6 @@ public class RecordService {
         Specification<FileRecord> spec = (root, query, cb) -> {
 
             List<Predicate> predicates = new ArrayList<>();
-
 
             if (sectionCategory != null && !sectionCategory.isEmpty()) {
                 predicates.add(cb.equal(
@@ -120,6 +141,12 @@ public class RecordService {
         );
 
         return recordRepo.findAll(spec, pageable);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void deleteRecordPermanent(Integer id) {
+        transRepo.deleteByFileRecordId(id);
+        recordRepo.deleteById(id);
     }
 
     public List<FileRecord> destructionReport() {

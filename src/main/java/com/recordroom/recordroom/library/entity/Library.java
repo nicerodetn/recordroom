@@ -36,4 +36,7 @@ public class Library {
     @Column(name = "updated_date")
     private LocalDate updatedDate;
 
+    @Transient
+    private boolean outstanding;
+
 }

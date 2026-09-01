@@ -100,9 +100,8 @@
                       <label class="form-label fw-bold">12. Record Room Dealing Hand Name</label><br>
                       <select class="form-select" id="rrDealingName" th:field="*{rr_dealing_name}" required>
                         <option value="">-- Select Section--</option>
-                        <option value="M. Ramesh">Shri M. Ramesh</option>
-                        <option value="Balasubramaniyan">Shri S. Balasubramaniyan</option>
-                        <option value="N. Karuppusamy">Shri N. Karuppusamy</option>
+                        <option th:each="s : ${staffList}" th:value="${s}" th:text="${s}"></option>
+                        <option value="Old">Others</option>
                       </select>
                       <div class="invalid-feedback">
                         Please select a section before saving.

@@ -13,6 +13,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class FileMasterReportDTO {
 
+    private Integer id;
+    private boolean outstanding;
     private Integer fileType;
     private Long drSerialNo;
     private Integer dr_year;

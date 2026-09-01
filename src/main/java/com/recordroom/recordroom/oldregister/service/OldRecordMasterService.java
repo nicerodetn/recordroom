@@ -15,6 +15,9 @@ public class OldRecordMasterService {
     @Autowired
     private OldRecordMasterRepository repository;
 
+    @Autowired
+    private com.recordroom.recordroom.oldregister.repo.RegisterTransactionRepository transactionRepository;
+
     public Optional<OldRecordMaster> saveRecord(OldRecordMaster record) {
 
 
@@ -69,10 +72,18 @@ public class OldRecordMasterService {
         return repository.countTotalRecords();
     }
 
-    public OldRecordMaster updateRecord(OldRecordMaster record) {
-        return repository.save(record);
+    public Optional<OldRecordMaster> updateRecord(OldRecordMaster record) {
+        Optional<OldRecordMaster> existing = repository.findBySerialNoAndYear(record.getRecord_serial_no(), record.getYear());
+        if (existing.isPresent() && !existing.get().getId().equals(record.getId())) {
+            return Optional.empty();
+        }
+        return Optional.of(repository.save(record));
     }
 
-
+    @org.springframework.transaction.annotation.Transactional
+    public void deleteRecord(Integer id) {
+        transactionRepository.deleteByMasterId(id);
+        repository.deleteById(id);
+    }
 
 }

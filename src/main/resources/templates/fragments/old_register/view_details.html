@@ -2,6 +2,18 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <div id="b-homedb" th:fragment="tabler">
+    <style>
+        .action-buttons-container .btn {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .action-buttons-container .btn:hover:not([disabled]) {
+            transform: scale(1.15);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .action-buttons-container .btn:active:not([disabled]) {
+            transform: scale(0.95);
+        }
+    </style>
     <div class="my-5">
         <h3 style="font-size:32px;" class="text-center mb-3 b-latest-data">Old Register Master Records</h3>
 
@@ -31,7 +43,7 @@
                                 });
                                 doc.styles.tableHeader = { fillColor: '#4CAF50', color: 'white', bold: true, alignment: 'center' };
                             },
-                            exportOptions: { columns: ':visible' }
+                            exportOptions: { columns: ':visible:not(:last-child)' }
                         },
                         {
                             extend: 'excelHtml5',
@@ -100,12 +112,42 @@
                                 colsXml += '</cols>';
                                 $sheet.find('worksheet').prepend(colsXml);
                             },
-                            exportOptions: { columns: ':visible' }
+                            exportOptions: { columns: ':visible:not(:last-child)' }
                         }
                     ],
-                    "responsive": true,
+                    "responsive": false,
                     "lengthChange": false,
                     "autoWidth": false
+                });
+
+                var editUrl = '/record/oldregister/edit/';
+                var deleteUrl = '/record/oldregister/delete/';
+
+
+
+                var deleteRecordId = null;
+                $(document).off('click', '.btn-delete-record').on('click', '.btn-delete-record', function() {
+                    deleteRecordId = $(this).data('id');
+                    if (deleteRecordId) {
+                        $('#deleteConfirmModal').modal('show');
+                    }
+                });
+
+                $(document).off('click', '#btnConfirmDelete').on('click', '#btnConfirmDelete', function() {
+                    if (deleteRecordId) {
+                        $.ajax({
+                            url: deleteUrl + deleteRecordId,
+                            type: 'POST',
+                            success: function(response) {
+                                $('#deleteConfirmModal').modal('hide');
+                                htmx.ajax('GET', '/record/oldregister/view_details', {target: '#b-homedb', swap: 'outerHTML'});
+                            },
+                            error: function(xhr, status, error) {
+                                $('#deleteConfirmModal').modal('hide');
+                                alert('Error deleting record: ' + xhr.responseText);
+                            }
+                        });
+                    }
                 });
             });
         </script>
@@ -118,28 +160,30 @@
                             <h3 class="card-title">All Old Register Records</h3>
                         </div>
                         <div class="card-body">
-                            <table id="example1" class="table table-bordered table-striped">
-                                <thead>
-                                <tr>
-                                    <th>Sr. No.</th>
-                                    <th>Record Serial No</th>
-                                    <th>Year</th>
-                                    <th>Taluk</th>
-                                    <th>Village</th>
-                                    <th>Quality</th>
-                                    <th>Details of Record</th>
-                                    <th>Type of Record</th>
-                                    <th>Rack No</th>
-                                    <th>Created Date</th>
-                                </tr>
-                                </thead>
+                            <div class="table-responsive" style="overflow-x: auto;">
+                                <table id="example1" class="table table-bordered table-striped" style="width: 100%;">
+                                    <thead>
+                                    <tr>
+                                        <th>Sr. No.</th>
+                                        <th>Record Serial No</th>
+                                        <th>Year</th>
+                                        <th>Taluk</th>
+                                        <th>Village</th>
+                                        <th>Quality</th>
+                                        <th>Details of Record</th>
+                                        <th>Type of Record</th>
+                                        <th>Rack No</th>
+                                        <th>Created Date</th>
+                                        <th class="text-center">Actions</th>
+                                    </tr>
+                                    </thead>
                                 <tbody>
                                 <tr th:each="record, iterStat : ${records}">
                                     <td th:text="${iterStat.index + 1}"></td>
                                     <td th:text="${record.record_serial_no}"></td>
                                     <td th:text="${record.year}"></td>
                                     <td th:text="${record.taluk}"></td>
-                                    <td th:text="${record.village}"></td>
+                                    <td th:text="${record.villageDisplay}"></td>
 
                                     <td th:text="${record.qualityStatusLabel}"></td>
 
@@ -147,14 +191,50 @@
                                     <td th:text="${record.types_of_record}"></td>
                                     <td th:text="${record.rack_no}"></td>
                                     <td th:text="${record.created_date}"></td>
+                                    <td class="text-center align-middle">
+                                        <div class="btn-group action-buttons-container">
+                                            <button class="btn btn-sm btn-danger btn-delete-record" 
+                                                    th:data-id="${record.id}" 
+                                                    th:disabled="${record.outstanding}" 
+                                                    th:style="${record.outstanding ? 'cursor: not-allowed; opacity: 0.5;' : ''}" 
+                                                    th:title="${record.outstanding ? 'Cannot delete an outstanding record' : 'Delete Record'}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content shadow-lg border-0 rounded-lg">
+                    <div class="modal-header bg-danger text-white border-bottom-0">
+                        <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Delete</h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body p-4 text-center">
+                        <i class="fas fa-exclamation-triangle text-warning fa-3x mb-3"></i>
+                        <p class="mb-0 font-weight-bold" style="font-size: 16px;">Are you sure you want to delete this record?</p>
+                        <small class="text-muted">This action cannot be undone.</small>
+                    </div>
+                    <div class="modal-footer border-top-0 d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary px-4 mr-2" data-dismiss="modal">Cancel</button>
+                        <button type="button" id="btnConfirmDelete" class="btn btn-danger px-4">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 </html>

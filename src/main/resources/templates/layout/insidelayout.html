@@ -90,6 +90,58 @@
             background: #ebebeb;
             border-left: 4px solid #3498db;
         }
+
+        /* Independent scrolling layout for Dashboard */
+        html, body {
+            height: 100vh;
+            overflow: hidden;
+            margin: 0;
+        }
+        #wrapper {
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+        #sidebar-wrapper {
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        /* Target the div that contains the body fragment */
+        #wrapper > div:nth-child(2) {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        /* Target the div from th:fragment="content" */
+        #wrapper > div:nth-child(2) > div {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+            flex-grow: 1;
+        }
+        #wrapper > div:nth-child(2) > div > nav {
+            flex-shrink: 0;
+        }
+        #wrapper > div:nth-child(2) > div > .container-fluid {
+            flex-grow: 1;
+            overflow-y: auto;
+            /* Hide scrollbar */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        #wrapper > div:nth-child(2) > div > .container-fluid::-webkit-scrollbar {
+            display: none;
+        }
+        #sidebar-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+        #sidebar-wrapper {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 

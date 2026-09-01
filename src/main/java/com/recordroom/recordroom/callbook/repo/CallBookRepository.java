@@ -14,24 +14,30 @@ import java.util.Optional;
 public interface CallBookRepository extends JpaRepository<CallBook, Integer>, JpaSpecificationExecutor<CallBook> {
 
     @Query(
-            value = "SELECT * FROM call_book f WHERE f.new_dr_serial_no = :new_dr_serial_no and f.new_dr_year =:new_dr_year AND is_current = true AND in_out_status =0 LIMIT 1",
+            value = "SELECT * FROM call_book f WHERE f.call_book_no = :call_book_no and f.new_dr_year =:call_book_year AND is_current = true AND in_out_status =0 LIMIT 1",
             nativeQuery = true
     )
-    Optional<CallBook> findByDrSerialNoAndYear(@Param("new_dr_serial_no") Integer new_dr_serial_no , @Param("new_dr_year") Integer new_dr_year);
+    Optional<CallBook> findByCallBookNoAndYear(@Param("call_book_no") Integer call_book_no , @Param("call_book_year") Integer call_book_year);
 
 
     @Query(
-            value = "SELECT * FROM call_book f WHERE f.new_dr_serial_no = :new_dr_serial_no and f.new_dr_year =:new_dr_year",
+            value = "SELECT * FROM call_book f WHERE f.call_book_no = :call_book_no and f.new_dr_year =:call_book_year",
             nativeQuery = true
     )
-    Optional<CallBook> findForDuplicate(@Param("new_dr_serial_no") Integer new_dr_serial_no , @Param("new_dr_year") Integer new_dr_year);
+    Optional<CallBook> findForDuplicate(@Param("call_book_no") Integer call_book_no , @Param("call_book_year") Integer call_book_year);
 
 
     @Query(
-            value = "SELECT * FROM call_book f WHERE f.new_dr_serial_no = :new_dr_serial_no and f.new_dr_year =:new_dr_year AND is_current = true AND in_out_status =1 LIMIT 1",
+            value = "SELECT * FROM call_book f WHERE f.call_book_no = :call_book_no and f.new_dr_year =:call_book_year AND is_current = true AND in_out_status =1 LIMIT 1",
             nativeQuery = true
     )
-    Optional<CallBook> findByDrSerialNoAndYearForINward(@Param("new_dr_serial_no") Integer new_dr_serial_no , @Param("new_dr_year") Integer new_dr_year);
+    Optional<CallBook> findByCallBookNoAndYearForInward(@Param("call_book_no") Integer call_book_no , @Param("call_book_year") Integer call_book_year);
+
+    @Query(
+            value = "SELECT * FROM call_book f WHERE f.new_dr_year = :call_book_year ORDER BY f.call_book_no DESC LIMIT 1",
+            nativeQuery = true
+    )
+    Optional<CallBook> findLastCallBookNoByYear(@Param("call_book_year") Integer call_book_year);
 
     @Query(
             value = "SELECT * FROM call_book f WHERE f.unique_key = :unique_key",

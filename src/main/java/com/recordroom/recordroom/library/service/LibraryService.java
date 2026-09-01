@@ -3,6 +3,7 @@ package com.recordroom.recordroom.library.service;
 import com.recordroom.recordroom.dto.DataTableRequest;
 import com.recordroom.recordroom.library.entity.Library;
 import com.recordroom.recordroom.library.repo.LibraryRepository;
+import com.recordroom.recordroom.library.repo.LibraryTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,8 @@ import jakarta.persistence.criteria.Predicate;
 public class LibraryService {
     private final LibraryRepository libraryRepository;
 
+    @Autowired
+    private LibraryTransactionRepository transactionRepository;
 
     @Autowired
     public LibraryService(LibraryRepository libraryRepository) {
@@ -44,7 +47,6 @@ public class LibraryService {
         Specification<Library> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-
             String searchValue = request.getSearch().getValue();
             if (searchValue != null && !searchValue.isEmpty()) {
                 try {
@@ -68,5 +70,15 @@ public class LibraryService {
         );
 
         return libraryRepository.findAll(spec, pageable);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void deleteLibrary(Integer id) {
+        transactionRepository.deleteByLibraryId(id);
+        libraryRepository.deleteById(id);
+    }
+
+    public Optional<Library> findById(Integer id) {
+        return libraryRepository.findById(id);
     }
 }

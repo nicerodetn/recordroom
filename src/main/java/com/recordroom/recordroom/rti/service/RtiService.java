@@ -24,7 +24,7 @@ public class RtiService {
         return Optional.of(rtiRepository.save(s));
     }
 
-    public void deleteSection(Integer id) {
+    public void deleteRti(Integer id) {
         rtiRepository.deleteById(id);
     }
 

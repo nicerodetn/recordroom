@@ -1,14 +1,17 @@
 package com.recordroom.recordroom.reference.controller;
 
 
+import com.recordroom.recordroom.closed.entity.Section;
 import com.recordroom.recordroom.closed.service.RecordService;
 import com.recordroom.recordroom.reference.entity.Reference;
 import com.recordroom.recordroom.reference.entity.ReferenceDTO;
 import com.recordroom.recordroom.reference.service.ReferenceService;
+import com.recordroom.recordroom.staff.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 import java.util.Optional;
 
 import com.recordroom.recordroom.dto.DataTableRequest;
@@ -30,6 +33,19 @@ public class ReferenceController {
     @Autowired
     private RecordService recordService;
 
+    @Autowired
+    private StaffService staffService;
+
+    @ModelAttribute("staffList")
+    public List<String> staffList() {
+        return staffService.getActiveStaffNames();
+    }
+
+    @ModelAttribute("sections")
+    public List<Section> sectionsList() {
+        return recordService.getAllSectionsSorted();
+    }
+
 
     @GetMapping("/reference_in_entry")
     public String inEntry(Model model) {
@@ -40,7 +56,7 @@ public class ReferenceController {
     @GetMapping("/reference_out_entry")
     public String loadForm(Model model) {
         model.addAttribute("reference", new Reference()); // new empty form
-        model.addAttribute("sections", recordService.getAllSections());
+        model.addAttribute("sections", recordService.getAllSectionsSorted());
         return "fragments/reference/out_entry :: loadFormFragment"; // return only fragment
     }
 
@@ -50,7 +66,7 @@ public class ReferenceController {
             reference.setIs_active(true);
             Optional<Reference> r = referenceService.saveRecord(reference);
             model.addAttribute("reference", new Reference());
-            model.addAttribute("sections", recordService.getAllSections());
+            model.addAttribute("sections", recordService.getAllSectionsSorted());
             model.addAttribute("successMessage", "✅ Record saved successfully! "+"Note Serial No"+r.get().getSerialNo());
             return "fragments/reference/out_entry :: loadFormFragment";
     }

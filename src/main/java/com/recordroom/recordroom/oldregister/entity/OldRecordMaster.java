@@ -3,6 +3,7 @@ package com.recordroom.recordroom.oldregister.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
@@ -31,7 +32,12 @@ public class OldRecordMaster {
 
     private String taluk;
 
-    private String village;
+    @Convert(converter = VillageListConverter.class)
+    private List<String> village;
+
+    public String getVillageDisplay() {
+        return village == null ? "" : String.join(", ", village);
+    }
 
 
     private Integer quality_status;
@@ -47,4 +53,7 @@ public class OldRecordMaster {
             default: return String.valueOf(quality_status);
         }
     }
+
+    @Transient
+    private boolean outstanding;
 }

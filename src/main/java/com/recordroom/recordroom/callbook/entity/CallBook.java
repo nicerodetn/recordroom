@@ -34,6 +34,7 @@ public class CallBook {
     private String recordRoomDealingHandName;
 
     private LocalDate possible_out_date;
+    private LocalDate handing_date;
 
     private Integer unique_key;
     private Boolean is_current;

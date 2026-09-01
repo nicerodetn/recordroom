@@ -3,6 +3,7 @@ package com.recordroom.recordroom.rti.controller;
 
 import com.recordroom.recordroom.rti.entity.Rti;
 import com.recordroom.recordroom.rti.service.RtiService;
+import com.recordroom.recordroom.staff.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
 import java.time.LocalDate;
 
 import java.util.List;
@@ -22,6 +26,14 @@ public class RtiController {
 
     @Autowired
     private RtiService rtiService;
+
+    @Autowired
+    private StaffService staffService;
+
+    @ModelAttribute("staffList")
+    public List<String> staffList() {
+        return staffService.getActiveStaffNames();
+    }
 
 
     @GetMapping("/load_form")
@@ -66,6 +78,13 @@ public class RtiController {
 
         // Pointing to the NEW file created in Step 1
         return "fragments/rti/rti_monthly_report :: tabler";
+    }
+
+    @PostMapping("/delete/{id}")
+    @ResponseBody
+    public ResponseEntity<String> deleteRti(@PathVariable Integer id) {
+        rtiService.deleteRti(id);
+        return ResponseEntity.ok("Record deleted successfully");
     }
 
 }

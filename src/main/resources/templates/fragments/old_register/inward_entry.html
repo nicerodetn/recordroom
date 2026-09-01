@@ -133,9 +133,8 @@
                                             <label class="form-label fw-bold">4. Record Room Person Name</label></br>
                                             <select name="recordPersonName_in" class="form-select" required>
                                                 <option value="">-- Select Name --</option>
-                                                <option value="M. Ramesh">Shri M. Ramesh</option>
-                                                <option value="Balasubramaniyan">Shri S. Balasubramaniyan</option>
-                                                <option value="N. Karuppusamy">Shri N. Karuppusamy</option>
+                                                <option th:each="s : ${staffList}" th:value="${s}" th:text="${s}"></option>
+                                                <option value="Old">Others</option>
                                             </select>
                                         </div>
 

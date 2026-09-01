@@ -79,6 +79,7 @@
                                         <th>e-Challan No</th>
                                         <th>Amount</th>
                                         <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -93,6 +94,13 @@
                                         <td th:text="${record.e_challan_no}"></td>
                                         <td th:text="${record.amount}"></td>
                                         <td th:text="${record.remarks}"></td>
+                                        <td class="text-center align-middle">
+                                            <button class="btn btn-sm btn-danger btn-delete-record" 
+                                                    th:data-id="${record.id}" 
+                                                    title="Delete Record">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -104,10 +112,35 @@
             </div>
         </div>
     </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content shadow-lg border-0 rounded-lg">
+                <div class="modal-header bg-danger text-white border-bottom-0">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">Confirm Delete</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <i class="fas fa-exclamation-triangle text-warning fa-3x mb-3"></i>
+                    <p class="mb-0 font-weight-bold" style="font-size: 16px;">Are you sure you want to delete this record?</p>
+                    <small class="text-muted">This action cannot be undone.</small>
+                </div>
+                <div class="modal-footer border-top-0 d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary px-4 mr-2" data-dismiss="modal">Cancel</button>
+                    <button type="button" id="btnConfirmDelete" class="btn btn-danger px-4">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         $(function () {
             $('#example1').DataTable({
+                scrollX: true,
                 dom: 'Bfrtip',
                 buttons: [
                     {
@@ -203,6 +236,49 @@
                         exportOptions: { columns: ':visible' }
                     }
                 ]
+            });
+            });
+
+            var deleteRecordId = null;
+            var deleteUrl = '/record/rti/delete/';
+
+            $(document).off('click', '.btn-delete-record').on('click', '.btn-delete-record', function() {
+                deleteRecordId = $(this).data('id');
+                if (deleteRecordId) {
+                    $('#deleteConfirmModal').modal('show');
+                }
+            });
+
+            $(document).off('click', '#btnConfirmDelete').on('click', '#btnConfirmDelete', function() {
+                if (deleteRecordId) {
+                    $.ajax({
+                        url: deleteUrl + deleteRecordId,
+                        type: 'POST',
+                        success: function(response) {
+                            $('#deleteConfirmModal').modal('hide');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: 'Record deleted successfully.',
+                                confirmButtonText: 'OK',
+                                timer: 2000,
+                                timerProgressBar: true
+                            }).then((result) => {
+                                htmx.ajax('GET', '/record/rti/rti_monthly_report', {target: '#b-homedb', swap: 'innerHTML'});
+                            });
+                        },
+                        error: function(xhr) {
+                            $('#deleteConfirmModal').modal('hide');
+                            var errorMsg = xhr.responseText || 'Failed to delete record';
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: errorMsg,
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+                }
             });
         });
     </script>

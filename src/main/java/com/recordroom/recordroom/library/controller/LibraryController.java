@@ -1,6 +1,4 @@
 package com.recordroom.recordroom.library.controller;
-
-
 import com.recordroom.recordroom.dto.DataTableRequest;
 import com.recordroom.recordroom.dto.DataTableResponse;
 import com.recordroom.recordroom.library.entity.Library;
@@ -8,6 +6,7 @@ import com.recordroom.recordroom.library.entity.LibraryTransaction;
 import com.recordroom.recordroom.library.service.LibraryService;
 import com.recordroom.recordroom.library.service.LibraryTransactionService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -35,14 +34,26 @@ public class LibraryController {
 
     @PostMapping("/save")
     public String saveLibrary(@ModelAttribute("library") Library library, Model model) {
+        if (library.getId() != null) {
+            Optional<Library> oldBook = libraryService.findById(library.getId());
+            if (oldBook.isPresent()) {
+                Optional<LibraryTransaction> activeTrans = transactionService.findActiveTransactionByBookId(oldBook.get().getId());
+                if (activeTrans.isPresent()) {
+                    model.addAttribute("errorMessage", "❌ Cannot edit record. Book is outstanding!");
+                    model.addAttribute("library", library);
+                    return "fragments/library/master_creation :: loadFormFragment";
+                }
+            }
+        }
+
         Optional<Library> existingBook = libraryService.findByBookSerialNo(library.getBook_serial_no());
 
-        if (existingBook.isPresent()) {
+        if (existingBook.isPresent() && (library.getId() == null || !existingBook.get().getId().equals(library.getId()))) {
             model.addAttribute("errorMessage", "Error: A book with serial number '" + library.getBook_serial_no() + "' already exists.");
             model.addAttribute("library", library);
         } else {
             libraryService.saveLibrary(library);
-            model.addAttribute("successMessage", "✅ Book saved successfully!");
+            model.addAttribute("successMessage", library.getId() != null ? "✅ Book updated successfully!" : "✅ Book saved successfully!");
             model.addAttribute("library", new Library());
         }
         return "fragments/library/master_creation :: loadFormFragment";
@@ -62,6 +73,11 @@ public class LibraryController {
 
         Page<Library> page = libraryService.findByFilters(request);
 
+        page.getContent().forEach(book -> {
+            boolean isOutstanding = transactionService.findActiveTransactionByBookId(book.getId()).isPresent();
+            book.setOutstanding(isOutstanding);
+        });
+
         DataTableResponse<Library> response = new DataTableResponse<>();
         response.setDraw(request.getDraw());
         response.setRecordsTotal(page.getTotalElements());
@@ -70,8 +86,6 @@ public class LibraryController {
 
         return response;
     }
-
-
 
 
     @GetMapping("/outward_entry")
@@ -197,5 +211,30 @@ public class LibraryController {
         response.setData(page.getContent());
 
         return response;
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editLibrary(@PathVariable Integer id, Model model) {
+        Optional<Library> optional = libraryService.findById(id);
+        if (optional.isPresent()) {
+            model.addAttribute("library", optional.get());
+            return "fragments/library/master_creation :: loadFormFragment";
+        }
+        return "redirect:/library/show_table";
+    }
+
+    @PostMapping("/delete/{id}")
+    @ResponseBody
+    public ResponseEntity<String> deleteLibrary(@PathVariable Integer id) {
+        Optional<Library> book = libraryService.findById(id);
+        if (book.isEmpty()) {
+            return ResponseEntity.status(404).body("Book not found");
+        }
+        Optional<LibraryTransaction> activeTrans = transactionService.findActiveTransactionByBookId(id);
+        if (activeTrans.isPresent()) {
+            return ResponseEntity.badRequest().body("Cannot delete outstanding book");
+        }
+        libraryService.deleteLibrary(id);
+        return ResponseEntity.ok("Book deleted successfully");
     }
 }

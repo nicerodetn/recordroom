@@ -51,14 +51,14 @@
 
                     <div class="row g-2">
                       <div class="col">
-                        <input type="text" name="new_drSerialNo"
+                        <input type="text" name="call_book_no"
                                class="form-control"
-                               placeholder="Enter DR Number..." required />
+                               placeholder="Enter Call Book Serial No..." required />
                       </div>
                       <div class="col">
-                        <input type="text" name="new_dr_year"
+                        <input type="text" name="call_book_year"
                                class="form-control"
-                               placeholder="Enter DR Serial Year..." required />
+                               placeholder="Enter Call Book Year..." required />
                       </div>
                       <div class="col-auto">
                         <button type="submit" class="btn btn-primary">
@@ -97,9 +97,9 @@
                   <table id="example1" class="table table-bordered table-striped">
                     <thead>
                     <tr>
+                      <th>Call Book Serial No</th>
+                      <th>Call Book Year</th>
                       <th>DR Serial No</th>
-                      <th>DR Year</th>
-                       <th>Call Book Serial No</th>
                       <th>Current Status</th>
                       <th>Closed Status</th>
                       <th>In Coming Date</th>
@@ -113,9 +113,9 @@
                     <tbody>
                     <tr th:each="record : ${records}">
 
-                      <td th:text="${record.new_drSerialNo}"></td>
-                      <td th:text="${record.new_dr_year}"></td>
                       <td th:text="${record.call_book_no}"></td>
+                      <td th:text="${record.new_dr_year}"></td>
+                      <td th:text="${record.new_drSerialNo}"></td>
 
                       <td th:text="${record.is_current} ? 'Current' : 'Old'"></td>
                       <td th:text="${record.closed_status} ? 'Closed' : 'Open'"></td>
@@ -183,17 +183,29 @@
 
 
                     <!-- 3a. Section Dealing Hand Name -->
-                    <label for="sectionHandName">3a) Section Dealing Hand Name:</label>
-                    <input type="text" th:field="*{sectionDealingHandName}" class="form-control"
-                           id="sectionHandName" required/><br/>
+                    <div class="col-12">
+                        <label for="sectionHandName">3a) Section Dealing Hand Name:</label>
+                        <select th:field="*{sectionDealingHandName}" class="form-select"
+                                id="sectionHandName"
+                                onchange="document.getElementById('sectionHandPhone').value = this.options[this.selectedIndex].getAttribute('data-phone') || '';"
+                                required>
+                            <option value="">-- Select Section - Dealing Hand --</option>
+                            <option th:each="sec : ${sections}"
+                                    th:value="${sec.sectionDealingHandName}"
+                                    th:text="${sec.section} + ' - ' + ${sec.sectionDealingHandName}"
+                                    th:data-phone="${sec.sectionDealingHandPhoneNo}"></option>
+                        </select>
+                    </div>
 
                     <!-- 3b. Section Dealing Hand Phone No -->
-                    <label for="sectionHandPhone">3b) Section Dealing Hand Phone No:</label>
-                    <input type="text"  pattern="\d{10}"
-                           maxlength="10"
-                           minlength="10"
-                           oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)" th:field="*{sectionDealingHandPhoneNo}" class="form-control"
-                           id="sectionHandPhone" required/><br/>
+                    <div class="col-12">
+                        <label for="sectionHandPhone">3b) Section Dealing Hand Phone No:</label>
+                        <input type="text"  pattern="\d{10}"
+                               maxlength="10"
+                               minlength="10"
+                               oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)" th:field="*{sectionDealingHandPhoneNo}" class="form-control"
+                               id="sectionHandPhone" required/>
+                    </div>
 
                     <!-- 4. Record Room Dealing Hand Name -->
                     <div style="padding-top: 17px;" class="col-12">
@@ -202,9 +214,8 @@
                       <select class="form-select" th:field="*{recordRoomDealingHandName}"
                               required>
                         <option value="">-- Select Name --</option>
-                        <option value="M. Ramesh">Shri M. Ramesh</option>
-                        <option value="Balasubramaniyan">Shri S. Balasubramaniyan</option>
-                        <option value="N. Karuppusamy">Shri N. Karuppusamy</option>
+                        <option th:each="s : ${staffList}" th:value="${s}" th:text="${s}"></option>
+                        <option value="Old">Others</option>
                       </select>
                       <div class="invalid-feedback">
                         Please select a name before saving.

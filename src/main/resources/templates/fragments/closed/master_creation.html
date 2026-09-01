@@ -21,6 +21,7 @@
                                           hx-swap="outerHTML"
                                           class="row g-3 border p-3 rounded bg-light shadow-sm"
                                           id="recordForm">
+                                        <input type="hidden" th:field="*{id}" />
                                         <!-- 1. File Type -->
 
                                         <div style="padding-top: 17px;" class="col-12">
@@ -121,9 +122,8 @@
                                             <label class="form-label fw-bold">13. Record Room Dealing Hand Name</label><br>
                                             <select class="form-select" th:field="*{recordRoomDealingHandName}" required>
                                                 <option value="">-- Select Section--</option>
-                                                <option value="M. Ramesh">Shri M. Ramesh</option>
-                                                <option value="Balasubramaniyan">Shri S. Balasubramaniyan</option>
-                                                <option value="N. Karuppusamy">Shri N. Karuppusamy</option>
+                                                <option th:each="s : ${staffList}" th:value="${s}" th:text="${s}"></option>
+                                                <option value="Old">Others</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 Please select a section before saving.
@@ -143,6 +143,13 @@
                                          id="successMsg"
                                          role="alert"
                                          th:text="${successMessage}">
+                                    </div>
+
+                                    <div th:if="${errorMessage}"
+                                         class="alert alert-danger alert-dismissible fade show text-center"
+                                         id="errorMsg"
+                                         role="alert"
+                                         th:text="${errorMessage}">
                                     </div>
 
                                     <script th:inline="javascript">
@@ -181,6 +188,15 @@
                                                     msg.remove();
                                                 }
                                             }, 3000);
+
+                                            // Auto-hide error message
+                                            setTimeout(() => {
+                                                let msg = document.getElementById("errorMsg");
+                                                if (msg) {
+                                                    msg.classList.remove("show");
+                                                    msg.remove();
+                                                }
+                                            }, 5000);
                                         });
                                     </script>
 

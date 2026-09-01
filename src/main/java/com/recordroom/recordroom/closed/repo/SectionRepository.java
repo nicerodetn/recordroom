@@ -10,4 +10,6 @@ public interface SectionRepository extends JpaRepository<Section, Integer>
     @Query("SELECT DISTINCT s.description FROM Section s ORDER BY s.description")
     List<String> findDistinctCategories();
 
+    List<Section> findAllByOrderBySectionAsc();
+
 }

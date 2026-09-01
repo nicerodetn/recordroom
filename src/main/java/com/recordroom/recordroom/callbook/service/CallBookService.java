@@ -31,16 +31,20 @@ public class CallBookService {
         return Optional.of(callBookRepository.save(r));
     }
 
-    public Optional<CallBook> findBydrSerialNoAndYear(Integer new_drSerialNo, Integer new_dr_year) {
-        return callBookRepository.findByDrSerialNoAndYear(new_drSerialNo, new_dr_year);
+    public Optional<CallBook> findByCallBookNoAndYear(Integer call_book_no, Integer call_book_year) {
+        return callBookRepository.findByCallBookNoAndYear(call_book_no, call_book_year);
     }
 
-    public Optional<CallBook> findForDuplicate(Integer new_drSerialNo, Integer new_dr_year) {
-        return callBookRepository.findForDuplicate(new_drSerialNo, new_dr_year);
+    public Optional<CallBook> findForDuplicate(Integer call_book_no, Integer call_book_year) {
+        return callBookRepository.findForDuplicate(call_book_no, call_book_year);
     }
 
-    public Optional<CallBook> findBydrSerialNoAndYearInward(Integer new_drSerialNo, Integer new_dr_year) {
-        return callBookRepository.findByDrSerialNoAndYearForINward(new_drSerialNo, new_dr_year);
+    public Optional<CallBook> findByCallBookNoAndYearInward(Integer call_book_no, Integer call_book_year) {
+        return callBookRepository.findByCallBookNoAndYearForInward(call_book_no, call_book_year);
+    }
+
+    public Optional<Integer> findLastCallBookNoByYear(Integer call_book_year) {
+        return callBookRepository.findLastCallBookNoByYear(call_book_year).map(CallBook::getCall_book_no);
     }
     public List<CallBook> findByUniqueKey(Integer unique_key) {
         return callBookRepository.findByUniqueKey(unique_key);
@@ -71,7 +75,7 @@ public class CallBookService {
                 try {
 
                     Integer searchSerialNo = Integer.parseInt(searchValue);
-                    predicates.add(cb.equal(root.get("new_drSerialNo"), searchSerialNo));
+                    predicates.add(cb.equal(root.get("call_book_no"), searchSerialNo));
                 } catch (NumberFormatException e) {
 
                     predicates.add(cb.isFalse(cb.literal(true)));

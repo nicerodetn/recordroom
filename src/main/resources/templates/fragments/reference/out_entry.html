@@ -78,13 +78,21 @@
                                         <!-- 3. Section Dealing Hand Name -->
                                         <div class="col-12">
                                             <label class="form-label fw-bold">6) Section Dealing Hand Name</label>
-                                            <input type="text" class="form-control" th:field="*{out_sectionDealingHandName}" placeholder="Enter dealing hand name" required>
+                                            <select class="form-select" th:field="*{out_sectionDealingHandName}" id="outSectionDealingHandName"
+                                                    onchange="document.getElementById('outSectionDealingHandPhoneNo').value = this.options[this.selectedIndex].getAttribute('data-phone') || '';"
+                                                    required>
+                                                <option value="">-- Select Section - Dealing Hand --</option>
+                                                <option th:each="sec : ${sections}"
+                                                        th:value="${sec.sectionDealingHandName}"
+                                                        th:text="${sec.section} + ' - ' + ${sec.sectionDealingHandName}"
+                                                        th:data-phone="${sec.sectionDealingHandPhoneNo}"></option>
+                                            </select>
                                         </div>
 
                                         <!-- 9. Section Dealing Hand Phone -->
                                         <div class="col-12">
                                             <label class="form-label fw-bold">7) Section Dealing Hand Phone No</label>
-                                            <input type="text" class="form-control" th:field="*{out_sectionDealingHandPhoneNo}" placeholder="Enter phone no" pattern="\d{10}"
+                                            <input type="text" class="form-control" th:field="*{out_sectionDealingHandPhoneNo}" id="outSectionDealingHandPhoneNo" placeholder="Enter phone no" pattern="\d{10}"
                                                    maxlength="10"
                                                    minlength="10"
                                                    oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)"
@@ -101,9 +109,8 @@
                                             <label class="form-label fw-bold">8. Record Room Dealing Hand Name</label><br>
                                             <select class="form-select" th:field="*{out_recordRoomDealingHandName}" required>
                                                 <option value="">-- Select Section--</option>
-                                                <option value="M. Ramesh">Shri M. Ramesh</option>
-                                                <option value="Balasubramaniyan">Shri S. Balasubramaniyan</option>
-                                                <option value="N. Karuppusamy">Shri N. Karuppusamy</option>
+                                                <option th:each="s : ${staffList}" th:value="${s}" th:text="${s}"></option>
+                                                <option value="Old">Others</option>
                                             </select>
                                             <div class="invalid-feedback">
                                                 Please select a section before saving.

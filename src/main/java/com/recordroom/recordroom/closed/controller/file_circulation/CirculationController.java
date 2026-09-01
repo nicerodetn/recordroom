@@ -10,8 +10,11 @@ import com.recordroom.recordroom.closed.service.RecordService;
 import com.recordroom.recordroom.closed.service.RecordTransactionService;
 import com.recordroom.recordroom.dto.DataTableRequest;
 import com.recordroom.recordroom.dto.DataTableResponse;
+import com.recordroom.recordroom.staff.service.StaffService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +32,19 @@ public class CirculationController {
 
     @Autowired
     private RecordTransactionService recordTransactionService;
+
+    @Autowired
+    private StaffService staffService;
+
+    @ModelAttribute("staffList")
+    public List<String> staffList() {
+        return staffService.getActiveStaffNames();
+    }
+
+    @ModelAttribute("sections")
+    public List<Section> sectionsList() {
+        return recordService.getAllSectionsSorted();
+    }
 
     public CirculationController(RecordService recordService) {
         this.recordService = recordService;
@@ -64,20 +80,74 @@ public class CirculationController {
 
     @PostMapping("/save")
     public String saveRecord(@ModelAttribute FileRecord record, Model model) {
-        Optional<FileRecord> r = recordService.saveRecord(record);
-        if(r.isPresent())
-        {
-            model.addAttribute("record", new FileRecord());
-            model.addAttribute("sections", recordService.getAllSections());
-            model.addAttribute("successMessage", "✅ Record saved successfully!");
-            return "fragments/closed/master_creation :: loadFormFragment";
+        if (record.getId() != null) {
+            Optional<FileRecord> oldRecord = recordService.findById(record.getId());
+            if (oldRecord.isPresent()) {
+                Optional<RecordTransactionDetails> activeTrans = recordTransactionService.findBydrSerialNoAndActiveAndYear(
+                        oldRecord.get().getDrSerialNo(), oldRecord.get().getDr_year()
+                );
+                if (activeTrans.isPresent()) {
+                    model.addAttribute("record", record);
+                    model.addAttribute("sections", recordService.getAllSections());
+                    model.addAttribute("errorMessage", "❌ Cannot edit record. File is outstanding!");
+                    return "fragments/closed/master_creation :: loadFormFragment";
+                }
+            }
+        }
 
-        }else {
-            model.addAttribute("record", new FileRecord());
+        Optional<FileRecord> r;
+        try {
+            if (record.getId() != null) {
+                r = recordService.updateRecord(record);
+            } else {
+                r = recordService.saveRecord(record);
+            }
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute("record", record);
             model.addAttribute("sections", recordService.getAllSections());
-            model.addAttribute("successMessage", "✅ Dulpicate DR Number given!");
+            model.addAttribute("errorMessage", "❌ Duplicate DR Number given!");
             return "fragments/closed/master_creation :: loadFormFragment";
         }
+
+        if (r.isPresent()) {
+            model.addAttribute("record", new FileRecord());
+            model.addAttribute("sections", recordService.getAllSections());
+            model.addAttribute("successMessage", record.getId() != null ? "✅ Record updated successfully!" : "✅ Record saved successfully!");
+            return "fragments/closed/master_creation :: loadFormFragment";
+        } else {
+            model.addAttribute("record", record);
+            model.addAttribute("sections", recordService.getAllSections());
+            model.addAttribute("errorMessage", "❌ Duplicate DR Number given!");
+            return "fragments/closed/master_creation :: loadFormFragment";
+        }
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editRecord(@PathVariable Integer id, Model model) {
+        Optional<FileRecord> optional = recordService.findById(id);
+        if (optional.isPresent()) {
+            model.addAttribute("record", optional.get());
+            model.addAttribute("sections", recordService.getAllSections());
+            return "fragments/closed/master_creation :: loadFormFragment";
+        }
+        return "redirect:/circulation/masterReport";
+    }
+
+    @PostMapping("/delete/{id}")
+    @ResponseBody
+    public ResponseEntity<String> deleteRecord(@PathVariable Integer id) {
+        Optional<FileRecord> record = recordService.findById(id);
+        if (record.isEmpty()) {
+            return ResponseEntity.status(404).body("Record not found");
+        }
+        Optional<RecordTransactionDetails> activeTrans = recordTransactionService.findBydrSerialNoAndActiveAndYear(
+                record.get().getDrSerialNo(), record.get().getDr_year()
+        );
+        if (activeTrans.isPresent()) {
+            return ResponseEntity.badRequest().body("Cannot delete outstanding file");
+        }
+        recordService.deleteRecordPermanent(id);
+        return ResponseEntity.ok("Record deleted successfully");
     }
 
     @GetMapping("/api/section/{id}")
@@ -87,6 +157,43 @@ public class CirculationController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/section_management")
+    public String sectionManagement(Model model) {
+        model.addAttribute("sections", recordService.getAllSections());
+        model.addAttribute("newSection", new Section());
+        return "fragments/closed/section_management :: content";
+    }
+
+    @PostMapping("/section/save")
+    @ResponseBody
+    public ResponseEntity<String> saveSection(
+            @RequestParam("section") String sectionName,
+            @RequestParam("sectionDealingHandName") String dealingHandName,
+            @RequestParam("sectionDealingHandPhoneNo") String phoneNo) {
+        Section s = new Section();
+        s.setSection(sectionName);
+        s.setSectionDealingHandName(dealingHandName);
+        s.setSectionDealingHandPhoneNo(phoneNo);
+        recordService.saveSection(s);
+        return ResponseEntity.ok("Section saved successfully");
+    }
+
+    @PostMapping("/section/update")
+    @ResponseBody
+    public ResponseEntity<String> updateSection(
+            @RequestParam("id") Integer id,
+            @RequestParam("sectionDealingHandName") String dealingHandName,
+            @RequestParam("sectionDealingHandPhoneNo") String phoneNo) {
+        try {
+            recordService.updateSection(id, dealingHandName, phoneNo);
+            return ResponseEntity.ok("Section updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error updating section.");
+        }
+    }
+
 
     @GetMapping("/searchForOutWardEntry")
     public String searchFile(@RequestParam String drSerialNo,@RequestParam String dr_year, Model model) {
@@ -241,6 +348,7 @@ public class CirculationController {
 
         List<FileMasterReportDTO> dtoList = page.getContent().stream().map(record -> {
             FileMasterReportDTO dto = new FileMasterReportDTO();
+            dto.setId(record.getId());
             dto.setDrSerialNo(record.getDrSerialNo());
             dto.setDr_year(record.getDr_year());
             dto.setFileType(record.getFileType());
@@ -260,6 +368,12 @@ public class CirculationController {
             dto.setTotal_volume(record.getTotal_volume());
             dto.setTotal_pages(record.getTotal_pages());
             dto.setNote_pages(record.getNote_pages());
+
+            boolean isOutstanding = recordTransactionService.findBydrSerialNoAndActiveAndYear(
+                    record.getDrSerialNo(), record.getDr_year()
+            ).isPresent();
+            dto.setOutstanding(isOutstanding);
+
             return dto;
         }).collect(Collectors.toList());
 
